@@ -4,7 +4,7 @@
 const rootTheme = document.documentElement;
 let currentCanvasColor = '231, 231, 231';
 let currentLang = localStorage.getItem('rl-lang') || 'en';
-let currentHash = '';
+let currentHash = ''; // Теперь объявлено до любого использования!
 
 const dynamicContent = document.getElementById('dynamicContent');
 const bcPageNameEn = document.getElementById('bcPageNameEn');
@@ -15,10 +15,24 @@ const langBtns = document.querySelectorAll('.lang-group .toggle-btn');
 const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
 
 // ============================================================
-//  СИСТЕМА ЗВУКОВ: ТОЛЬКО БЕЛЫЙ ШУМ ДЛЯ RLTV
+//  СИСТЕМА ЗВУКОВ (ТОЛЬКО БЕЛЫЙ ШУМ ДЛЯ ТЕЛЕВИЗОРА)
 // ============================================================
 let sharedAudioCtx = null;
 let audioUnlocked = false;
+
+const unlockAudio = () => {
+    if (audioUnlocked) return;
+    if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (sharedAudioCtx.state === 'suspended') {
+        sharedAudioCtx.resume().then(() => { audioUnlocked = true; }).catch(() => {});
+    } else {
+        audioUnlocked = true;
+    }
+    if (audioUnlocked) {
+        ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.removeEventListener(evt, unlockAudio));
+    }
+};
+['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.addEventListener(evt, unlockAudio, { passive: true }));
 
 function playStaticNoiseSound() {
     try {
@@ -41,7 +55,7 @@ function playStaticNoiseSound() {
         const gain = sharedAudioCtx.createGain(); 
         const volSlider = document.getElementById('volSlider');
         const currentVol = volSlider ? (parseInt(volSlider.value, 10) / 100) : 0.5; 
-        const maxVol = 0.15 * Math.max(0.1, currentVol); // Шум слышен чуть-чуть даже при нулевой громкости ТВ (для атмосферы)
+        const maxVol = 0.15 * currentVol;
         gain.gain.setValueAtTime(0, sharedAudioCtx.currentTime); 
         gain.gain.linearRampToValueAtTime(maxVol, sharedAudioCtx.currentTime + 0.05); 
         gain.gain.setValueAtTime(maxVol, sharedAudioCtx.currentTime + 0.35); 
@@ -49,21 +63,6 @@ function playStaticNoiseSound() {
         noise.connect(gain); gain.connect(sharedAudioCtx.destination); noise.start();
     } catch (e) { }
 }
-
-// Разблокировка AudioContext (нужно для автоплея и шума)
-const unlockAudio = () => {
-    if (audioUnlocked) return;
-    if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (sharedAudioCtx.state === 'suspended') {
-        sharedAudioCtx.resume().then(() => { audioUnlocked = true; }).catch(() => {});
-    } else {
-        audioUnlocked = true;
-    }
-    if (audioUnlocked) {
-        ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.removeEventListener(evt, unlockAudio));
-    }
-};
-['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.addEventListener(evt, unlockAudio, { passive: true }));
 
 // ============================================================
 //  НАСТРОЙКИ: ТЕМЫ И ЯЗЫКИ
@@ -91,17 +90,15 @@ function applyLang(langVal) {
     
     updateBreadcrumbsTitle();
     
-    // Обновляем placeholder поиска, если элемент существует на странице
     const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
-    }
+    if (searchInput) searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
 }
 
 themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
 langBtns.forEach(btn => btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang-val'))));
 sysMedia.addEventListener('change', () => { if ((localStorage.getItem('rl-theme') || 'system') === 'system') applyTheme('system'); });
 
+// Инициализация при старте скрипта
 applyTheme(localStorage.getItem('rl-theme') || 'system');
 applyLang(currentLang);
 
@@ -109,17 +106,20 @@ applyLang(currentLang);
 //  РОУТЕР (SPA) И РЕНДЕР КАРТОЧЕК
 // ============================================================
 function loadPage(hash) {
-    // 1. Очистка старой страницы (ставим видео ТВ на паузу)
+    // 1. Очистка старой страницы (ставим видео ТВ на паузу, если уходим с вкладки)
     if (currentHash === 'rltv' && typeof appRLTV !== 'undefined' && appRLTV.video) {
         appRLTV.video.pause();
     }
 
-    // 2. Защита хэша
+    // 2. Защита, если хэш кривой
     if (!PAGE_CONTENT[hash]) hash = 'rl'; 
     currentHash = hash;
     
     // 3. Вставляем HTML из базы content.js
-    if (dynamicContent) dynamicContent.innerHTML = PAGE_CONTENT[hash];
+    if (dynamicContent) {
+        dynamicContent.innerHTML = PAGE_CONTENT[hash];
+    }
+    
     updateBreadcrumbsTitle();
     
     // 4. Подсвечиваем нужное меню
@@ -131,7 +131,7 @@ function loadPage(hash) {
     panelOffset = 0;
     setPanelOffset(0);
 
-    // 6. Запускаем специфичную логику страницы
+    // 6. Запускаем специфичную логику страницы (Телевизор или Патчноуты)
     if (hash === 'rltv' && typeof appRLTV !== 'undefined') appRLTV.init();
     if (hash === 'patchnotes') initPatchnotesUI();
     
@@ -139,10 +139,12 @@ function loadPage(hash) {
     initCanvases();
 }
 
+// Слушаем изменения хэша в адресной строке
 window.addEventListener('hashchange', () => {
     loadPage(window.location.hash.replace('#', ''));
 });
 
+// Первичная загрузка страницы
 document.addEventListener('DOMContentLoaded', () => {
     let initialHash = window.location.hash.replace('#', '') || 'rl';
     loadPage(initialHash);
@@ -174,6 +176,7 @@ function setPanelOffset(o) {
 }
 
 new ResizeObserver(() => { const max = getPanelMaxOffset(); if (panelOffset > max) panelOffset = max; setPanelOffset(panelOffset); }).observe(mainPanel);
+
 mainClip.addEventListener('wheel', e => { e.preventDefault(); setPanelOffset(panelOffset + e.deltaY); }, { passive: false });
 window.addEventListener('resize', () => setPanelOffset(panelOffset));
 
@@ -262,7 +265,7 @@ function initPatchnotesUI() {
     
     if(!searchInput) return;
 
-    // Жестко принудительно ставим правильный язык плейсхолдера при рендере!
+    // ИСПРАВЛЕНИЕ: Обновляем placeholder сразу после генерации HTML
     searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
 
     function updateInputStates() {
@@ -343,7 +346,7 @@ const appRLTV = {
             const response = await fetch(`https://api.github.com/repos/ZAKFUN35/Intec/contents/videos`);
             if (!response.ok) throw new Error();
             const files = await response.json();
-            this.playlist = files.filter(f => f.name.endsWith('.mp4') || f.name.endsWith('.webm')).map(f => f.download_url);
+            this.playlist = files.filter(f => f.name.endsWith('.mp4')).map(f => f.download_url);
             
             for (let i = this.playlist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[this.playlist[i], this.playlist[j]] = [this.playlist[j], this.playlist[i]]; }
             
@@ -366,26 +369,17 @@ const appRLTV = {
     changeChannel(dir) {
         if(this.playlist.length === 0) return;
         const screen = document.getElementById('tvScreen');
-        screen.classList.remove('switching');
+        screen.classList.add('switching');
         
-        setTimeout(() => {
-            screen.classList.add('switching'); 
-            
-            // Включаем белый шум при переключении
-            playStaticNoiseSound();
-            
-            this.video.pause();
-            setTimeout(() => { 
-                this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length; 
-                this.loadVideo(); 
-            }, 250);
-            
-            setTimeout(() => { 
-                screen.classList.remove('switching'); 
-            }, 500);
-            
-        }, 10);
+        playStaticNoiseSound(); // ДОБАВЛЕН БЕЛЫЙ ШУМ
 
+        this.video.pause();
+        setTimeout(() => {
+            this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
+            this.loadVideo();
+        }, 250);
+        setTimeout(() => screen.classList.remove('switching'), 500);
+        
         if (this.isPaused) this.togglePause();
     },
 
