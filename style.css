@@ -104,8 +104,8 @@ a { text-decoration: none; color: inherit; }
 .tag-status { color: var(--c-sub); }
 
 .content-card { padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-/* ЖЕЛЕЗОБЕТОННЫЙ КЛАСС ДЛЯ ПЕРЕВОРОТА */
-.content-card.reverse { flex-direction: row-reverse; }
+/* ВОЗВРАЩЕН СТАРЫЙ АВТОМАТИЧЕСКИЙ ПЕРЕВОРОТ КАРТОЧЕК */
+.content-card:nth-child(even) { flex-direction: row-reverse; }
 
 .info-text { flex: 1; color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.5; text-align: justify; min-width: 0; }
 .info-text h2 { color: var(--c-text); font-size: 42px; font-weight: 900; letter-spacing: 0.05em; margin-bottom: 18px; text-align: left; }

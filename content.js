@@ -18,7 +18,7 @@ const PAGE_CONTENT = {
             </div>
         </div>
 
-        <div class="content-card reverse">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Battle Royale in a new format</h2>
@@ -46,7 +46,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="launch_drop"></canvas></div>
         </div>
 
-        <div class="content-card reverse">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>From Pistol to Mega-Gun</h2>
@@ -74,7 +74,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="bubble"></canvas></div>
         </div>
 
-        <div class="content-card reverse">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Madness on Wheels</h2>
@@ -108,7 +108,7 @@ const PAGE_CONTENT = {
             </div>
         </div>
 
-        <div class="content-card reverse">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Generation Instead of Routine</h2>
@@ -136,7 +136,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="normals"></canvas></div>
         </div>
 
-        <div class="content-card reverse">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Engine Optimization</h2>
@@ -240,7 +240,7 @@ const PAGE_CONTENT = {
             </div>
         </div>
 
-        <div class="content-card reverse">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>The loading screen is yours</h2>
