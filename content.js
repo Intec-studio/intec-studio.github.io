@@ -32,7 +32,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="storm"></canvas></div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card reverse">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Cannon Volley and Drop</h2>
@@ -60,7 +60,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="weapon"></canvas></div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card reverse">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Stylized Bubbles</h2>
@@ -122,7 +122,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="gen"></canvas></div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card reverse">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Custom Normals in One Click</h2>
@@ -150,7 +150,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="opt"></canvas></div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card reverse">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Community Platform</h2>
@@ -240,8 +240,7 @@ const PAGE_CONTENT = {
             </div>
         </div>
 
-        <!-- ЖЕСТКОЕ ПЕРЕОПРЕДЕЛЕНИЕ ПОРЯДКА ЧЕРЕЗ INLINE-СТИЛИ -->
-        <div class="content-card" style="flex-direction: row-reverse;">
+        <div class="content-card reverse">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>The loading screen is yours</h2>
@@ -255,7 +254,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="rltv_upload"></canvas></div>
         </div>
 
-        <div class="content-card" style="flex-direction: row;">
+        <div class="content-card">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Shoot your commercial</h2>
@@ -274,12 +273,6 @@ const PAGE_CONTENT = {
     // PATCHNOTES
     // ==========================================
     'patchnotes': `
-        <!-- ЛОКАЛЬНЫЕ ЖЕСТКИЕ СТИЛИ ДЛЯ ИДЕАЛЬНЫХ ОТСТУПОВ -->
-        <style>
-            .pn-wrapper { display: flex; flex-direction: column; gap: 18px; width: 100%; }
-            @media (max-width: 900px) { .pn-wrapper { gap: 9px; } }
-        </style>
-        
         <div class="pn-wrapper">
             <div class="search-block">
                 <form class="pn-input-wrap" id="searchForm" action="javascript:void(0);">
