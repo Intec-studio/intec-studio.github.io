@@ -1,4 +1,224 @@
-<script>
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intec</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================================
+           ПЕРЕМЕННЫЕ ЦВЕТОВЫХ ТЕМ (ИНВЕРСИЯ)
+        ============================================================ */
+        :root {
+            --c-bg: #000000;
+            --c-bg-rgb: 0, 0, 0;
+            --c-panel: #111111;
+            --c-border: #1F1F1F;
+            --c-text: #E7E7E7;
+            --c-canvas: 180, 190, 205; /* Цвет точек в темной теме */
+        }
+
+        html[data-theme="light"] {
+            --c-bg: #FFFFFF;
+            --c-bg-rgb: 255, 255, 255;
+            --c-panel: #F0F0F0;
+            --c-border: #D4D4D4;
+            --c-text: #1F1F1F;
+            --c-canvas: 31, 31, 31; /* Цвет точек в светлой теме */
+        }
+
+        /* МЕДЛЕННАЯ АНИМАЦИЯ (для смены тем) */
+        body, .vignette, .gate-btn {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* БЫСТРАЯ АНИМАЦИЯ (для ховеров) */
+        .toggle-btn, .gate-btn {
+            transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+        }
+        svg { transition: stroke 0.1s ease, fill 0.1s ease; }
+
+        /* ============================================================
+           СБРОС СТИЛЕЙ И БАЗА
+        ============================================================ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body, html {
+            width: 100vw; height: 100vh; height: 100dvh;
+            background: var(--c-bg); font-family: 'Noto Sans', sans-serif;
+            overflow: hidden; user-select: none;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Канвас на заднем фоне */
+        #intro-canvas {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Виньетка для глубины */
+        .vignette {
+            position: absolute; inset: 0; z-index: 2; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 30%, rgba(var(--c-bg-rgb), 0.9) 100%);
+        }
+
+        /* ============================================================
+           УГЛОВОЙ БЛОК НАСТРОЕК (Темы - Дизайн из RL.html)
+        ============================================================ */
+        .corner-settings {
+            /* Перенесено в левый верхний угол, отступ 6 * 3 = 18px */
+            position: absolute; top: 18px; left: 18px; z-index: 10;
+        }
+        
+        .toggle-block { 
+            display: flex; 
+            gap: 3px; /* Отступ 1 * 3 = 3px */
+            /* Общая ширина будет 36 + 3 + 36 + 3 + 36 = 114px (38 * 3) */
+        }
+
+        .toggle-btn {
+            width: 36px; height: 36px; /* Размер 12 * 3 = 36px */
+            background: var(--c-border); 
+            border: 2px solid transparent;
+            display: flex; justify-content: center; align-items: center; 
+            cursor: pointer; color: var(--c-text);
+        }
+        .toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+        
+        /* Скругления только по краям блока */
+        .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+        .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+        
+        @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
+        .toggle-btn.active, .toggle-btn:active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+
+        /* ============================================================
+           ЦЕНТРАЛЬНЫЙ БЛОК UI
+        ============================================================ */
+        .intro-container {
+            position: relative; z-index: 5;
+            display: flex; flex-direction: column; align-items: center; gap: 36px;
+            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.8s ease;
+        }
+
+        /* Глитч-логотип */
+        .glitch-logo {
+            font-size: clamp(4rem, 10vw, 12rem); font-weight: 900;
+            text-transform: uppercase; letter-spacing: 0.25em;
+            position: relative; color: var(--c-text); white-space: nowrap; 
+            text-shadow: 0 0 20px rgba(var(--c-bg-rgb), 0.5);
+            margin-left: 0.25em; 
+            line-height: 1;
+        }
+        
+        .glitch-logo::before, .glitch-logo::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; background: transparent; color: var(--c-text); 
+            overflow: hidden; white-space: nowrap; 
+        }
+        
+        .glitch-logo::before { text-shadow: -3px 0 rgba(128, 128, 128, 0.5); animation: glitch-anim-1 4s infinite linear alternate-reverse; }
+        .glitch-logo::after { text-shadow: 3px 0 rgba(128, 128, 128, 0.3); animation: glitch-anim-2 5s infinite linear alternate-reverse; }
+
+        @keyframes glitch-anim-1 {
+            0%, 90% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+            92% { clip-path: inset(10% 0 60% 0); transform: translate(-4px, 2px); }
+            94% { clip-path: inset(40% 0 20% 0); transform: translate(4px, -2px); }
+            96% { clip-path: inset(80% 0 5% 0); transform: translate(-4px, 2px); }
+            98%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+        }
+        @keyframes glitch-anim-2 {
+            0%, 85% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+            88% { clip-path: inset(20% 0 50% 0); transform: translate(4px, 2px); }
+            92% { clip-path: inset(60% 0 10% 0); transform: translate(-4px, -2px); }
+            95% { clip-path: inset(15% 0 70% 0); transform: translate(4px, 2px); }
+            98%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+        }
+
+        /* ============================================================
+           ВХОДНЫЕ КНОПКИ (EN / RU) - Дизайн из RL.html
+        ============================================================ */
+        .lang-gate {
+            display: flex;
+            width: 261px; /* Строго 87 * 3 */
+            height: 36px; /* Строго 12 * 3 */
+            gap: 3px;     /* Отступ 1 * 3 = 3px */
+        }
+
+        .gate-btn {
+            flex: 1; /* Кнопки делят пространство поровну (по 129px) */
+            height: 100%;
+            background: var(--c-border); 
+            border: 2px solid transparent;
+            color: var(--c-text);
+            font-size: 15px;
+            font-family: 'Noto Sans', sans-serif;
+            font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; outline: none; letter-spacing: 0.05em;
+        }
+
+        /* Скругления только по внешним краям, внутри - прямые углы */
+        .lang-gate > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+        .lang-gate > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+
+        @media (hover: hover) { .gate-btn:hover { border-color: var(--c-text); } }
+        
+        .gate-btn:active, .gate-btn.entering {
+            background: var(--c-text); color: var(--c-panel); border-color: var(--c-text);
+        }
+
+        /* Состояние перехода (при клике) */
+        body.transitioning .intro-container { transform: scale(1.1); opacity: 0; }
+        body.transitioning #intro-canvas { opacity: 0; transform: scale(1.05); transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1); }
+
+        /* Мобильный адаптив для угловой кнопки */
+        @media (max-width: 900px) {
+            .corner-settings { top: 9px; left: 9px; }
+            .toggle-block { gap: 1.5px; }
+            .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
+            .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+            .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
+            .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+            
+            .lang-gate { width: 130px; height: 18px; gap: 1.5px; }
+            .gate-btn { font-size: 9px; border-width: 1px; }
+            .lang-gate > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
+            .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="intro-canvas"></canvas>
+    <div class="vignette"></div>
+
+    <!-- Настройка темы (слева сверху) -->
+    <div class="corner-settings">
+        <div class="toggle-block theme-group">
+            <div class="toggle-btn" data-theme-val="system"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div class="toggle-btn" data-theme-val="dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+            <div class="toggle-btn" data-theme-val="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+        </div>
+    </div>
+
+    <div class="intro-container">
+        <!-- Логотип -->
+        <h1 class="glitch-logo" data-text="INTEC">INTEC</h1>
+        
+        <!-- Кнопки выбора языка / Вход -->
+        <div class="lang-gate">
+            <button class="gate-btn" data-lang-entry="en">EN</button>
+            <button class="gate-btn" data-lang-entry="ru">RU</button>
+        </div>
+    </div>
+
+    <script>
         // ============================================================
         //  ТЕМЫ
         // ============================================================
@@ -90,7 +310,7 @@
         drawGrid();
 
         // ============================================================
-        // ЛОГИКА ВХОДА И МАРШРУТИЗАЦИЯ (SEO)
+        // ЛОГИКА ВХОДА
         // ============================================================
         const gateBtns = document.querySelectorAll('.gate-btn');
 
@@ -107,13 +327,14 @@
                 document.body.classList.add('transitioning');
 
                 setTimeout(() => {
-                    // Разделяем языки
                     if (lang === 'ru') {
-                        window.location.href = 'ru/rl.html'; // Русская версия (пока выдаст 404, сделаем папку позже)
+                        window.location.href = 'ru/rl.html'; // Отправляем в русскую папку
                     } else {
-                        window.location.href = 'rl.html';    // Английская версия (маленькими буквами, сработает сразу!)
+                        window.location.href = 'rl.html';    // Отправляем в корень (маленькими буквами!)
                     }
                 }, 800);
             });
         });
     </script>
+</body>
+</html>
