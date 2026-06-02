@@ -31,28 +31,31 @@
             --c-canvas: 31, 31, 31;
         }
 
-        /* МЕДЛЕННАЯ АНИМАЦИЯ для фона и крупных элементов (переключение темы) */
+        /* МЕДЛЕННАЯ АНИМАЦИЯ для фона и крупных элементов */
         body, .top-bar, .sidebar, .main-area, .hero-card, .content-card, 
         .hero-footer, .info-console, .tag, .breadcrumbs, .v-track {
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
-        /* БЫСТРАЯ АНИМАЦИЯ для кнопок (моментальный отклик на наведение) */
+        /* БЫСТРАЯ АНИМАЦИЯ для кнопок */
         .nav-btn, .back-btn, .toggle-btn {
             transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
         }
         svg { transition: stroke 0.1s ease, fill 0.1s ease; }
 
         /* ============================================================
-           СИСТЕМА ЛОКАЛИЗАЦИИ
-        ============================================================ */
-        html[lang="en"] [data-lang="ru"] { display: none !important; }
-        html[lang="ru"] [data-lang="en"] { display: none !important; }
-
-        /* ============================================================
            СБРОС СТИЛЕЙ И БАЗА
         ============================================================ */
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* Плавное появление страницы при загрузке */
+        body {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
         
         body, html {
             width: 100vw; 
@@ -63,6 +66,8 @@
             display: flex; flex-direction: column; 
             touch-action: none; 
         }
+        
+        a { text-decoration: none; color: inherit; }
 
         /* ============================================================
            ВЕРХНЯЯ ПАНЕЛЬ И КНОПКИ
@@ -78,9 +83,7 @@
         }
         .back-btn svg { width: 18px; height: 18px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; stroke-linecap: butt; stroke-linejoin: miter; }
         
-        /* ХОВЕР ТОЛЬКО НА УСТРОЙСТВАХ С МЫШКОЙ (Десктопы) */
         @media (hover: hover) { .back-btn:hover { border-color: var(--c-text); } }
-        
         .back-btn:active { background: var(--c-text); }
         .back-btn:active svg { stroke: var(--c-panel); }
 
@@ -97,10 +100,8 @@
         .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
         .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
         
-        /* ХОВЕР ТОЛЬКО НА УСТРОЙСТВАХ С МЫШКОЙ (Десктопы) */
         @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
-        
-        .toggle-btn.active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+        .toggle-btn.active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); pointer-events: none; }
 
         .breadcrumbs { flex-grow: 1; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; padding: 0 9px; min-width: 0; }
         .bc-text { color: var(--c-text); font-size: 15px; font-weight: 500; line-height: normal; padding: 3px 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -121,9 +122,7 @@
         .nav-btn .nav-icon { width: 18px; height: 18px; margin-right: 9px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
         .nav-btn span { font-size: 15px; font-weight: 500; line-height: normal; padding: 3px 0; display: block; white-space: nowrap; }
         
-        /* ХОВЕР ТОЛЬКО НА УСТРОЙСТВАХ С МЫШКОЙ (Десктопы) */
         @media (hover: hover) { .nav-btn:hover { border-color: var(--c-text); } }
-        
         .nav-btn:active, .nav-btn.active { background: var(--c-text); color: var(--c-panel); }
 
         .main-area { flex-grow: 1; background: var(--c-bg); position: relative; overflow: hidden; touch-action: none; }
@@ -163,18 +162,10 @@
         .hero-banner::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); z-index: 1; }
         .hero-banner::after { content: ''; position: absolute; inset: 0; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); opacity: 0.25; mix-blend-mode: overlay; z-index: 2; }
 
-        /* БАЗОВЫЙ ШРИФТ ДЛЯ ПК */
         .hero-title {
-            position: relative;
-            z-index: 5;
-            font-size: clamp(36px, 7vw, 96px);
-            font-weight: 900;
-            color: #E7E7E7;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            text-align: center;
-            padding: 0 18px; /* Гарантированный "воздух" по бокам */
-            line-height: 1.1; /* Если на супер-мелком экране текст всё же перенесется, строки не слипнутся */
+            position: relative; z-index: 5; font-size: clamp(36px, 7vw, 96px); font-weight: 900;
+            color: #E7E7E7; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;
+            padding: 0 18px; line-height: 1.1;
         }
 
         .hero-footer { height: 75px; background: var(--c-panel); border-top: 3px solid var(--c-border); display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
@@ -201,7 +192,6 @@
             .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; }
             .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
             .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
-            
             .settings-group { gap: 9px; margin-right: 19.5px; }
             .toggle-block { gap: 1.5px; }
             .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
@@ -209,38 +199,27 @@
             .toggle-btn.text-btn { font-size: 7px; }
             .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
             .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
-
             .breadcrumbs { height: 18px; border-radius: 4.5px; padding: 0 4.5px; }
             .bc-text { font-size: 7.5px; padding: 1px 0; }
             .bc-icon { width: 9px; height: 9px; margin: 0 3px; stroke-width: 1px; }
-
             .sidebar { width: 150px; border-right-width: 1.5px; }
             .sidebar-nav { gap: 9px; padding: 9px; }
             .nav-btn { height: 18px; border-radius: 4.5px; padding: 0 4.5px; border-width: 1px; }
             .nav-btn .nav-icon { width: 9px; height: 9px; margin-right: 4.5px; stroke-width: 1px; }
             .nav-btn span { font-size: 7.5px; padding: 1px 0; }
-
             .main-grad-bottom, .main-grad-top { height: 30px; }
             .v-slider-container { right: 4px; top: 9px; bottom: 9px; width: 3px; }
             .v-track { width: 1.5px; }
             .v-thumb { width: 1.5px; }
-
             .cards-layout { padding: 9px 15px 9px 9px; gap: 9px; }
             .hero-card, .content-card { border-width: 1.5px; border-radius: 9px; }
-
             .hero-banner { height: 160px; } 
-
-            /* ЖЕСТКОЕ ОГРАНИЧЕНИЕ ТЕКСТА ДЛЯ МОБИЛОК (ВЕРТ/ГОРИЗ) */
             .hero-title { font-size: clamp(24px, 7.5vw, 42px); }
-
             .hero-footer { height: 37.5px; border-top-width: 1.5px; padding: 0 9px; }
-            
             .tags-group { gap: 1.5px; }
             .tag { height: 18px; padding: 0 4.5px; font-size: 7px; border-radius: 4.5px; }
-
             .content-card { padding: 9px; gap: 9px; }
             .info-text { font-size: 9px; }
-            /* Уменьшили h2 для правильной иерархии */
             .info-text h2 { font-size: 14px; margin-bottom: 6px; line-height: 1.2; }
             .info-console { width: 90px; height: 90px; border-width: 1px; border-radius: 4.5px; }
         }
@@ -248,7 +227,6 @@
         @media (max-width: 900px) and (orientation: portrait) {
             .back-btn { margin-right: 19.5px; } 
             .settings-group { gap: 9px; margin-right: 9px; } 
-
             .sidebar { width: auto; }
             .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; }
             .sidebar .nav-btn .nav-icon { margin-right: 0; }
@@ -259,17 +237,19 @@
 <body>
 
     <header class="top-bar">
-        <div class="back-btn"><svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15"/></svg></div>
+        <!-- Кнопка назад ведет на начальный экран -->
+        <a href="index.html" class="back-btn"><svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15"/></svg></a>
         
         <div class="settings-group">
             <div class="toggle-block theme-group">
-                <div class="toggle-btn" data-theme-val="system" title="Системная тема"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-                <div class="toggle-btn" data-theme-val="dark" title="Темная тема"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
-                <div class="toggle-btn" data-theme-val="light" title="Светлая тема"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+                <div class="toggle-btn" data-theme-val="system" title="System Theme"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="toggle-btn" data-theme-val="dark" title="Dark Theme"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+                <div class="toggle-btn" data-theme-val="light" title="Light Theme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
             </div>
+            <!-- Языковые ссылки -->
             <div class="toggle-block lang-group">
-                <div class="toggle-btn text-btn" data-lang-val="en">EN</div>
-                <div class="toggle-btn text-btn" data-lang-val="ru">RU</div>
+                <div class="toggle-btn text-btn active">EN</div>
+                <a href="ru/ff.html" class="toggle-btn text-btn">RU</a>
             </div>
         </div>
 
@@ -283,23 +263,23 @@
     <div class="content-wrapper">
         <aside class="sidebar">
             <div class="sidebar-nav">
-                <div class="nav-btn">
+                <a href="rl.html" class="nav-btn">
                     <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg><span>Race Legends</span>
-                </div>
-                <div class="nav-btn active">
+                </a>
+                <a href="#" class="nav-btn active">
                     <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg><span>Fractal Forge</span>
-                </div>
-                <div class="nav-btn">
+                </a>
+                <a href="#" class="nav-btn">
                     <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg><span>#RaceLegendsTV</span>
-                </div>
-                <div class="nav-btn">
+                </a>
+                <a href="#" class="nav-btn">
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                    <span data-lang="en">Patchnotes</span><span data-lang="ru">Патчноуты</span>
-                </div>
-                <div class="nav-btn">
+                    <span>Patchnotes</span>
+                </a>
+                <a href="#" class="nav-btn">
                     <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span data-lang="en">Chronograph</span><span data-lang="ru">Хронограф</span>
-                </div>
+                    <span>Chronograph</span>
+                </a>
             </div>
         </aside>
 
@@ -317,7 +297,7 @@
                                 <div class="tags-group">
                                     <a href="https://github.com/ZAKFUN35/FractalForge" target="_blank" class="nav-btn" style="width: max-content; margin: 0;">
                                         <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                        <span data-lang="en">Download</span><span data-lang="ru">Скачать</span>
+                                        <span>Download</span>
                                     </a>
                                 </div>
                             </div>
@@ -325,56 +305,32 @@
 
                         <div class="content-card">
                             <div class="info-text">
-                                <div data-lang="en">
-                                    <h2>Generation Instead of Routine</h2>
-                                    <p>Fractal Forge takes over the most tedious part of modeling. Instead of manually placing every single leaf, you generate ready-made vegetation via <span class="highlight">Geometry Nodes</span>. The addon instantly creates meshes fully ready for export to a game engine: with correct UV unwrapping, baked Vertex Color, and necessary attributes for masks. And if you need a dense canopy in <span class="highlight">Studio Ghibli</span> style, the base geometry turns into a proper stylized volume in a couple of clicks.</p>
-                                </div>
-                                <div data-lang="ru">
-                                    <h2>Генерация вместо рутины</h2>
-                                    <p>Fractal Forge забирает на себя самую душную часть моделирования. Вместо того чтобы вручную расставлять каждый листик, вы генерируете готовую растительность через <span class="highlight">Geometry Nodes</span>. Аддон сразу создает меши, полностью готовые к экспорту в игровой движок: с правильными UV-развертками, запеченным Vertex Color и необходимыми атрибутами для масок. А если нужна густая крона в стиле <span class="highlight">Studio Ghibli</span>, базовая геометрия превращается в правильный стилизованный объем за пару кликов.</p>
-                                </div>
+                                <h2>Generation Instead of Routine</h2>
+                                <p>Fractal Forge takes over the most tedious part of modeling. Instead of manually placing every single leaf, you generate ready-made vegetation via <span class="highlight">Geometry Nodes</span>. The addon instantly creates meshes fully ready for export to a game engine: with correct UV unwrapping, baked Vertex Color, and necessary attributes for masks. And if you need a dense canopy in <span class="highlight">Studio Ghibli</span> style, the base geometry turns into a proper stylized volume in a couple of clicks.</p>
                             </div>
                             <div class="info-console"><canvas class="mini-console" data-type="gen"></canvas></div>
                         </div>
 
                         <div class="content-card">
                             <div class="info-text">
-                                <div data-lang="en">
-                                    <h2>Custom Normals in One Click</h2>
-                                    <p>The main enemy of 3D trees is that every leaf casts its own shadow, turning the canopy into a noisy <span class="highlight">mess</span>. The tool solves this problem in one click. The addon automatically recalculates and transfers custom spherical normals to your foliage. The tree begins to perceive light as a single monolithic object. You get those clean, smooth shadows for proper <span class="highlight">cel-shading</span> without spending hours manually tweaking modifiers.</p>
-                                </div>
-                                <div data-lang="ru">
-                                    <h2>Кастомные нормали в один клик</h2>
-                                    <p>Главный враг 3D-деревьев — каждый лист отбрасывает собственную тень, превращая крону в шумное <span class="highlight">нечто</span>. Инструмент решает эту проблему в один клик. Аддон автоматически пересчитывает и переносит кастомные сферические нормали на вашу листву. Дерево начинает воспринимать свет как единый монолитный объект. Вы получаете те самые чистые, сглаженные тени для правильного <span class="highlight">cel-shading</span>, не тратя часы на ручную настройку модификаторов.</p>
-                                </div>
+                                <h2>Custom Normals in One Click</h2>
+                                <p>The main enemy of 3D trees is that every leaf casts its own shadow, turning the canopy into a noisy <span class="highlight">mess</span>. The tool solves this problem in one click. The addon automatically recalculates and transfers custom spherical normals to your foliage. The tree begins to perceive light as a single monolithic object. You get those clean, smooth shadows for proper <span class="highlight">cel-shading</span> without spending hours manually tweaking modifiers.</p>
                             </div>
                             <div class="info-console"><canvas class="mini-console" data-type="normals"></canvas></div>
                         </div>
 
                         <div class="content-card">
                             <div class="info-text">
-                                <div data-lang="en">
-                                    <h2>Engine Optimization</h2>
-                                    <p>Stylized graphics shouldn't kill FPS. The addon instantly optimizes models for the strict requirements of game engines like <span class="highlight">UE5</span>. It automatically generates Levels of Detail <span class="highlight">(LOD)</span> and properly slices the geometry. For example, a generated patch of grass is neatly split into independent blades, and the origin is placed strictly at the base of each stem. This is critical for cheap wind animation in the engine via <span class="highlight">World Position Offset (WPO)</span> without heavy bones.</p>
-                                </div>
-                                <div data-lang="ru">
-                                    <h2>Оптимизация под движок</h2>
-                                    <p>Стилизованная графика не должна убивать FPS. Аддон сразу оптимизирует модели под жесткие требования игровых движков вроде <span class="highlight">UE5</span>. Он автоматически генерирует уровни детализации <span class="highlight">(LOD)</span> и правильно нарезает геометрию. Например, сгенерированная поляна аккуратно разбивается на независимые травинки, а центр координат (origin) ставится строго в основание каждого стебля. Это критически важно, чтобы в движке можно было сделать дешевую анимацию ветра через <span class="highlight">World Position Offset (WPO)</span> без тяжелых костей.</p>
-                                </div>
+                                <h2>Engine Optimization</h2>
+                                <p>Stylized graphics shouldn't kill FPS. The addon instantly optimizes models for the strict requirements of game engines like <span class="highlight">UE5</span>. It automatically generates Levels of Detail <span class="highlight">(LOD)</span> and properly slices the geometry. For example, a generated patch of grass is neatly split into independent blades, and the origin is placed strictly at the base of each stem. This is critical for cheap wind animation in the engine via <span class="highlight">World Position Offset (WPO)</span> without heavy bones.</p>
                             </div>
                             <div class="info-console"><canvas class="mini-console" data-type="opt"></canvas></div>
                         </div>
 
                         <div class="content-card">
                             <div class="info-text">
-                                <div data-lang="en">
-                                    <h2>Community Platform</h2>
-                                    <p>Right now, Fractal Forge is a utility for solving technical tasks in Race Legends. But the global goal is much bigger. In future updates, the addon will receive a custom cel-shading engine based on the <span class="highlight">Oklab</span> perceptual color space, where light and shadow transitions will be mathematically flawless to the human eye. This will turn the addon into a tool for the community: players will be able to create locations, item designs, and skins themselves. You do great work, send it to me, and if it's excellent — it <span class="highlight">officially gets added to the game</span>.</p>
-                                </div>
-                                <div data-lang="ru">
-                                    <h2>Платформа для комьюнити</h2>
-                                    <p>Сейчас Fractal Forge — это утилита для решения технических задач в Race Legends. Но глобальная цель куда масштабнее. В будущих обновлениях аддон получит кастомный движок cel-shading на базе перцептивного цветового пространства <span class="highlight">Oklab</span>, где переходы света и тени будут математически безупречны для человеческого глаза. Это превратит аддон в инструмент для сообщества: игроки смогут сами создавать локации, дизайны предметов и скины. Вы делаете крутую работу, присылаете мне, и если всё отлично — она <span class="highlight">официально добавляется в игру</span>.</p>
-                                </div>
+                                <h2>Community Platform</h2>
+                                <p>Right now, Fractal Forge is a utility for solving technical tasks in Race Legends. But the global goal is much bigger. In future updates, the addon will receive a custom cel-shading engine based on the <span class="highlight">Oklab</span> perceptual color space, where light and shadow transitions will be mathematically flawless to the human eye. This will turn the addon into a tool for the community: players will be able to create locations, item designs, and skins themselves. You do great work, send it to me, and if it's excellent — it <span class="highlight">officially gets added to the game</span>.</p>
                             </div>
                             <div class="info-console"><canvas class="mini-console" data-type="comm"></canvas></div>
                         </div>
@@ -394,7 +350,7 @@
 
     <script>
         // ============================================================
-        //  ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ТЕМ И ЯЗЫКА
+        //  ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ТЕМ
         // ============================================================
         const rootTheme = document.documentElement;
         let currentCanvasColor = '231, 231, 231';
@@ -428,27 +384,9 @@
             if (current === 'system') applyTheme('system');
         });
 
-        const langBtns = document.querySelectorAll('.lang-group .toggle-btn');
-        
-        function applyLang(langVal) {
-            rootTheme.setAttribute('lang', langVal);
-            try { localStorage.setItem('rl-lang', langVal); } catch(e) {}
-            
-            langBtns.forEach(btn => {
-                if (btn.getAttribute('data-lang-val') === langVal) btn.classList.add('active');
-                else btn.classList.remove('active');
-            });
-        }
-
-        langBtns.forEach(btn => btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang-val'))));
-
         let savedTheme = 'system';
         try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
         applyTheme(savedTheme);
-
-        let savedLang = 'en';
-        try { savedLang = localStorage.getItem('rl-lang') || 'en'; } catch(e) {}
-        applyLang(savedLang);
 
         // ============================================================
         //  АНИМАЦИИ МИНИ-КОНСОЛЕЙ (FRACTAL FORGE) С ОПТИМИЗАЦИЕЙ
@@ -574,21 +512,18 @@
                             let showB1 = 0, showB2 = 1, showB3 = 0;
 
                             if (phase === 0) {
-                                // 3 -> 2: Правая рассыпается
                                 showB1 = 1;
-                                if (ny < scanY) showB3 = 1; // Выше полосы - целая
-                                else showB3 = rnd > (ny - scanY) * 3 ? 1 : 0; // Ниже полосы - рассыпается в шум
+                                if (ny < scanY) showB3 = 1; 
+                                else showB3 = rnd > (ny - scanY) * 3 ? 1 : 0; 
                             } else if (phase === 1) {
-                                // 2 -> 1: Левая рассыпается
                                 showB3 = 0;
                                 if (ny < scanY) showB1 = 1;
                                 else showB1 = rnd > (ny - scanY) * 3 ? 1 : 0;
                             } else if (phase === 2) {
-                                // 1 -> 3: Левая и Правая восстанавливаются
                                 if (ny < scanY) {
-                                    showB1 = 0; showB3 = 0; // Выше полосы - невидимы
+                                    showB1 = 0; showB3 = 0; 
                                 } else {
-                                    showB1 = rnd < (ny - scanY) * 3 ? 1 : 0; // Ниже полосы - собираются из шума
+                                    showB1 = rnd < (ny - scanY) * 3 ? 1 : 0; 
                                     showB3 = showB1;
                                 }
                             }
@@ -598,7 +533,6 @@
                                 aT = 0.9;
                             }
 
-                            // Серая сканирующая полоса на всю ширину
                             if (Math.abs(ny - scanY) < 0.05) {
                                 aT = Math.max(aT, 0.4);
                             }
@@ -612,13 +546,10 @@
                             let ry = (nx + ny) * 0.707;
                             
                             let isWHandle = Math.abs(rx) < 0.35 && Math.abs(ry) < 0.06;
-                            
                             let wHeadRDist = Math.hypot(rx - 0.35, ry);
                             let isWHeadR = wHeadRDist < 0.2 && !(rx > 0.35 && Math.abs(ry) < 0.08);
-                            
                             let wHeadLDist = Math.hypot(rx + 0.35, ry);
                             let isWHeadL = wHeadLDist < 0.16 && wHeadLDist > 0.06;
-                            
                             let isWrench = isWHandle || isWHeadR || isWHeadL;
 
                             let isPole = Math.abs(nx + 0.3) < 0.04 && ny > -0.5 && ny < 0.6;
@@ -760,118 +691,6 @@
                 inertiaFrame = requestAnimationFrame(step);
             };
             step();
-        });
-    </script>
-
-    <script>
-        // ============================================================
-        //  СИСТЕМА ЗВУКОВ: ПРИРОДНЫЙ LO-FI (БЕЗ ПИСКОВ И ОБРЫВОВ)
-        // ============================================================
-        let sharedAudioCtx = null;
-        let audioUnlocked = false;
-
-        function playTone(type, startFreq, endFreq, maxVol, duration, attackTime = 0.003) {
-            try {
-                if (!sharedAudioCtx) {
-                    sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                
-                if (sharedAudioCtx.state === 'suspended') {
-                    sharedAudioCtx.resume().catch(() => {});
-                    if (sharedAudioCtx.state === 'suspended') return;
-                }
-
-                const osc = sharedAudioCtx.createOscillator();
-                const gainNode = sharedAudioCtx.createGain();
-
-                osc.type = type; 
-                
-                const now = sharedAudioCtx.currentTime;
-
-                osc.frequency.setValueAtTime(startFreq, now);
-                osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
-
-                // Огибающая громкости с АБСОЛЮТНЫМ затуханием в 0
-                gainNode.gain.setValueAtTime(0, now); // Стартуем строго с нуля
-                gainNode.gain.linearRampToValueAtTime(maxVol, now + attackTime);
-                
-                // Плавно спадаем до микро-значения к концу основной длительности
-                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-                
-                // И гарантированно уводим в настоящий 0, чтобы избежать щелчка при остановке
-                gainNode.gain.linearRampToValueAtTime(0, now + duration + 0.01);
-
-                osc.connect(gainNode);
-                gainNode.connect(sharedAudioCtx.destination);
-
-                osc.start(now);
-                // Останавливаем генератор чуть ПОЗЖЕ, чем звук полностью исчез (дополнительная защита от обрывов)
-                osc.stop(now + duration + 0.02);
-            } catch (e) {
-                // Игнорируем ошибки
-            }
-        }
-
-        // КУЛДАУН (предотвращает наслоение звуков и писк при бешеном движении мышкой)
-        let lastHoverTime = 0;
-
-        // ЗВУК ПРИ НАВЕДЕНИИ ("Скорлупа грецких орехов друг об друга")
-        function playUIHover(e) {
-            if (e && e.pointerType !== 'mouse') return;
-            if (e.currentTarget && e.currentTarget.classList.contains('active')) return;
-            
-            // Если с прошлого звука прошло меньше 40мс - игнорируем (защита от звукового мусора)
-            const now = Date.now();
-            if (now - lastHoverTime < 40) return;
-            lastHoverTime = now;
-            
-            // Немного удлинили затухание (0.04с), чтобы оно успело плавно раствориться
-            playTone('sine', 180, 250, 0.35, 0.04, 0.005);
-        }
-
-        // ЗВУК ПРИ КЛИКЕ ("Глухой, мягкий клик")
-        function playUIClick(e) {
-            if (e.currentTarget && e.currentTarget.classList.contains('active')) return;
-
-            // Снизили частоты (320 -> 150), чтобы сделать звук более "глухим".
-            // Увеличили длительность (0.02 -> 0.05), чтобы звук успел раскрыться, но остался кликом.
-            // Слегка смягчили атаку (0.002), чтобы убрать острый "щелчок" по ушам в самом начале.
-            playTone('sine', 190, 150, 0.6, 0.05, 0.0025);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const clickableElements = document.querySelectorAll('.back-btn, .toggle-btn, .nav-btn');
-            
-            clickableElements.forEach(btn => {
-                btn.addEventListener('pointerenter', playUIHover); 
-                btn.addEventListener('click', playUIClick, true);      
-            });
-
-            const unlockAudio = () => {
-                if (audioUnlocked) return;
-                
-                if (!sharedAudioCtx) {
-                    sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                
-                if (sharedAudioCtx.state === 'suspended') {
-                    sharedAudioCtx.resume().then(() => {
-                        audioUnlocked = true;
-                    }).catch(() => {});
-                } else {
-                    audioUnlocked = true;
-                }
-
-                if (audioUnlocked) {
-                    ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => {
-                        document.removeEventListener(evt, unlockAudio);
-                    });
-                }
-            };
-
-            ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => {
-                document.addEventListener(evt, unlockAudio, { passive: true });
-            });
         });
     </script>
 </body>
