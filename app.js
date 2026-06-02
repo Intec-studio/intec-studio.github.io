@@ -4,7 +4,7 @@
 const rootTheme = document.documentElement;
 let currentCanvasColor = '231, 231, 231';
 let currentLang = localStorage.getItem('rl-lang') || 'en';
-let currentHash = ''; // Теперь объявлено до любого использования!
+let currentHash = '';
 
 const dynamicContent = document.getElementById('dynamicContent');
 const bcPageNameEn = document.getElementById('bcPageNameEn');
@@ -13,6 +13,129 @@ const bcPageNameRu = document.getElementById('bcPageNameRu');
 const themeBtns = document.querySelectorAll('.theme-group .toggle-btn');
 const langBtns = document.querySelectorAll('.lang-group .toggle-btn');
 const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
+
+// ============================================================
+//  СИСТЕМА ЗВУКОВ: ПРИРОДНЫЙ LO-FI И UI
+// ============================================================
+let sharedAudioCtx = null;
+let audioUnlocked = false;
+let lastHoverTime = 0;
+let inputWasFocused = false;
+
+function playTone(type, startFreq, endFreq, maxVol, duration, attackTime = 0.003) {
+    try {
+        if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (sharedAudioCtx.state === 'suspended') {
+            sharedAudioCtx.resume().catch(() => {});
+            if (sharedAudioCtx.state === 'suspended') return;
+        }
+        const osc = sharedAudioCtx.createOscillator();
+        const gainNode = sharedAudioCtx.createGain();
+        osc.type = type; 
+        const now = sharedAudioCtx.currentTime;
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+        gainNode.gain.setValueAtTime(0, now); 
+        gainNode.gain.linearRampToValueAtTime(maxVol, now + attackTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+        gainNode.gain.linearRampToValueAtTime(0, now + duration + 0.01);
+        osc.connect(gainNode);
+        gainNode.connect(sharedAudioCtx.destination);
+        osc.start(now);
+        osc.stop(now + duration + 0.02);
+    } catch (e) {}
+}
+
+function playStaticNoiseSound() {
+    try {
+        if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
+        const duration = 0.5; 
+        const bufferSize = sharedAudioCtx.sampleRate * duration; 
+        const buffer = sharedAudioCtx.createBuffer(1, bufferSize, sharedAudioCtx.sampleRate); 
+        const data = buffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        for (let i = 0; i < bufferSize; i++) {
+            let white = Math.random() * 2 - 1;
+            b0 = 0.99886 * b0 + white * 0.0555179; b1 = 0.99332 * b1 + white * 0.0750759; 
+            b2 = 0.96900 * b2 + white * 0.1538520; b3 = 0.86650 * b3 + white * 0.3104856; 
+            b4 = 0.55000 * b4 + white * 0.5329522; b5 = -0.7616 * b5 - white * 0.0168980;
+            data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362; 
+            data[i] *= 0.11; b6 = white * 0.115926;
+        }
+        const noise = sharedAudioCtx.createBufferSource(); noise.buffer = buffer;
+        const gain = sharedAudioCtx.createGain(); 
+        const volSlider = document.getElementById('volSlider');
+        const currentVol = volSlider ? (parseInt(volSlider.value, 10) / 100) : 0.5; 
+        const maxVol = 0.15 * Math.max(0.1, currentVol); // Шум слышен чуть-чуть даже при нулевой громкости ТВ (для атмосферы)
+        gain.gain.setValueAtTime(0, sharedAudioCtx.currentTime); 
+        gain.gain.linearRampToValueAtTime(maxVol, sharedAudioCtx.currentTime + 0.05); 
+        gain.gain.setValueAtTime(maxVol, sharedAudioCtx.currentTime + 0.35); 
+        gain.gain.linearRampToValueAtTime(0, sharedAudioCtx.currentTime + duration);
+        noise.connect(gain); gain.connect(sharedAudioCtx.destination); noise.start();
+    } catch (e) { }
+}
+
+function playUIHover(e) {
+    if (e && e.pointerType !== 'mouse') return;
+    const tgt = e.currentTarget;
+    if (tgt) {
+        if (tgt.classList.contains('active')) return;
+        if (tgt.classList.contains('pn-input') || tgt.classList.contains('pn-select')) {
+            if (tgt.closest('.active-state') || tgt === document.activeElement) return;
+        }
+        if (tgt.classList.contains('vol-box') && tgt.contains(document.activeElement)) return;
+    }
+    const now = Date.now();
+    if (now - lastHoverTime < 40) return;
+    lastHoverTime = now;
+    playTone('sine', 180, 250, 0.35, 0.04, 0.005);
+}
+
+function playUIClick(e) {
+    const tgt = e.currentTarget;
+    if (tgt) {
+        if (tgt.classList.contains('active') && tgt.id !== 'btnPause') return;
+        if ((tgt.classList.contains('pn-input') || tgt.classList.contains('pn-select')) && inputWasFocused) return;
+        if (tgt.classList.contains('vol-box') && inputWasFocused) return;
+    }
+    playTone('sine', 190, 150, 0.6, 0.05, 0.0025);
+}
+
+// Привязка звуков к динамическому контенту
+function bindAudioEvents() {
+    document.querySelectorAll('.back-btn, .toggle-btn, .nav-btn, .pn-select, .pn-input, .vol-box').forEach(btn => {
+        btn.removeEventListener('pointerenter', playUIHover);
+        btn.removeEventListener('click', playUIClick, true);
+        
+        btn.addEventListener('pointerenter', playUIHover);
+        btn.addEventListener('click', playUIClick, true);
+    });
+}
+
+// Отслеживание фокуса инпутов для блокировки лишних звуков клика
+document.addEventListener('pointerdown', (e) => {
+    if (e.target.matches('.pn-input, .pn-select, #volInput')) {
+        inputWasFocused = document.activeElement === e.target;
+    } else if (e.target.closest('.vol-box')) {
+        inputWasFocused = document.activeElement === document.getElementById('volInput');
+    }
+}, true);
+
+// Разблокировка AudioContext
+const unlockAudio = () => {
+    if (audioUnlocked) return;
+    if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (sharedAudioCtx.state === 'suspended') {
+        sharedAudioCtx.resume().then(() => { audioUnlocked = true; }).catch(() => {});
+    } else {
+        audioUnlocked = true;
+    }
+    if (audioUnlocked) {
+        ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.removeEventListener(evt, unlockAudio));
+    }
+};
+['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.addEventListener(evt, unlockAudio, { passive: true }));
 
 // ============================================================
 //  НАСТРОЙКИ: ТЕМЫ И ЯЗЫКИ
@@ -48,7 +171,6 @@ themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getA
 langBtns.forEach(btn => btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang-val'))));
 sysMedia.addEventListener('change', () => { if ((localStorage.getItem('rl-theme') || 'system') === 'system') applyTheme('system'); });
 
-// Инициализация при старте скрипта
 applyTheme(localStorage.getItem('rl-theme') || 'system');
 applyLang(currentLang);
 
@@ -56,20 +178,17 @@ applyLang(currentLang);
 //  РОУТЕР (SPA) И РЕНДЕР КАРТОЧЕК
 // ============================================================
 function loadPage(hash) {
-    // 1. Очистка старой страницы (ставим видео ТВ на паузу, если уходим с вкладки)
+    // 1. Очистка старой страницы (ставим видео ТВ на паузу)
     if (currentHash === 'rltv' && typeof appRLTV !== 'undefined' && appRLTV.video) {
         appRLTV.video.pause();
     }
 
-    // 2. Защита, если хэш кривой
+    // 2. Защита хэша
     if (!PAGE_CONTENT[hash]) hash = 'rl'; 
     currentHash = hash;
     
     // 3. Вставляем HTML из базы content.js
-    if (dynamicContent) {
-        dynamicContent.innerHTML = PAGE_CONTENT[hash];
-    }
-    
+    if (dynamicContent) dynamicContent.innerHTML = PAGE_CONTENT[hash];
     updateBreadcrumbsTitle();
     
     // 4. Подсвечиваем нужное меню
@@ -81,20 +200,21 @@ function loadPage(hash) {
     panelOffset = 0;
     setPanelOffset(0);
 
-    // 6. Запускаем специфичную логику страницы (Телевизор или Патчноуты)
+    // 6. Запускаем специфичную логику страницы
     if (hash === 'rltv' && typeof appRLTV !== 'undefined') appRLTV.init();
     if (hash === 'patchnotes') initPatchnotesUI();
     
     // 7. Перезапускаем анимации канвасов
     initCanvases();
+
+    // 8. Цепляем звуки к новым элементам
+    bindAudioEvents();
 }
 
-// Слушаем изменения хэша в адресной строке
 window.addEventListener('hashchange', () => {
     loadPage(window.location.hash.replace('#', ''));
 });
 
-// Первичная загрузка страницы
 document.addEventListener('DOMContentLoaded', () => {
     let initialHash = window.location.hash.replace('#', '') || 'rl';
     loadPage(initialHash);
@@ -126,7 +246,6 @@ function setPanelOffset(o) {
 }
 
 new ResizeObserver(() => { const max = getPanelMaxOffset(); if (panelOffset > max) panelOffset = max; setPanelOffset(panelOffset); }).observe(mainPanel);
-
 mainClip.addEventListener('wheel', e => { e.preventDefault(); setPanelOffset(panelOffset + e.deltaY); }, { passive: false });
 window.addEventListener('resize', () => setPanelOffset(panelOffset));
 
@@ -214,6 +333,9 @@ function initPatchnotesUI() {
     const filterSelect = document.getElementById('filterSelect');
     
     if(!searchInput) return;
+
+    // Сразу ставим правильный язык плейсхолдера при рендере!
+    searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
 
     function updateInputStates() {
         if (searchInput.value.trim().length > 0) searchForm.classList.add('active-state');
@@ -316,15 +438,26 @@ const appRLTV = {
     changeChannel(dir) {
         if(this.playlist.length === 0) return;
         const screen = document.getElementById('tvScreen');
-        screen.classList.add('switching');
-
-        this.video.pause();
-        setTimeout(() => {
-            this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
-            this.loadVideo();
-        }, 250);
-        setTimeout(() => screen.classList.remove('switching'), 500);
+        screen.classList.remove('switching');
         
+        setTimeout(() => {
+            screen.classList.add('switching'); 
+            
+            // Включаем белый шум при переключении
+            playStaticNoiseSound();
+            
+            this.video.pause();
+            setTimeout(() => { 
+                this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length; 
+                this.loadVideo(); 
+            }, 250);
+            
+            setTimeout(() => { 
+                screen.classList.remove('switching'); 
+            }, 500);
+            
+        }, 10);
+
         if (this.isPaused) this.togglePause();
     },
 
