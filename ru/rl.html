@@ -639,58 +639,86 @@
         });
 
         // ============================================================
-        //  SPA РОУТЕР (БЕСШОВНАЯ НАВИГАЦИЯ)
+        //  SPA РОУТЕР (ИСПРАВЛЕННАЯ БЕСШОВНАЯ НАВИГАЦИЯ)
         // ============================================================
         function initSpaNavigation() {
-            const links = document.querySelectorAll('.sidebar a.nav-btn, .lang-group a.toggle-btn');
-            
-            links.forEach(link => {
-                link.addEventListener('click', async (e) => {
-                    const url = link.getAttribute('href');
+            // Вешаем обработчик ОДИН раз на весь body (делегирование событий).
+            // Это решает проблему лагов и зависаний на телефонах.
+            document.body.addEventListener('click', async (e) => {
+                const link = e.target.closest('.sidebar a.nav-btn, .lang-group a.toggle-btn');
+                
+                // Если клик не по нужной ссылке, внешняя ссылка или текущая страница - игнорируем
+                if (!link) return;
+                const url = link.getAttribute('href');
+                if (!url || url.includes('index.html') || url.startsWith('http') || url.startsWith('#')) return;
+                
+                // Предотвращаем перезагрузку, если мы уже на этой странице
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                const targetPath = url.split('/').pop();
+                if (currentPath === targetPath) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                e.preventDefault(); 
+                
+                const cardsLayout = document.querySelector('.cards-layout');
+                if(cardsLayout) cardsLayout.classList.add('fade-out');
+                
+                try {
+                    const response = await fetch(url);
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
                     
-                    if (!url || url.includes('index.html') || url.startsWith('http')) return;
-                    
-                    e.preventDefault(); 
-                    
-                    const cardsLayout = document.querySelector('.cards-layout');
-                    cardsLayout.classList.add('fade-out');
-                    
-                    try {
-                        const response = await fetch(url);
-                        const html = await response.text();
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
+                    setTimeout(() => {
+                        // 1. Обновляем контент
+                        const newCards = doc.querySelector('.cards-layout');
+                        if(newCards) cardsLayout.innerHTML = newCards.innerHTML;
                         
-                        setTimeout(() => {
-                            cardsLayout.innerHTML = doc.querySelector('.cards-layout').innerHTML;
-                            document.querySelector('.breadcrumbs').innerHTML = doc.querySelector('.breadcrumbs').innerHTML;
-                            document.querySelector('.lang-group').innerHTML = doc.querySelector('.lang-group').innerHTML;
-                            
-                            document.title = doc.title;
-                            
-                            document.querySelectorAll('.sidebar a.nav-btn').forEach(btn => btn.classList.remove('active'));
-                            const newActiveBtn = document.querySelector(`.sidebar a[href="${url}"]`);
-                            if (newActiveBtn) newActiveBtn.classList.add('active');
-                            
-                            window.history.pushState({ path: url }, '', url);
-                            
-                            setPanelOffset(0);
-                            initCanvases();
-                            initSpaNavigation(); 
-                            
-                            requestAnimationFrame(() => {
-                                cardsLayout.classList.remove('fade-out');
-                                updateVSlider(); 
-                            });
-                        }, 300);
+                        const newBc = doc.querySelector('.breadcrumbs');
+                        if(newBc) document.querySelector('.breadcrumbs').innerHTML = newBc.innerHTML;
                         
-                    } catch (err) {
-                        window.location.href = url;
-                    }
-                });
+                        const newLang = doc.querySelector('.lang-group');
+                        if(newLang) document.querySelector('.lang-group').innerHTML = newLang.innerHTML;
+                        
+                        document.title = doc.title;
+
+                        // 2. ИСПРАВЛЕНИЕ ГРАДИЕНТОВ: Копируем стили из <head> загруженной страницы
+                        const currentStyles = document.querySelectorAll('head style');
+                        const newStyles = doc.querySelectorAll('head style');
+                        currentStyles.forEach((style, index) => {
+                            if (newStyles[index]) {
+                                style.innerHTML = newStyles[index].innerHTML;
+                            }
+                        });
+                        
+                        // 3. Обновляем активную кнопку в меню
+                        document.querySelectorAll('.sidebar a.nav-btn').forEach(btn => btn.classList.remove('active'));
+                        const newActiveBtn = document.querySelector(`.sidebar a[href="${url}"]`);
+                        if (newActiveBtn) newActiveBtn.classList.add('active');
+                        
+                        window.history.pushState({ path: url }, '', url);
+                        
+                        setPanelOffset(0);
+                        initCanvases();
+                        
+                        // ВАЖНО: Мы больше не вызываем initSpaNavigation() здесь, чтобы не плодить баги!
+                        
+                        requestAnimationFrame(() => {
+                            if(cardsLayout) cardsLayout.classList.remove('fade-out');
+                            updateVSlider(); 
+                        });
+                    }, 300);
+                    
+                } catch (err) {
+                    // Если fetch не удался (например, нет сети), переходим по старинке
+                    window.location.href = url;
+                }
             });
         }
 
+        // Вызываем инициализацию только один раз
         initSpaNavigation();
 
         window.addEventListener('popstate', () => {
