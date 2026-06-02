@@ -68,21 +68,19 @@
         }
 
         /* ============================================================
-           УГЛОВОЙ БЛОК НАСТРОЕК (Темы - Дизайн из RL.html)
+           УГЛОВОЙ БЛОК НАСТРОЕК (Темы)
         ============================================================ */
         .corner-settings {
-            /* Перенесено в левый верхний угол, отступ 6 * 3 = 18px */
             position: absolute; top: 18px; left: 18px; z-index: 10;
         }
         
         .toggle-block { 
             display: flex; 
-            gap: 3px; /* Отступ 1 * 3 = 3px */
-            /* Общая ширина будет 36 + 3 + 36 + 3 + 36 = 114px (38 * 3) */
+            gap: 3px; 
         }
 
         .toggle-btn {
-            width: 36px; height: 36px; /* Размер 12 * 3 = 36px */
+            width: 36px; height: 36px; 
             background: var(--c-border); 
             border: 2px solid transparent;
             display: flex; justify-content: center; align-items: center; 
@@ -141,17 +139,17 @@
         }
 
         /* ============================================================
-           ВХОДНЫЕ КНОПКИ (EN / RU) - Дизайн из RL.html
+           ВХОДНЫЕ КНОПКИ (EN / RU)
         ============================================================ */
         .lang-gate {
             display: flex;
-            width: 261px; /* Строго 87 * 3 */
-            height: 36px; /* Строго 12 * 3 */
-            gap: 3px;     /* Отступ 1 * 3 = 3px */
+            width: 261px;
+            height: 36px;
+            gap: 3px;
         }
 
         .gate-btn {
-            flex: 1; /* Кнопки делят пространство поровну (по 129px) */
+            flex: 1;
             height: 100%;
             background: var(--c-border); 
             border: 2px solid transparent;
@@ -163,7 +161,6 @@
             cursor: pointer; outline: none; letter-spacing: 0.05em;
         }
 
-        /* Скругления только по внешним краям, внутри - прямые углы */
         .lang-gate > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
         .lang-gate > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
 
@@ -177,7 +174,7 @@
         body.transitioning .intro-container { transform: scale(1.1); opacity: 0; }
         body.transitioning #intro-canvas { opacity: 0; transform: scale(1.05); transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1); }
 
-        /* Мобильный адаптив для угловой кнопки */
+        /* Мобильный адаптив */
         @media (max-width: 900px) {
             .corner-settings { top: 9px; left: 9px; }
             .toggle-block { gap: 1.5px; }
@@ -251,7 +248,7 @@
         applyTheme(savedTheme);
 
         // ============================================================
-        // ИНТЕРАКТИВНЫЙ КАНВАС
+        // ИНТЕРАКТИВНЫЙ КАНВАС С ОПТИМИЗАЦИЕЙ ПОД ТАЧ-СЕНСОРЫ
         // ============================================================
         const canvas = document.getElementById('intro-canvas');
         const ctx = canvas.getContext('2d');
@@ -261,6 +258,7 @@
         let cols = 0, rows = 0;
         let mouseX = -1000, mouseY = -1000;
         let isEntering = false;
+        let isMobile = false;
 
         function initCanvas() {
             const dpr = window.devicePixelRatio || 1;
@@ -270,17 +268,39 @@
             
             cols = Math.ceil(width / spacing) + 1;
             rows = Math.ceil(height / spacing) + 1;
+
+            // Определяем, мобильный ли экран
+            isMobile = width <= 900;
         }
 
         window.addEventListener('resize', initCanvas);
+        
+        // События мыши для ПК
         window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
         window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
+
+        // События тача для смартфонов
+        window.addEventListener('touchstart', (e) => {
+            if(e.touches.length > 0) { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; }
+        }, { passive: true });
+        
+        window.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; }
+        }, { passive: true });
+
+        // Сбрасываем координаты, когда палец убирают от экрана
+        window.addEventListener('touchend', () => { mouseX = -1000; mouseY = -1000; });
+        window.addEventListener('touchcancel', () => { mouseX = -1000; mouseY = -1000; });
 
         initCanvas();
 
         function drawGrid() {
             ctx.clearRect(0, 0, width, height);
             
+            // На телефонах радиус взаимодействия и раздутие точек меньше на 50%
+            let effectRadius = isMobile ? 100 : 200;
+            let maxExtraRadius = isMobile ? 1.6 : 3.2;
+
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
                     let x = c * spacing + (width % spacing) / 2;
@@ -290,10 +310,10 @@
                     let dy = mouseY - y;
                     let dist = Math.sqrt(dx*dx + dy*dy);
                     
-                    let mouseInfluence = Math.max(0, 1 - dist / 200); 
+                    let mouseInfluence = Math.max(0, 1 - dist / effectRadius); 
                     let intensity = mouseInfluence * mouseInfluence * (3 - 2 * mouseInfluence);
                     
-                    let radius = 0.8 + intensity * 3.2; 
+                    let radius = 0.8 + intensity * maxExtraRadius; 
                     let alpha = 0.05 + intensity * 0.95; 
 
                     ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`;
