@@ -240,7 +240,8 @@ const PAGE_CONTENT = {
             </div>
         </div>
 
-        <div class="content-card">
+        <!-- ЖЕСТКОЕ ПЕРЕОПРЕДЕЛЕНИЕ ПОРЯДКА ЧЕРЕЗ INLINE-СТИЛИ -->
+        <div class="content-card" style="flex-direction: row-reverse;">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>The loading screen is yours</h2>
@@ -254,7 +255,7 @@ const PAGE_CONTENT = {
             <div class="info-console"><canvas class="mini-console" data-type="rltv_upload"></canvas></div>
         </div>
 
-        <div class="content-card">
+        <div class="content-card" style="flex-direction: row;">
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Shoot your commercial</h2>
@@ -273,7 +274,13 @@ const PAGE_CONTENT = {
     // PATCHNOTES
     // ==========================================
     'patchnotes': `
-        <div class="list-view">
+        <!-- ЛОКАЛЬНЫЕ ЖЕСТКИЕ СТИЛИ ДЛЯ ИДЕАЛЬНЫХ ОТСТУПОВ -->
+        <style>
+            .pn-wrapper { display: flex; flex-direction: column; gap: 18px; width: 100%; }
+            @media (max-width: 900px) { .pn-wrapper { gap: 9px; } }
+        </style>
+        
+        <div class="pn-wrapper">
             <div class="search-block">
                 <form class="pn-input-wrap" id="searchForm" action="javascript:void(0);">
                     <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -290,7 +297,7 @@ const PAGE_CONTENT = {
                 </div>
             </div>
             
-            <div id="patchnotesContainer" style="display: flex; flex-direction: column; gap: inherit;">
+            <div id="patchnotesContainer" class="pn-wrapper">
                 <div class="pn-card" style="cursor: default;">
                     <div class="pn-card-title" data-lang="en">Work in Progress</div>
                     <div class="pn-card-title" data-lang="ru">В разработке</div>
