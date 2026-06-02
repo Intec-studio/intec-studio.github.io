@@ -15,36 +15,10 @@ const langBtns = document.querySelectorAll('.lang-group .toggle-btn');
 const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
 
 // ============================================================
-//  СИСТЕМА ЗВУКОВ: ПРИРОДНЫЙ LO-FI И UI
+//  СИСТЕМА ЗВУКОВ: ТОЛЬКО БЕЛЫЙ ШУМ ДЛЯ RLTV
 // ============================================================
 let sharedAudioCtx = null;
 let audioUnlocked = false;
-let lastHoverTime = 0;
-let inputWasFocused = false;
-
-function playTone(type, startFreq, endFreq, maxVol, duration, attackTime = 0.003) {
-    try {
-        if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (sharedAudioCtx.state === 'suspended') {
-            sharedAudioCtx.resume().catch(() => {});
-            if (sharedAudioCtx.state === 'suspended') return;
-        }
-        const osc = sharedAudioCtx.createOscillator();
-        const gainNode = sharedAudioCtx.createGain();
-        osc.type = type; 
-        const now = sharedAudioCtx.currentTime;
-        osc.frequency.setValueAtTime(startFreq, now);
-        osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
-        gainNode.gain.setValueAtTime(0, now); 
-        gainNode.gain.linearRampToValueAtTime(maxVol, now + attackTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-        gainNode.gain.linearRampToValueAtTime(0, now + duration + 0.01);
-        osc.connect(gainNode);
-        gainNode.connect(sharedAudioCtx.destination);
-        osc.start(now);
-        osc.stop(now + duration + 0.02);
-    } catch (e) {}
-}
 
 function playStaticNoiseSound() {
     try {
@@ -76,53 +50,7 @@ function playStaticNoiseSound() {
     } catch (e) { }
 }
 
-function playUIHover(e) {
-    if (e && e.pointerType !== 'mouse') return;
-    const tgt = e.currentTarget;
-    if (tgt) {
-        if (tgt.classList.contains('active')) return;
-        if (tgt.classList.contains('pn-input') || tgt.classList.contains('pn-select')) {
-            if (tgt.closest('.active-state') || tgt === document.activeElement) return;
-        }
-        if (tgt.classList.contains('vol-box') && tgt.contains(document.activeElement)) return;
-    }
-    const now = Date.now();
-    if (now - lastHoverTime < 40) return;
-    lastHoverTime = now;
-    playTone('sine', 180, 250, 0.35, 0.04, 0.005);
-}
-
-function playUIClick(e) {
-    const tgt = e.currentTarget;
-    if (tgt) {
-        if (tgt.classList.contains('active') && tgt.id !== 'btnPause') return;
-        if ((tgt.classList.contains('pn-input') || tgt.classList.contains('pn-select')) && inputWasFocused) return;
-        if (tgt.classList.contains('vol-box') && inputWasFocused) return;
-    }
-    playTone('sine', 190, 150, 0.6, 0.05, 0.0025);
-}
-
-// Привязка звуков к динамическому контенту
-function bindAudioEvents() {
-    document.querySelectorAll('.back-btn, .toggle-btn, .nav-btn, .pn-select, .pn-input, .vol-box').forEach(btn => {
-        btn.removeEventListener('pointerenter', playUIHover);
-        btn.removeEventListener('click', playUIClick, true);
-        
-        btn.addEventListener('pointerenter', playUIHover);
-        btn.addEventListener('click', playUIClick, true);
-    });
-}
-
-// Отслеживание фокуса инпутов для блокировки лишних звуков клика
-document.addEventListener('pointerdown', (e) => {
-    if (e.target.matches('.pn-input, .pn-select, #volInput')) {
-        inputWasFocused = document.activeElement === e.target;
-    } else if (e.target.closest('.vol-box')) {
-        inputWasFocused = document.activeElement === document.getElementById('volInput');
-    }
-}, true);
-
-// Разблокировка AudioContext
+// Разблокировка AudioContext (нужно для автоплея и шума)
 const unlockAudio = () => {
     if (audioUnlocked) return;
     if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -163,8 +91,11 @@ function applyLang(langVal) {
     
     updateBreadcrumbsTitle();
     
+    // Обновляем placeholder поиска, если элемент существует на странице
     const searchInput = document.getElementById('searchInput');
-    if (searchInput) searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
+    if (searchInput) {
+        searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
+    }
 }
 
 themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
@@ -206,9 +137,6 @@ function loadPage(hash) {
     
     // 7. Перезапускаем анимации канвасов
     initCanvases();
-
-    // 8. Цепляем звуки к новым элементам
-    bindAudioEvents();
 }
 
 window.addEventListener('hashchange', () => {
@@ -334,7 +262,7 @@ function initPatchnotesUI() {
     
     if(!searchInput) return;
 
-    // Сразу ставим правильный язык плейсхолдера при рендере!
+    // Жестко принудительно ставим правильный язык плейсхолдера при рендере!
     searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
 
     function updateInputStates() {
@@ -415,7 +343,7 @@ const appRLTV = {
             const response = await fetch(`https://api.github.com/repos/ZAKFUN35/Intec/contents/videos`);
             if (!response.ok) throw new Error();
             const files = await response.json();
-            this.playlist = files.filter(f => f.name.endsWith('.mp4')).map(f => f.download_url);
+            this.playlist = files.filter(f => f.name.endsWith('.mp4') || f.name.endsWith('.webm')).map(f => f.download_url);
             
             for (let i = this.playlist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[this.playlist[i], this.playlist[j]] = [this.playlist[j], this.playlist[i]]; }
             
