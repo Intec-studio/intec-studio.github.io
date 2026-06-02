@@ -17,6 +17,12 @@ html[data-theme="light"] {
 html[lang="en"] [data-lang="ru"] { display: none !important; }
 html[lang="ru"] [data-lang="en"] { display: none !important; }
 
+/* ПЛАВНОЕ ПОЯВЛЕНИЕ ПРИ ЗАГРУЗКЕ HUB.HTML */
+@keyframes pageFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
 /* АНИМАЦИИ */
 body, .top-bar, .sidebar, .main-area, .hero-card, .content-card, 
 .hero-footer, .info-console, .tag, .breadcrumbs, .v-track,
@@ -32,7 +38,18 @@ svg { transition: stroke 0.1s ease, fill 0.1s ease; }
 
 /* БАЗА */
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body, html { width: 100vw; height: 100vh; height: 100dvh; background: var(--c-bg); font-family: 'Noto Sans', sans-serif; overflow: hidden; user-select: none; display: flex; flex-direction: column; touch-action: none; }
+
+body, html { 
+    width: 100vw; height: 100vh; height: 100dvh; 
+    background: var(--c-bg); font-family: 'Noto Sans', sans-serif; 
+    overflow: hidden; user-select: none; 
+    display: flex; flex-direction: column; touch-action: none; 
+}
+
+body {
+    animation: pageFadeIn 0.8s ease-out forwards; /* Скрытая тайная загрузка */
+}
+
 a { text-decoration: none; color: inherit; }
 
 /* ПАНЕЛИ И КНОПКИ */
