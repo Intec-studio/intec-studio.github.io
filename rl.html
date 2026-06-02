@@ -638,14 +638,17 @@
         });
 
         // ============================================================
-        //  SPA РОУТЕР (ПЛАВНЫЙ И МОЛНИЕНОСНЫЙ)
+        //  SPA РОУТЕР (МГНОВЕННЫЙ ПЕРЕХОД И ФИКС КНОПОК)
         // ============================================================
         function initSpaNavigation() {
             document.body.addEventListener('click', async (e) => {
-                const link = e.target.closest('.sidebar a.nav-btn, .lang-group a.toggle-btn');
+                // Исключили .lang-group. Теперь смена языка работает как обычная ссылка (полная перезагрузка)
+                const link = e.target.closest('.sidebar a.nav-btn');
                 
                 if (!link) return;
                 const url = link.getAttribute('href');
+                
+                // Игнорируем внешние ссылки и кнопку назад
                 if (!url || url.includes('index.html') || url.startsWith('http') || url.startsWith('#')) return;
                 
                 const currentPath = window.location.pathname.split('/').pop() || 'index.html';
@@ -657,18 +660,11 @@
                 
                 e.preventDefault(); 
 
-                // УЛУЧШЕНИЕ 1: Мгновенный отклик кнопок (Optimistic UI)
-                if (link.classList.contains('nav-btn')) {
-                    document.querySelectorAll('.sidebar a.nav-btn').forEach(btn => btn.classList.remove('active'));
-                    link.classList.add('active');
-                }
-                if (link.closest('.lang-group')) {
-                    document.querySelectorAll('.lang-group .toggle-btn').forEach(btn => btn.classList.remove('active'));
-                    link.classList.add('active');
-                }
+                // Мгновенно перекрашиваем кнопку в белый
+                document.querySelectorAll('.sidebar a.nav-btn').forEach(btn => btn.classList.remove('active'));
+                link.classList.add('active');
                 
                 const cardsLayout = document.querySelector('.cards-layout');
-                if(cardsLayout) cardsLayout.classList.add('fade-out');
                 
                 try {
                     const response = await fetch(url);
@@ -676,46 +672,44 @@
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
                     
-                    setTimeout(() => {
-                        // Обновляем контент
-                        const newCards = doc.querySelector('.cards-layout');
-                        if(newCards) cardsLayout.innerHTML = newCards.innerHTML;
-                        
-                        const newBc = doc.querySelector('.breadcrumbs');
-                        if(newBc) document.querySelector('.breadcrumbs').innerHTML = newBc.innerHTML;
-                        
-                        const newLang = doc.querySelector('.lang-group');
-                        if(newLang) document.querySelector('.lang-group').innerHTML = newLang.innerHTML;
-                        
-                        document.title = doc.title;
+                    // МГНОВЕННАЯ ЗАМЕНА КОНТЕНТА (Без fade-out)
+                    const newCards = doc.querySelector('.cards-layout');
+                    if(newCards && cardsLayout) cardsLayout.innerHTML = newCards.innerHTML;
+                    
+                    const newBc = doc.querySelector('.breadcrumbs');
+                    if(newBc) document.querySelector('.breadcrumbs').innerHTML = newBc.innerHTML;
+                    
+                    document.title = doc.title;
 
-                        // Перенос стилей (для градиентов)
-                        const currentStyles = document.querySelectorAll('head style');
-                        const newStyles = doc.querySelectorAll('head style');
-                        currentStyles.forEach((style, index) => {
-                            if (newStyles[index]) {
-                                style.innerHTML = newStyles[index].innerHTML;
-                            }
-                        });
-                        
-                        window.history.pushState({ path: url }, '', url);
-                        
-                        setPanelOffset(0);
-                        initCanvases();
-                        updateVSlider(); 
-                        
-                        // УЛУЧШЕНИЕ 2: Плавное появление (микро-задержка для браузера)
-                        setTimeout(() => {
-                            if(cardsLayout) cardsLayout.classList.remove('fade-out');
-                        }, 50);
-                        
-                    }, 300);
+                    // Перенос стилей (для мгновенной смены цвета градиентов)
+                    const currentStyles = document.querySelectorAll('head style');
+                    const newStyles = doc.querySelectorAll('head style');
+                    currentStyles.forEach((style, index) => {
+                        if (newStyles[index]) style.innerHTML = newStyles[index].innerHTML;
+                    });
+                    
+                    // Записываем переход в историю браузера
+                    window.history.pushState({ path: url }, '', url);
+                    
+                    // Обнуляем скролл и перезапускаем анимации консолей
+                    setPanelOffset(0);
+                    initCanvases();
+                    updateVSlider(); 
                     
                 } catch (err) {
+                    // Если ошибка сети - переходим как обычно
                     window.location.href = url;
                 }
             });
         }
+
+        initSpaNavigation();
+
+        // Обработка кнопки "Назад" (свайп на телефонах)
+        window.addEventListener('popstate', () => {
+            // Принудительно перезагружаем страницу при шаге назад, чтобы избежать багов с кэшем
+            window.location.reload(); 
+        });
 
         // Вызываем инициализацию только один раз
         initSpaNavigation();
