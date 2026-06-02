@@ -711,13 +711,6 @@
             // Принудительно перезагружаем страницу при шаге назад, чтобы избежать багов с кэшем
             window.location.reload(); 
         });
-
-        // Вызываем инициализацию только один раз
-        initSpaNavigation();
-
-        window.addEventListener('popstate', () => {
-            window.location.reload(); 
-        });
     </script>
 </body>
 </html>
