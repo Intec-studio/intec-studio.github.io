@@ -19,7 +19,7 @@
             --c-panel: #111111;
             --c-border: #1F1F1F;
             --c-text: #E7E7E7;
-            --c-canvas: 180, 190, 205; /* Цвет точек в темной теме */
+            --c-canvas: 180, 190, 205;
         }
 
         html[data-theme="light"] {
@@ -28,7 +28,17 @@
             --c-panel: #F0F0F0;
             --c-border: #D4D4D4;
             --c-text: #1F1F1F;
-            --c-canvas: 31, 31, 31; /* Цвет точек в светлой теме */
+            --c-canvas: 31, 31, 31;
+        }
+
+        /* СКРЫТАЯ ЗАГРУЗКА */
+        @keyframes secretLoad {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        body {
+            animation: secretLoad 1.5s ease-out forwards;
         }
 
         /* МЕДЛЕННАЯ АНИМАЦИЯ (для смены тем) */
@@ -42,9 +52,7 @@
         }
         svg { transition: stroke 0.1s ease, fill 0.1s ease; }
 
-        /* ============================================================
-           СБРОС СТИЛЕЙ И БАЗА
-        ============================================================ */
+        /* БАЗА */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body, html {
@@ -54,66 +62,47 @@
             display: flex; justify-content: center; align-items: center;
         }
 
-        /* Канвас на заднем фоне */
         #intro-canvas {
             position: absolute; inset: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none; opacity: 1;
             transition: opacity 0.8s ease;
         }
 
-        /* Виньетка для глубины */
         .vignette {
             position: absolute; inset: 0; z-index: 2; pointer-events: none;
             background: radial-gradient(circle at center, transparent 30%, rgba(var(--c-bg-rgb), 0.9) 100%);
         }
 
-        /* ============================================================
-           УГЛОВОЙ БЛОК НАСТРОЕК (Темы - Дизайн из RL.html)
-        ============================================================ */
         .corner-settings {
-            /* Перенесено в левый верхний угол, отступ 6 * 3 = 18px */
             position: absolute; top: 18px; left: 18px; z-index: 10;
         }
         
-        .toggle-block { 
-            display: flex; 
-            gap: 3px; /* Отступ 1 * 3 = 3px */
-            /* Общая ширина будет 36 + 3 + 36 + 3 + 36 = 114px (38 * 3) */
-        }
+        .toggle-block { display: flex; gap: 3px; }
 
         .toggle-btn {
-            width: 36px; height: 36px; /* Размер 12 * 3 = 36px */
-            background: var(--c-border); 
-            border: 2px solid transparent;
-            display: flex; justify-content: center; align-items: center; 
-            cursor: pointer; color: var(--c-text);
+            width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--c-text);
         }
         .toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
         
-        /* Скругления только по краям блока */
         .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
         .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
         
         @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
         .toggle-btn.active, .toggle-btn:active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
 
-        /* ============================================================
-           ЦЕНТРАЛЬНЫЙ БЛОК UI
-        ============================================================ */
         .intro-container {
             position: relative; z-index: 5;
             display: flex; flex-direction: column; align-items: center; gap: 36px;
             transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.8s ease;
         }
 
-        /* Глитч-логотип */
         .glitch-logo {
             font-size: clamp(4rem, 10vw, 12rem); font-weight: 900;
             text-transform: uppercase; letter-spacing: 0.25em;
             position: relative; color: var(--c-text); white-space: nowrap; 
             text-shadow: 0 0 20px rgba(var(--c-bg-rgb), 0.5);
-            margin-left: 0.25em; 
-            line-height: 1;
+            margin-left: 0.25em; line-height: 1;
         }
         
         .glitch-logo::before, .glitch-logo::after {
@@ -140,54 +129,31 @@
             98%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
         }
 
-        /* ============================================================
-           ВХОДНЫЕ КНОПКИ (EN / RU) - Дизайн из RL.html
-        ============================================================ */
-        .lang-gate {
-            display: flex;
-            width: 261px; /* Строго 87 * 3 */
-            height: 36px; /* Строго 12 * 3 */
-            gap: 3px;     /* Отступ 1 * 3 = 3px */
-        }
+        .lang-gate { display: flex; width: 261px; height: 36px; gap: 3px; }
 
         .gate-btn {
-            flex: 1; /* Кнопки делят пространство поровну (по 129px) */
-            height: 100%;
-            background: var(--c-border); 
-            border: 2px solid transparent;
-            color: var(--c-text);
-            font-size: 15px;
-            font-family: 'Noto Sans', sans-serif;
-            font-weight: 900;
-            display: flex; align-items: center; justify-content: center;
+            flex: 1; height: 100%; background: var(--c-border); border: 2px solid transparent;
+            color: var(--c-text); font-size: 15px; font-family: 'Noto Sans', sans-serif;
+            font-weight: 900; display: flex; align-items: center; justify-content: center;
             cursor: pointer; outline: none; letter-spacing: 0.05em;
         }
 
-        /* Скругления только по внешним краям, внутри - прямые углы */
         .lang-gate > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
         .lang-gate > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
 
         @media (hover: hover) { .gate-btn:hover { border-color: var(--c-text); } }
-        
-        .gate-btn:active, .gate-btn.entering {
-            background: var(--c-text); color: var(--c-panel); border-color: var(--c-text);
-        }
+        .gate-btn:active, .gate-btn.entering { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
 
-        /* Состояние перехода (при клике) */
         body.transitioning .intro-container { transform: scale(1.1); opacity: 0; }
         body.transitioning #intro-canvas { opacity: 0; transform: scale(1.05); transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1); }
 
-        /* Мобильный адаптив для угловой кнопки */
         @media (max-width: 900px) {
             .corner-settings { top: 9px; left: 9px; }
-            .toggle-block { gap: 1.5px; }
-            .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
+            .toggle-block { gap: 1.5px; } .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
             .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
             .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
             .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
-            
-            .lang-gate { width: 130px; height: 18px; gap: 1.5px; }
-            .gate-btn { font-size: 9px; border-width: 1px; }
+            .lang-gate { width: 130px; height: 18px; gap: 1.5px; } .gate-btn { font-size: 9px; border-width: 1px; }
             .lang-gate > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
             .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
         }
@@ -198,7 +164,6 @@
     <canvas id="intro-canvas"></canvas>
     <div class="vignette"></div>
 
-    <!-- Настройка темы (слева сверху) -->
     <div class="corner-settings">
         <div class="toggle-block theme-group">
             <div class="toggle-btn" data-theme-val="system"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
@@ -208,10 +173,7 @@
     </div>
 
     <div class="intro-container">
-        <!-- Логотип -->
         <h1 class="glitch-logo" data-text="INTEC">INTEC</h1>
-        
-        <!-- Кнопки выбора языка / Вход -->
         <div class="lang-gate">
             <button class="gate-btn" data-lang-entry="en">EN</button>
             <button class="gate-btn" data-lang-entry="ru">RU</button>
@@ -219,9 +181,6 @@
     </div>
 
     <script>
-        // ============================================================
-        //  ТЕМЫ
-        // ============================================================
         const rootTheme = document.documentElement;
         let currentCanvasColor = '180, 190, 205'; 
         const themeBtns = document.querySelectorAll('.theme-group .toggle-btn');
@@ -231,104 +190,49 @@
             let isLight = themeVal === 'system' ? sysMedia.matches : themeVal === 'light';
             if (isLight) rootTheme.setAttribute('data-theme', 'light'); else rootTheme.removeAttribute('data-theme');
             try { localStorage.setItem('rl-theme', themeVal); } catch(e) {}
-            
-            themeBtns.forEach(btn => {
-                if (btn.getAttribute('data-theme-val') === themeVal) btn.classList.add('active'); 
-                else btn.classList.remove('active');
-            });
+            themeBtns.forEach(btn => { if (btn.getAttribute('data-theme-val') === themeVal) btn.classList.add('active'); else btn.classList.remove('active'); });
             setTimeout(() => { currentCanvasColor = getComputedStyle(rootTheme).getPropertyValue('--c-canvas').trim(); }, 50);
         }
 
         themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
-        sysMedia.addEventListener('change', () => {
-            let current = 'system';
-            try { current = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
-            if (current === 'system') applyTheme('system');
-        });
+        sysMedia.addEventListener('change', () => { let current = 'system'; try { current = localStorage.getItem('rl-theme') || 'system'; } catch(e) {} if (current === 'system') applyTheme('system'); });
+        let savedTheme = 'system'; try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {} applyTheme(savedTheme);
 
-        let savedTheme = 'system';
-        try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
-        applyTheme(savedTheme);
-
-        // ============================================================
-        // ИНТЕРАКТИВНЫЙ КАНВАС
-        // ============================================================
-        const canvas = document.getElementById('intro-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        const spacing = 24; 
-        
-        let cols = 0, rows = 0;
-        let mouseX = -1000, mouseY = -1000;
-        let isEntering = false;
+        const canvas = document.getElementById('intro-canvas'); const ctx = canvas.getContext('2d');
+        let width, height; const spacing = 24; let cols = 0, rows = 0; let mouseX = -1000, mouseY = -1000; let isEntering = false;
 
         function initCanvas() {
-            const dpr = window.devicePixelRatio || 1;
-            width = window.innerWidth; height = window.innerHeight;
-            canvas.width = width * dpr; canvas.height = height * dpr;
-            ctx.scale(dpr, dpr);
-            
-            cols = Math.ceil(width / spacing) + 1;
-            rows = Math.ceil(height / spacing) + 1;
+            const dpr = window.devicePixelRatio || 1; width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width * dpr; canvas.height = height * dpr; ctx.scale(dpr, dpr);
+            cols = Math.ceil(width / spacing) + 1; rows = Math.ceil(height / spacing) + 1;
         }
 
-        window.addEventListener('resize', initCanvas);
-        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-        window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
-
+        window.addEventListener('resize', initCanvas); window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }); window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
         initCanvas();
 
         function drawGrid() {
             ctx.clearRect(0, 0, width, height);
-            
             for (let c = 0; c < cols; c++) {
                 for (let r = 0; r < rows; r++) {
-                    let x = c * spacing + (width % spacing) / 2;
-                    let y = r * spacing + (height % spacing) / 2;
-                    
-                    let dx = mouseX - x;
-                    let dy = mouseY - y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    let mouseInfluence = Math.max(0, 1 - dist / 200); 
-                    let intensity = mouseInfluence * mouseInfluence * (3 - 2 * mouseInfluence);
-                    
-                    let radius = 0.8 + intensity * 3.2; 
-                    let alpha = 0.05 + intensity * 0.95; 
-
-                    ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`;
-                    ctx.beginPath(); 
-                    ctx.arc(x, y, radius, 0, Math.PI * 2); 
-                    ctx.fill();
+                    let x = c * spacing + (width % spacing) / 2; let y = r * spacing + (height % spacing) / 2;
+                    let dx = mouseX - x; let dy = mouseY - y; let dist = Math.sqrt(dx*dx + dy*dy);
+                    let mouseInfluence = Math.max(0, 1 - dist / 200); let intensity = mouseInfluence * mouseInfluence * (3 - 2 * mouseInfluence);
+                    let radius = 0.8 + intensity * 3.2; let alpha = 0.05 + intensity * 0.95; 
+                    ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
                 }
             }
-            
-            if (!isEntering) {
-                requestAnimationFrame(drawGrid);
-            }
+            if (!isEntering) requestAnimationFrame(drawGrid);
         }
         drawGrid();
 
-        // ============================================================
-        // ЛОГИКА ВХОДА
-        // ============================================================
         const gateBtns = document.querySelectorAll('.gate-btn');
-
         gateBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 if (isEntering) return;
-                isEntering = true;
-                
-                btn.classList.add('entering');
-                
-                const lang = btn.getAttribute('data-lang-entry');
-                try { localStorage.setItem('rl-lang', lang); } catch(e) {}
-
+                isEntering = true; btn.classList.add('entering');
+                const lang = btn.getAttribute('data-lang-entry'); try { localStorage.setItem('rl-lang', lang); } catch(e) {}
                 document.body.classList.add('transitioning');
-
-                setTimeout(() => {
-                    window.location.href = 'hub.html#rl'; 
-                }, 800);
+                setTimeout(() => { window.location.href = 'hub.html#rl'; }, 800);
             });
         });
     </script>
