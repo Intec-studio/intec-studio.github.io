@@ -144,9 +144,20 @@
         .v-thumb::after { content: ''; position: absolute; top: -10px; bottom: -10px; left: -20px; right: -20px; }
 
         /* ============================================================
-           СИСТЕМА ОТСТУПОВ МЕЙН-БЛОКА
+           SPA АНИМАЦИЯ ПЕРЕХОДА
         ============================================================ */
-        .cards-layout { width: 100%; padding: 18px 30px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+        .cards-layout {
+            width: 100%; padding: 18px 30px 18px 18px; display: flex; flex-direction: column; gap: 18px;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .cards-layout.fade-out {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        /* ============================================================
+           СИСТЕМА ОТСТУПОВ МЕЙН-БЛОКА И КАРТОЧКИ
+        ============================================================ */
         .hero-card, .content-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; overflow: hidden; }
 
         /* ============================================================
@@ -395,39 +406,42 @@
         applyTheme(savedTheme);
 
         // ============================================================
-        //  АНИМАЦИИ МИНИ-КОНСОЛЕЙ С ОПТИМИЗАЦИЕЙ
+        //  АНИМАЦИИ МИНИ-КОНСОЛЕЙ С ОПТИМИЗАЦИЕЙ (SPA Версия)
         // ============================================================
         let time = 0;
         let panelOffset = 0;
-        
-        const consoles = document.querySelectorAll('.mini-console');
-        const consData = [];
+        let consData = [];
+        let animFrameId = null;
         const consSize = 240, consDots = 32, consStep = consSize / consDots;
-
-        consoles.forEach(c => {
-            const dpr = window.devicePixelRatio || 1;
-            c.width = consSize * dpr; c.height = consSize * dpr;
-            const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
-            consData.push({ canvas: c, ctx: ctx, type: c.getAttribute('data-type'), isVisible: false });
-        });
 
         const canvasObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const data = consData.find(d => d.canvas === entry.target);
-                if (data) {
-                    data.isVisible = entry.isIntersecting;
-                }
+                if (data) data.isVisible = entry.isIntersecting;
             });
         }, { root: document.getElementById('mainClip'), rootMargin: "100px", threshold: 0 });
 
-        consoles.forEach(c => canvasObserver.observe(c));
+        function initCanvases() {
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            consData.forEach(c => canvasObserver.unobserve(c.canvas));
+            consData = [];
+
+            const consoles = document.querySelectorAll('.mini-console');
+            consoles.forEach(c => {
+                const dpr = window.devicePixelRatio || 1;
+                c.width = consSize * dpr; c.height = consSize * dpr;
+                const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+                consData.push({ canvas: c, ctx: ctx, type: c.getAttribute('data-type'), isVisible: false });
+                canvasObserver.observe(c);
+            });
+
+            drawConsoles();
+        }
 
         function drawConsoles() {
             const t = time * 2; 
-            
             consData.forEach(c => {
                 if (!c.isVisible) return; 
-
                 const ctx = c.ctx;
                 ctx.clearRect(0, 0, consSize, consSize);
                 
@@ -513,9 +527,10 @@
                 }
             });
             time += 0.007; 
-            requestAnimationFrame(drawConsoles);
+            animFrameId = requestAnimationFrame(drawConsoles);
         }
-        drawConsoles();
+
+        initCanvases();
 
         // ============================================================
         //  ЛОГИКА СКРОЛЛА И СЛАЙДЕРА
@@ -620,6 +635,65 @@
                 inertiaFrame = requestAnimationFrame(step);
             };
             step();
+        });
+
+        // ============================================================
+        //  SPA РОУТЕР (БЕСШОВНАЯ НАВИГАЦИЯ)
+        // ============================================================
+        function initSpaNavigation() {
+            const links = document.querySelectorAll('.sidebar a.nav-btn, .lang-group a.toggle-btn');
+            
+            links.forEach(link => {
+                link.addEventListener('click', async (e) => {
+                    const url = link.getAttribute('href');
+                    
+                    if (!url || url.includes('index.html') || url.startsWith('http')) return;
+                    
+                    e.preventDefault(); 
+                    
+                    const cardsLayout = document.querySelector('.cards-layout');
+                    cardsLayout.classList.add('fade-out');
+                    
+                    try {
+                        const response = await fetch(url);
+                        const html = await response.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        setTimeout(() => {
+                            cardsLayout.innerHTML = doc.querySelector('.cards-layout').innerHTML;
+                            document.querySelector('.breadcrumbs').innerHTML = doc.querySelector('.breadcrumbs').innerHTML;
+                            document.querySelector('.lang-group').innerHTML = doc.querySelector('.lang-group').innerHTML;
+                            
+                            document.title = doc.title;
+                            
+                            document.querySelectorAll('.sidebar a.nav-btn').forEach(btn => btn.classList.remove('active'));
+                            const newActiveBtn = document.querySelector(`.sidebar a[href="${url}"]`);
+                            if (newActiveBtn) newActiveBtn.classList.add('active');
+                            
+                            window.history.pushState({ path: url }, '', url);
+                            
+                            setPanelOffset(0);
+                            initCanvases();
+                            initSpaNavigation(); 
+                            
+                            requestAnimationFrame(() => {
+                                cardsLayout.classList.remove('fade-out');
+                                updateVSlider(); 
+                            });
+                        }, 300);
+                        
+                    } catch (err) {
+                        window.location.href = url;
+                    }
+                });
+            });
+        }
+
+        initSpaNavigation();
+
+        window.addEventListener('popstate', () => {
+            window.location.reload(); 
         });
     </script>
 </body>
