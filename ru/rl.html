@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intec | Race Legends</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           ПЕРЕМЕННЫЕ ЦВЕТОВЫХ ТЕМ (ИНВЕРСИЯ)
+        ============================================================ */
+        :root {
+            --c-bg: #000000;
+            --c-bg-rgb: 0, 0, 0;
+            --c-panel: #111111;
+            --c-border: #1F1F1F;
+            --c-text: #E7E7E7;
+            --c-sub: #8C8C8C;
+            --c-canvas: 231, 231, 231;
+        }
+
+        html[data-theme="light"] {
+            --c-bg: #FFFFFF;
+            --c-bg-rgb: 255, 255, 255;
+            --c-panel: #F0F0F0;
+            --c-border: #D4D4D4;
+            --c-text: #1F1F1F;
+            --c-sub: #666666;
+            --c-canvas: 31, 31, 31;
+        }
+
+        /* МЕДЛЕННАЯ АНИМАЦИЯ для фона и крупных элементов */
+        body, .top-bar, .sidebar, .main-area, .hero-card, .content-card, 
+        .hero-footer, .info-console, .tag, .breadcrumbs, .v-track {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* БЫСТРАЯ АНИМАЦИЯ для кнопок */
+        .nav-btn, .back-btn, .toggle-btn {
+            transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+        }
+        svg { transition: stroke 0.1s ease, fill 0.1s ease; }
+
+        /* ============================================================
+           СБРОС СТИЛЕЙ И БАЗА
+        ============================================================ */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* Плавное появление страницы при загрузке */
+        body {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        body, html {
+            width: 100vw; 
+            height: 100vh;
+            height: 100dvh; 
+            background: var(--c-bg); font-family: 'Noto Sans', sans-serif;
+            overflow: hidden; user-select: none;
+            display: flex; flex-direction: column; 
+            touch-action: none; 
+        }
+        
+        a { text-decoration: none; color: inherit; }
+
+        /* ============================================================
+           ВЕРХНЯЯ ПАНЕЛЬ И КНОПКИ
+        ============================================================ */
+        .top-bar {
+            height: 75px; background: var(--c-panel); border-bottom: 3px solid var(--c-border); 
+            display: flex; align-items: center; padding: 18px; width: 100%; flex-shrink: 0; z-index: 10;
+        }
+
+        .back-btn {
+            width: 36px; height: 36px; background: var(--c-border); border-radius: 9px; margin-right: 18px;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid transparent; flex-shrink: 0;
+        }
+        .back-btn svg { width: 18px; height: 18px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; stroke-linecap: butt; stroke-linejoin: miter; }
+        
+        @media (hover: hover) { .back-btn:hover { border-color: var(--c-text); } }
+        .back-btn:active { background: var(--c-text); }
+        .back-btn:active svg { stroke: var(--c-panel); }
+
+        .settings-group { display: flex; align-items: center; gap: 18px; margin-right: 39px; flex-shrink: 0; }
+        .toggle-block { display: flex; gap: 3px; }
+
+        .toggle-btn {
+            width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--c-text);
+        }
+        .toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+        .toggle-btn.text-btn { font-size: 14px; font-weight: 900; line-height: 1; }
+
+        .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+        .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+        
+        @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
+        .toggle-btn.active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); pointer-events: none; }
+
+        .breadcrumbs { flex-grow: 1; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; padding: 0 9px; min-width: 0; }
+        .bc-text { color: var(--c-text); font-size: 15px; font-weight: 500; line-height: normal; padding: 3px 0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .bc-icon { width: 18px; height: 18px; margin: 0 6px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; flex-shrink: 0; }
+
+        /* ============================================================
+           БОКОВАЯ ПАНЕЛЬ И КОНТЕНТ
+        ============================================================ */
+        .content-wrapper { display: flex; flex-grow: 1; width: 100%; overflow: hidden; }
+        
+        .sidebar { width: 300px; height: 100%; background: var(--c-panel); border-right: 3px solid var(--c-border); flex-shrink: 0; z-index: 5; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 18px; padding: 18px; }
+
+        .nav-btn {
+            width: 100%; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; 
+            padding: 0 9px; cursor: pointer; border: 2px solid transparent; color: var(--c-text); text-decoration: none;
+        }
+        .nav-btn .nav-icon { width: 18px; height: 18px; margin-right: 9px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .nav-btn span { font-size: 15px; font-weight: 500; line-height: normal; padding: 3px 0; display: block; white-space: nowrap; }
+        
+        @media (hover: hover) { .nav-btn:hover { border-color: var(--c-text); } }
+        .nav-btn:active, .nav-btn.active { background: var(--c-text); color: var(--c-panel); }
+
+        .main-area { flex-grow: 1; background: var(--c-bg); position: relative; overflow: hidden; touch-action: none; }
+
+        /* ============================================================
+           СИСТЕМА СКРОЛЛИНГА И ГРАДИЕНТНЫЕ ТЕНИ
+        ============================================================ */
+        .main-clip { position: absolute; inset: 0; overflow: hidden; z-index: 2; touch-action: none; }
+        .main-panel { position: relative; width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: flex-start; will-change: transform; }
+
+        .main-grad-bottom, .main-grad-top { position: absolute; left: 0; right: 0; height: 60px; pointer-events: none; opacity: 0; transition: opacity 0.25s; z-index: 10; }
+        .main-grad-bottom { bottom: 0; background: linear-gradient(to bottom, rgba(var(--c-bg-rgb),0) 0%, rgba(var(--c-bg-rgb),1) 100%); }
+        .main-grad-top    { top: 0;    background: linear-gradient(to bottom, rgba(var(--c-bg-rgb),1) 0%, rgba(var(--c-bg-rgb),0) 100%); }
+
+        .v-slider-container { position: absolute; right: 18px; top: 18px; bottom: 18px; width: 3px; z-index: 25; display: flex; justify-content: center; }
+        .v-track { width: 3px; height: 100%; background: var(--c-border); position: relative; }
+        .v-thumb { width: 3px; top: 0; left: 0; background: var(--c-text); position: absolute; cursor: grab; touch-action: none; }
+        .v-thumb:active { cursor: grabbing; }
+        .v-thumb::after { content: ''; position: absolute; top: -10px; bottom: -10px; left: -20px; right: -20px; }
+
+        /* ============================================================
+           СИСТЕМА ОТСТУПОВ МЕЙН-БЛОКА
+        ============================================================ */
+        .cards-layout { width: 100%; padding: 18px 30px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+        .hero-card, .content-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; overflow: hidden; }
+
+        /* ============================================================
+           HERO БЛОК
+        ============================================================ */
+        .hero-banner {
+            position: relative; width: 100%; height: 441px; display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, #ffb300 0%, #ff5e00 12.5%, #cc3a00 25%, #ff5e00 37.5%, #ffb300 50%, #ff5e00 62.5%, #cc3a00 75%, #ff5e00 87.5%, #ffb300 100%);
+            background-size: 150vw 150vw; animation: gradientFlow 18s linear infinite; will-change: background-position; overflow: hidden;
+        }
+        @keyframes gradientFlow { 0% { background-position: 0vw 0vw; } 100% { background-position: -75vw -75vw; } }
+
+        .hero-banner::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); z-index: 1; }
+        .hero-banner::after { content: ''; position: absolute; inset: 0; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); opacity: 0.25; mix-blend-mode: overlay; z-index: 2; }
+        
+        .hero-title { position: relative; z-index: 5; font-size: clamp(36px, 7vw, 96px); font-weight: 900; color: #E7E7E7; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 0 18px; line-height: 1.1; }
+
+        .hero-footer { height: 75px; background: var(--c-panel); border-top: 3px solid var(--c-border); display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
+        .tags-group { display: flex; gap: 3px; }
+        .tag { height: 36px; padding: 0 9px; background: var(--c-border); color: var(--c-text); font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; border-radius: 9px; }
+        .tags-group .tag:not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+        .tags-group .tag:not(:first-child) { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+        .tag svg { width: 16px; height: 16px; margin-right: 8px; stroke: currentColor; fill: none; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }
+        .tag-status { color: var(--c-sub); }
+
+        /* ============================================================
+           КОНТЕНТНЫЕ КАРТОЧКИ И ТЕКСТ
+        ============================================================ */
+        .content-card { padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+        .content-card:nth-child(even) { flex-direction: row-reverse; }
+        .info-text { flex: 1; color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.5; text-align: justify; min-width: 0; }
+        .info-text h2 { color: var(--c-text); font-size: 42px; font-weight: 900; letter-spacing: 0.05em; margin-bottom: 18px; text-align: left; }
+        .info-text .highlight { color: var(--c-text); }
+        .info-console { width: 240px; height: 240px; background: var(--c-bg); border: 3px solid var(--c-border); border-radius: 9px; flex-shrink: 0; position: relative; overflow: hidden; }
+        .info-console canvas { display: block; width: 100%; height: 100%; }
+
+        /* ============================================================
+           МОБИЛЬНЫЙ АДАПТИВ
+        ============================================================ */
+        @media (max-width: 900px) {
+            .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; }
+            .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
+            .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+            .settings-group { gap: 9px; margin-right: 19.5px; }
+            .toggle-block { gap: 1.5px; }
+            .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
+            .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+            .toggle-btn.text-btn { font-size: 7px; }
+            .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
+            .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+            .breadcrumbs { height: 18px; border-radius: 4.5px; padding: 0 4.5px; }
+            .bc-text { font-size: 7.5px; padding: 1px 0; }
+            .bc-icon { width: 9px; height: 9px; margin: 0 3px; stroke-width: 1px; }
+            .sidebar { width: 150px; border-right-width: 1.5px; }
+            .sidebar-nav { gap: 9px; padding: 9px; }
+            .nav-btn { height: 18px; border-radius: 4.5px; padding: 0 4.5px; border-width: 1px; }
+            .nav-btn .nav-icon { width: 9px; height: 9px; margin-right: 4.5px; stroke-width: 1px; }
+            .nav-btn span { font-size: 7.5px; padding: 1px 0; }
+            .main-grad-bottom, .main-grad-top { height: 30px; }
+            .v-slider-container { right: 4px; top: 9px; bottom: 9px; width: 3px; }
+            .v-track { width: 1.5px; }
+            .v-thumb { width: 1.5px; }
+            .cards-layout { padding: 9px 15px 9px 9px; gap: 9px; }
+            .hero-card, .content-card { border-width: 1.5px; border-radius: 9px; }
+            .hero-banner { height: 160px; }
+            .hero-title { font-size: clamp(24px, 7.5vw, 42px); }
+            .hero-footer { height: 37.5px; border-top-width: 1.5px; padding: 0 9px; }
+            .tags-group { gap: 1.5px; }
+            .tag { height: 18px; padding: 0 4.5px; font-size: 7px; border-radius: 4.5px; }
+            .tag svg { width: 8px; height: 8px; margin-right: 4px; stroke-width: 1px; }
+            .content-card { padding: 9px; gap: 9px; }
+            .info-text { font-size: 9px; }
+            .info-text h2 { font-size: 14px; margin-bottom: 6px; line-height: 1.2; }
+            .info-console { width: 90px; height: 90px; border-width: 1px; border-radius: 4.5px; }
+        }
+
+        @media (max-width: 900px) and (orientation: portrait) {
+            .back-btn { margin-right: 19.5px; } 
+            .settings-group { gap: 9px; margin-right: 9px; } 
+            .sidebar { width: auto; }
+            .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; }
+            .sidebar .nav-btn .nav-icon { margin-right: 0; }
+            .sidebar .nav-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <!-- Кнопка назад ведет на уровень выше (на стартовый экран) -->
+        <a href="../index.html" class="back-btn"><svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15"/></svg></a>
+        
+        <div class="settings-group">
+            <div class="toggle-block theme-group">
+                <div class="toggle-btn" data-theme-val="system" title="Системная тема"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="toggle-btn" data-theme-val="dark" title="Темная тема"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+                <div class="toggle-btn" data-theme-val="light" title="Светлая тема"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+            </div>
+            <!-- Ссылки для языков: Английская кнопка возвращает назад в корень, Русская некликабельна -->
+            <div class="toggle-block lang-group">
+                <a href="../rl.html" class="toggle-btn text-btn">EN</a>
+                <div class="toggle-btn text-btn active">RU</div>
+            </div>
+        </div>
+
+        <div class="breadcrumbs">
+            <span class="bc-text">Intec</span>
+            <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15"/></svg>
+            <span class="bc-text">Race Legends</span>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-nav">
+                <a href="#" class="nav-btn active">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg><span>Race Legends</span>
+                </a>
+                <a href="#" class="nav-btn">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg><span>Fractal Forge</span>
+                </a>
+                <a href="#" class="nav-btn">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg><span>#RaceLegendsTV</span>
+                </a>
+                <a href="#" class="nav-btn">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    <span>Патчноуты</span>
+                </a>
+                <a href="#" class="nav-btn">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Хронограф</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-area">
+            <div class="main-clip" id="mainClip">
+                <div class="main-panel" id="mainPanel">
+                    <div class="cards-layout">
+                        
+                        <div class="hero-card">
+                            <div class="hero-banner"><h1 class="hero-title">RACE LEGENDS</h1></div>
+                            <div class="hero-footer">
+                                <div class="tags-group">
+                                    <div class="tag">#UnrealEngine5</div><div class="tag">#BattleRoyale</div><div class="tag">#PreAlpha</div>
+                                </div>
+                                <div class="tags-group">
+                                    <div class="tag tag-status">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        <span>В разработке</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="info-text">
+                                <h2>Королевская битва в новом формате</h2>
+                                <p>Матч длится около двадцати минут, и задача привычная — остаться последним выжившим. Здесь нет классического сужающегося круга. Вместо него — <span class="highlight">хаотичный шторм</span>. Его границы постоянно пульсируют, меняют направление и прорываются вглубь острова. Место, которое секунду назад было безопасным укрытием, может внезапно оказаться смертельной ловушкой. Приходится <span class="highlight">постоянно двигаться</span> и менять тактику.</p>
+                            </div>
+                            <div class="info-console"><canvas class="mini-console" data-type="storm"></canvas></div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="info-text">
+                                <h2>Пушечный залп и спуск</h2>
+                                <p>Никаких долгих полетов на самолете. Матч начинается с <span class="highlight">пушечного залпа</span>. Все игроки сидят в гигантских пушках по периметру острова. Вы сами настраиваете мощность и траекторию, а затем все орудия стреляют одновременно. В воздухе вы находитесь в капсуле, и у вас два пути. Первый — подорвать капсулу в полете и <span class="highlight">раскрыть дельтаплан</span>. Это медленно, но зато можно приземлиться точно на нужную крышу. Второй путь — <span class="highlight">краш-лендинг</span>. Капсула падает, как метеорит, по заданной траектории.</p>
+                            </div>
+                            <div class="info-console"><canvas class="mini-console" data-type="launch_drop"></canvas></div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="info-text">
+                                <h2>От пистолета до мега-пушки</h2>
+                                <p>На старте все равны — у каждого есть только кирка и базовый пистолет. <span class="highlight">Оружие нельзя выбросить</span>. Вместо того чтобы искать новые стволы, вы <span class="highlight">собираете модули</span>. Находя нужные детали, вы постепенно превращаете обычный стартовый пистолет в тяжелую артиллерию. Здоровье у всех фиксированное — 100 единиц. Щита на старте нет. Чтобы его получить, нужно найти специальный инъектор — <span class="highlight">псыж</span>. Он восстанавливает броню до 100%, но очень медленно: по одной единице в секунду. <span class="highlight">Любой полученный урон сразу сбивает регенерацию</span>, поэтому лечиться придется в укрытиях.</p>
+                            </div>
+                            <div class="info-console"><canvas class="mini-console" data-type="weapon"></canvas></div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="info-text">
+                                <h2>Стилизованные пузыри</h2>
+                                <p>Карта поделена не просто на лес или пустыню. На арене есть локальные <span class="highlight">зоны с измененной реальностью</span>. Забегая в такую область, вы буквально попадаете в <span class="highlight">другой визуальный стиль</span>. Например, в одной зоне картинка становится черно-белой и контрастной, как в нуарном детективе. В другой зоне экран покрывается помехами и искажениями в духе старой VHS-кассеты.</p>
+                            </div>
+                            <div class="info-console"><canvas class="mini-console" data-type="bubble"></canvas></div>
+                        </div>
+
+                        <div class="content-card">
+                            <div class="info-text">
+                                <h2>Безумие на колесах</h2>
+                                <p>Когда наступает вторая фаза матча, игроки могут <span class="highlight">вызывать технику</span>. Машина падает прямо с неба в капсуле, разрушая здания на своем пути. На нее тоже можно вешать модули: пушки, турбины, защитные поля. Если машину уничтожат, <span class="highlight">вы не умираете сразу</span> — взрыв подкинет вас в воздух и нанесет урон, после чего можно будет раскрыть дельтаплан и отступить. В командном режиме техника раскрывается на полную. Игроки заранее выбирают одну машину на всю команду, и она становится мобильной крепостью. <span class="highlight">Управление делится на всех</span>: один рулит, второй стреляет из турели, третий отвечает за сканеры и щиты. Успех зависит от того, насколько хорошо вы координируете действия.</p>
+                            </div>
+                            <div class="info-console"><canvas class="mini-console" data-type="car"></canvas></div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="main-grad-bottom" id="mainGradBottom"></div>
+                <div class="main-grad-top" id="mainGradTop"></div>
+            </div>
+
+            <div class="v-slider-container">
+                <div class="v-track" id="vTrack"><div class="v-thumb" id="vThumb"></div></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================================
+        //  ЛОГИКА ПЕРЕКЛЮЧЕНИЯ ТЕМ
+        // ============================================================
+        const rootTheme = document.documentElement;
+        let currentCanvasColor = '231, 231, 231';
+
+        const themeBtns = document.querySelectorAll('.theme-group .toggle-btn');
+        const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
+
+        function applyTheme(themeVal) {
+            let isLight = false;
+            if (themeVal === 'system') isLight = sysMedia.matches;
+            else isLight = (themeVal === 'light');
+
+            if (isLight) rootTheme.setAttribute('data-theme', 'light');
+            else rootTheme.removeAttribute('data-theme');
+            
+            try { localStorage.setItem('rl-theme', themeVal); } catch(e) {}
+            
+            themeBtns.forEach(btn => {
+                if (btn.getAttribute('data-theme-val') === themeVal) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            setTimeout(() => { currentCanvasColor = getComputedStyle(rootTheme).getPropertyValue('--c-canvas').trim(); }, 50);
+        }
+
+        themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
+
+        sysMedia.addEventListener('change', () => {
+            let current = 'system';
+            try { current = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
+            if (current === 'system') applyTheme('system');
+        });
+
+        let savedTheme = 'system';
+        try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
+        applyTheme(savedTheme);
+
+        // ============================================================
+        //  АНИМАЦИИ МИНИ-КОНСОЛЕЙ С ОПТИМИЗАЦИЕЙ
+        // ============================================================
+        let time = 0;
+        let panelOffset = 0;
+        
+        const consoles = document.querySelectorAll('.mini-console');
+        const consData = [];
+        const consSize = 240, consDots = 32, consStep = consSize / consDots;
+
+        consoles.forEach(c => {
+            const dpr = window.devicePixelRatio || 1;
+            c.width = consSize * dpr; c.height = consSize * dpr;
+            const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+            consData.push({ canvas: c, ctx: ctx, type: c.getAttribute('data-type'), isVisible: false });
+        });
+
+        const canvasObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const data = consData.find(d => d.canvas === entry.target);
+                if (data) {
+                    data.isVisible = entry.isIntersecting;
+                }
+            });
+        }, { root: document.getElementById('mainClip'), rootMargin: "100px", threshold: 0 });
+
+        consoles.forEach(c => canvasObserver.observe(c));
+
+        function drawConsoles() {
+            const t = time * 2; 
+            
+            consData.forEach(c => {
+                if (!c.isVisible) return; 
+
+                const ctx = c.ctx;
+                ctx.clearRect(0, 0, consSize, consSize);
+                
+                for (let ix = 0; ix < consDots; ix++) {
+                    for (let iy = 0; iy < consDots; iy++) {
+                        let x = ix * consStep + consStep / 2; let y = iy * consStep + consStep / 2;
+                        let nx = (ix / (consDots - 1)) * 2 - 1; let ny = (iy / (consDots - 1)) * 2 - 1;
+                        let dist = Math.sqrt(nx*nx + ny*ny); let alpha = 0.1; 
+                        
+                        if (c.type === 'storm') {
+                            let progress = (Math.sin(t * 0.8) + 1) / 2; let safeRadius = progress * 2.1 - 0.3; 
+                            let angle = Math.atan2(ny, nx); let noise = Math.sin(angle * 5 + t * 2.5) * 0.15 + Math.cos(angle * 3 - t * 1.5) * 0.1;
+                            let boundary = safeRadius + noise;
+                            if (dist > boundary) { alpha = 0.7 + Math.random() * 0.3; } else { alpha = 0.1; if (dist > boundary - 0.08) alpha = 1.0; }
+                        } 
+                        else if (c.type === 'launch_drop') {
+                            let cycle = t % 6;
+                            if (Math.abs(ny - 0.8) < 0.03 && Math.abs(nx) <= 0.9) alpha = Math.max(alpha, 0.4);
+                            if (Math.abs(nx) <= 0.8 && ny <= 0.8) {
+                                let ellipse_y = 0.8 - 1.6 * Math.sqrt(Math.max(0, 1 - Math.pow(nx/0.8, 2)));
+                                if (Math.abs(ny - ellipse_y) < 0.03) alpha = Math.max(alpha, 0.3);
+                            }
+                            if (cycle < 3) {
+                                let p = cycle / 3; let theta = Math.PI * (1 - p);
+                                let cap_x = 0.8 * Math.cos(theta); let cap_y = 0.8 - 1.6 * Math.sin(theta);
+                                let dx = nx - cap_x; let dy = ny - cap_y; let ang = Math.atan2(-1.6 * Math.cos(theta), 0.8 * Math.sin(theta));
+                                let rx = dx * Math.cos(-ang) - dy * Math.sin(-ang); let ry = dx * Math.sin(-ang) + dy * Math.cos(-ang);
+                                if (Math.abs(rx) < 0.12 && Math.abs(ry) < 0.08) alpha = 1;
+                            } else if (cycle >= 3 && cycle < 3.5) {
+                                let expl_p = (cycle - 3) / 0.5; if (Math.hypot(nx - 0.8, ny - 0.8) < 0.25 * expl_p && Math.random() > expl_p) alpha = 1;
+                            }
+                            if (cycle >= 1.5 && cycle < 4.5) {
+                                let p_gli = (cycle - 1.5) / 3; let gli_y = -0.8 + 1.6 * p_gli;
+                                if (Math.abs(nx) < 0.18 && Math.abs(ny - gli_y) < 0.04) alpha = 1;
+                                if (Math.abs(nx) < 0.04 && ny >= gli_y && ny < gli_y + 0.12) alpha = 1;
+                            } else if (cycle >= 4.5 && cycle < 5.0) {
+                                let expl_p = (cycle - 4.5) / 0.5; if (Math.hypot(nx, ny - 0.8) < 0.2 * expl_p && ny <= 0.8 && Math.random() > expl_p) alpha = 1;
+                            }
+                        }
+                        else if (c.type === 'weapon') {
+                            let p_alpha = 0, pk_alpha = 0;
+                            if (nx > -0.35 && nx < 0.35 && ny > -0.2 && ny < 0.0) p_alpha = 1; 
+                            if (nx > -0.35 && nx < -0.1 && ny >= 0.0 && ny < 0.4) p_alpha = 1; 
+                            if (nx >= -0.1 && nx < 0.1 && ny >= 0.0 && ny < 0.2) { p_alpha = 1; if (nx > -0.06 && nx < 0.06 && ny > 0.04 && ny < 0.16) p_alpha = 0; }
+                            if (Math.abs(nx + ny) < 0.06 && nx > -0.4 && nx < 0.4) pk_alpha = 1; 
+                            let blade_dist = Math.abs(nx - ny - 0.3); let dist_to_cross = Math.hypot(nx - 0.15, ny + 0.15); 
+                            if (blade_dist < 0.08 && dist_to_cross < 0.3) pk_alpha = 1;
+                            let cycle = (t * 0.8) % 2; let phase = cycle % 1; let scanX = (phase * 2.4) - 1.2; let distToScan = Math.abs(nx - scanX);
+                            let showPistol = (cycle < 1) ? (nx > scanX) : (nx <= scanX); let showPick = (cycle < 1) ? (nx <= scanX) : (nx > scanX);
+                            alpha = 0.1; if (showPistol && p_alpha > 0) alpha = 1.0; if (showPick && pk_alpha > 0) alpha = 1.0;
+                            if (distToScan < 0.05) { if (p_alpha > 0 || pk_alpha > 0) alpha = 1.0; else alpha = 0.3; } 
+                            else if (distToScan < 0.2) { if (p_alpha > 0 || pk_alpha > 0) { let hash = Math.sin(ix * 12.9898 + iy * 78.233 + Math.floor(t*5)) * 43758.5453; if (hash - Math.floor(hash) > 0.4) alpha = 0.9; else alpha = 0.1; } }
+                        }
+                        else if (c.type === 'bubble') {
+                            let groundY = 0.5; let distToCenter = Math.hypot(nx, ny - groundY);
+                            if (Math.abs(ny - groundY) < 0.03) alpha = 0.5;
+                            if (ny < groundY) {
+                                let angle = Math.atan2(ny - groundY, nx); let wave = Math.sin(angle * 6 - t * 2) * 0.05; let bubbleRadius = 0.6 + wave;
+                                if (Math.abs(distToCenter - bubbleRadius) < 0.04) alpha = 1;
+                                if (distToCenter < bubbleRadius - 0.04) { if (Math.random() > 0.85) alpha = 0.6; let scanY = -1.0 + (t % 2) * 2; if (Math.abs(ny - scanY) < 0.05) alpha = 0.9; }
+                            }
+                        }
+                        else if (c.type === 'car') {
+                            let carBounce = Math.abs(Math.sin(t * 8)) * 0.03; let cy = carBounce - 0.05; let md = 999;
+                            let d2s = (x1, y1, x2, y2) => {
+                                let l2 = (x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1); if (l2 === 0) return Math.hypot(nx - x1, ny - (y1 + cy));
+                                let t_p = Math.max(0, Math.min(1, ((nx - x1)*(x2 - x1) + (ny - (y1 + cy))*(y2 - y1)) / l2));
+                                return Math.hypot(nx - (x1 + t_p*(x2 - x1)), ny - (y1 + cy + t_p*(y2 - y1)));
+                            };
+                            let ln = (x1, y1, x2, y2) => { md = Math.min(md, d2s(x1, y1, x2, y2)); };
+                            ln(-0.8, 0.0, 0.7, 0.0); ln(-0.2, -0.3, 0.2, -0.3); ln(-0.2, -0.3, -0.4, 0.0); ln(0.2, -0.3, 0.4, 0.0); ln(0.0, -0.3, 0.0, 0.0); ln(-0.8, 0.0, -0.85, 0.1);
+                            ln(-0.85, 0.1, -0.85, 0.2); ln(-0.85, 0.2, -0.8, 0.3); ln(0.7, 0.0, 0.8, 0.15); ln(0.8, 0.15, 0.8, 0.3); ln(-0.8, 0.3, -0.6, 0.3); ln(-0.6, 0.3, -0.5, 0.1); 
+                            ln(-0.5, 0.1, -0.3, 0.1); ln(-0.3, 0.1, -0.2, 0.3); ln(-0.2, 0.3, 0.2, 0.3); ln(0.2, 0.3, 0.3, 0.1); ln(0.3, 0.1, 0.5, 0.1); ln(0.5, 0.1, 0.6, 0.3); ln(0.6, 0.3, 0.8, 0.3);
+                            if (md < 0.045) alpha = 1.0;
+                            let wR = 0.14; let dw1 = Math.hypot(nx - (-0.4), ny - (0.3 + cy)); let dw2 = Math.hypot(nx - 0.4, ny - (0.3 + cy));
+                            if (Math.abs(dw1 - wR) < 0.045 || Math.abs(dw2 - wR) < 0.045) alpha = 1.0;
+                            if (dw1 < wR - 0.04) { let a = Math.atan2(ny - (0.3 + cy), nx - (-0.4)); if (Math.sin(a * 4 - t * 20) > 0.8) alpha = 0.6; }
+                            if (dw2 < wR - 0.04) { let a = Math.atan2(ny - (0.3 + cy), nx - 0.4); if (Math.sin(a * 4 - t * 20) > 0.8) alpha = 0.6; }
+                            let gY = 0.3 + cy + wR; if (Math.abs(ny - gY) < 0.03) { if ((nx * 15 + t * 20) % 2 < 1.0) alpha = Math.max(alpha, 0.5); }
+                        }
+                        ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; ctx.beginPath(); ctx.arc(x, y, alpha > 0.2 ? 2.0 : 1.0, 0, Math.PI * 2); ctx.fill();
+                    }
+                }
+            });
+            time += 0.007; 
+            requestAnimationFrame(drawConsoles);
+        }
+        drawConsoles();
+
+        // ============================================================
+        //  ЛОГИКА СКРОЛЛА И СЛАЙДЕРА
+        // ============================================================
+        const mainClip = document.getElementById('mainClip');
+        const mainPanel = document.getElementById('mainPanel');
+        const vTrack = document.getElementById('vTrack');
+        const vThumb = document.getElementById('vThumb');
+        const mainGradBottom = document.getElementById('mainGradBottom');
+        const mainGradTop = document.getElementById('mainGradTop');
+        
+        function getPanelMaxOffset() { return Math.max(0, mainPanel.scrollHeight - mainClip.clientHeight); }
+
+        function setPanelOffset(o) {
+            const max = getPanelMaxOffset(); 
+            panelOffset = Math.max(0, Math.min(o, max));
+            mainPanel.style.transform = `translateY(-${panelOffset}px)`;
+            
+            mainGradBottom.style.opacity = (panelOffset < max) && (max > 0) ? '1' : '0';
+            mainGradTop.style.opacity = panelOffset > 0 ? '1' : '0'; 
+            
+            updateVSlider();
+        }
+
+        function updateVSlider() {
+            const max = getPanelMaxOffset();
+            if (max <= 0) { vThumb.style.height = '100%'; vThumb.style.top = '0px'; return; }
+            const th = Math.max((mainClip.clientHeight / mainPanel.scrollHeight) * vTrack.clientHeight, 40);
+            vThumb.style.height = `${th}px`;
+            vThumb.style.top = `${(panelOffset / max) * (vTrack.clientHeight - th)}px`;
+        }
+
+        const resizeObserver = new ResizeObserver(() => {
+            const max = getPanelMaxOffset();
+            if (panelOffset > max) panelOffset = max;
+            setPanelOffset(panelOffset); 
+        });
+        resizeObserver.observe(mainPanel);
+
+        mainClip.addEventListener('wheel', e => { 
+            e.preventDefault(); setPanelOffset(panelOffset + e.deltaY); 
+        }, { passive: false });
+        window.addEventListener('resize', () => setPanelOffset(panelOffset));
+
+        window.addEventListener('keydown', e => {
+            if (['INPUT', 'TEXTAREA', 'BUTTON', 'SELECT'].includes(document.activeElement.tagName)) return;
+            const step = 60; const pageStep = mainClip.clientHeight * 0.8; 
+            let newOffset = panelOffset; let handled = false;
+            switch(e.key) {
+                case 'ArrowUp': newOffset -= step; handled = true; break;
+                case 'ArrowDown': newOffset += step; handled = true; break;
+                case 'PageUp': newOffset -= pageStep; handled = true; break;
+                case 'PageDown': newOffset += pageStep; handled = true; break;
+                case ' ': newOffset += e.shiftKey ? -pageStep : pageStep; handled = true; break;
+                case 'Home': newOffset = 0; handled = true; break;
+                case 'End': newOffset = getPanelMaxOffset(); handled = true; break;
+            }
+            if (handled) { e.preventDefault(); setPanelOffset(newOffset); }
+        });
+
+        let activeDrag = false, startY, startPanelOffset;
+        vThumb.addEventListener('pointerdown', e => { 
+            activeDrag = true; startY = e.pageY; startPanelOffset = panelOffset; 
+            vThumb.setPointerCapture(e.pointerId); e.stopPropagation(); 
+        });
+        vThumb.addEventListener('pointermove', e => {
+            if (activeDrag) { 
+                e.preventDefault(); 
+                const trackSpace = vTrack.clientHeight - vThumb.offsetHeight;
+                if (trackSpace > 0) setPanelOffset(startPanelOffset + ((e.pageY - startY) / trackSpace) * getPanelMaxOffset());
+            }
+        });
+        vThumb.addEventListener('pointerup', e => { activeDrag = false; try { vThumb.releasePointerCapture(e.pointerId); } catch(err) {} });
+        vThumb.addEventListener('pointercancel', e => { activeDrag = false; try { vThumb.releasePointerCapture(e.pointerId); } catch(err) {} });
+
+        let touchStartY = 0, touchStartOffset = 0, touchVelocity = 0, lastTouchY = 0, lastTouchTime = 0, inertiaFrame;
+
+        mainClip.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) return; 
+            cancelAnimationFrame(inertiaFrame);
+            touchStartY = e.touches[0].clientY; lastTouchY = touchStartY;
+            lastTouchTime = Date.now(); touchStartOffset = panelOffset;
+        }, { passive: false }); 
+
+        mainClip.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) return;
+            e.preventDefault(); 
+            const touchY = e.touches[0].clientY; const now = Date.now();
+            touchVelocity = (touchY - lastTouchY) / (now - lastTouchTime || 1);
+            lastTouchY = touchY; lastTouchTime = now;
+            setPanelOffset(touchStartOffset + (touchStartY - touchY));
+        }, { passive: false });
+
+        mainClip.addEventListener('touchend', () => {
+            let v = touchVelocity * 15; 
+            const step = () => {
+                if (Math.abs(v) < 0.5) return; 
+                let prevOffset = panelOffset;
+                setPanelOffset(panelOffset - v);
+                if (panelOffset === prevOffset) { v = 0; return; }
+                v *= 0.92; 
+                inertiaFrame = requestAnimationFrame(step);
+            };
+            step();
+        });
+    </script>
+</body>
+</html>
