@@ -2,7 +2,8 @@
 <html lang="en" data-theme="system">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Запрещаем масштабирование экрана пользователем -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Intec</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,6 +53,7 @@
             background: var(--c-bg); font-family: 'Noto Sans', sans-serif;
             overflow: hidden; user-select: none;
             display: flex; justify-content: center; align-items: center;
+            touch-action: none; /* ЖЕСТКО блокируем системные жесты (зум, свайпы браузера) */
         }
 
         /* Канвас на заднем фоне */
@@ -163,7 +165,7 @@
             .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
         }
     </style>
-    <!-- Этот скрипт блокирует рендер на миллисекунду, чтобы применить правильную тему ДО первой отрисовки, убирая мерцание -->
+    <!-- Этот скрипт блокирует рендер на миллисекунду, чтобы применить правильную тему ДО первой отрисовки -->
     <script>
         try {
             const savedTheme = localStorage.getItem('rl-theme') || 'system';
@@ -227,7 +229,7 @@
         applyTheme(savedTheme);
 
         // ============================================================
-        // ИНТЕРАКТИВНЫЙ КАНВАС (С ПОДДЕРЖКОЙ ТАЧЕЙ И РАЗМЕРА ЭКРАНА)
+        // ИНТЕРАКТИВНЫЙ КАНВАС (МУЛЬТИТАЧ)
         // ============================================================
         const canvas = document.getElementById('intro-canvas');
         const ctx = canvas.getContext('2d');
@@ -235,10 +237,12 @@
         const spacing = 24; 
         
         let cols = 0, rows = 0;
-        let mouseX = -1000, mouseY = -1000;
         let isEntering = false;
 
-        // Переменные для настройки размера под разные экраны
+        // Массив, в котором будут храниться координаты всех активных пальцев/мыши
+        let activePointers = [];
+        let lastTouchTime = 0;
+
         let influenceRadius = 200; 
         let baseDotRadius = 0.8;   
         let maxDotRadius = 3.2;    
@@ -252,13 +256,11 @@
             cols = Math.ceil(width / spacing) + 1;
             rows = Math.ceil(height / spacing) + 1;
 
-            // Если экран мобильный (уменьшаем радиус и размер точек)
             if (width <= 900) {
-                influenceRadius = 100; // Радиус свечения в 2 раза меньше
-                baseDotRadius = 0.5;   // Сами точки чуть меньше
-                maxDotRadius = 1.5;    // Увеличиваются не так сильно
+                influenceRadius = 100;
+                baseDotRadius = 0.5;
+                maxDotRadius = 1.5;
             } else {
-                // Возвращаем дефолтные значения для ПК
                 influenceRadius = 200;
                 baseDotRadius = 0.8;
                 maxDotRadius = 3.2;
@@ -267,37 +269,24 @@
 
         window.addEventListener('resize', initCanvas);
 
-        // Объявляем переменную для защиты от фантомных кликов
-        let lastTouchTime = 0;
+        // Функция обновления списка координат (для мультитача)
+        function updateTouches(e) {
+            lastTouchTime = Date.now();
+            activePointers = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
+        }
 
         // --- СОБЫТИЯ КАСАНИЯ (СЕНСОРНЫЕ ЭКРАНЫ) ---
-        window.addEventListener('touchstart', (e) => { 
-            lastTouchTime = Date.now();
-            mouseX = e.touches[0].clientX; 
-            mouseY = e.touches[0].clientY; 
-        }, { passive: true });
-        
-        window.addEventListener('touchmove', (e) => { 
-            lastTouchTime = Date.now();
-            mouseX = e.touches[0].clientX; 
-            mouseY = e.touches[0].clientY; 
-        }, { passive: true });
-        
-        window.addEventListener('touchend', () => { 
-            lastTouchTime = Date.now();
-            mouseX = -1000; mouseY = -1000; 
-        }); 
-        window.addEventListener('touchcancel', () => { 
-            mouseX = -1000; mouseY = -1000; 
-        }); 
+        window.addEventListener('touchstart', updateTouches, { passive: true });
+        window.addEventListener('touchmove', updateTouches, { passive: true });
+        window.addEventListener('touchend', updateTouches); 
+        window.addEventListener('touchcancel', updateTouches); 
 
         // --- СОБЫТИЯ МЫШИ (ПК) ---
         window.addEventListener('mousemove', (e) => { 
-            // Игнорируем "фантомную" мышь от мобильного браузера в течение 500мс после тапа
             if (Date.now() - lastTouchTime < 500) return;
-            mouseX = e.clientX; mouseY = e.clientY; 
+            activePointers = [{ x: e.clientX, y: e.clientY }];
         });
-        window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
+        window.addEventListener('mouseout', () => { activePointers = []; });
 
         initCanvas();
 
@@ -309,15 +298,22 @@
                     let x = c * spacing + (width % spacing) / 2;
                     let y = r * spacing + (height % spacing) / 2;
                     
-                    let dx = mouseX - x;
-                    let dy = mouseY - y;
-                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    let maxInfluence = 0;
+
+                    // Проверяем каждую точку на экране (сколько бы пальцев ни было прижато)
+                    for (let i = 0; i < activePointers.length; i++) {
+                        let dx = activePointers[i].x - x;
+                        let dy = activePointers[i].y - y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        let influence = Math.max(0, 1 - dist / influenceRadius);
+                        if (influence > maxInfluence) {
+                            maxInfluence = influence;
+                        }
+                    }
                     
-                    // Используем динамический радиус
-                    let mouseInfluence = Math.max(0, 1 - dist / influenceRadius); 
-                    let intensity = mouseInfluence * mouseInfluence * (3 - 2 * mouseInfluence);
+                    let intensity = maxInfluence * maxInfluence * (3 - 2 * maxInfluence);
                     
-                    // Используем динамические размеры точек
                     let radius = baseDotRadius + intensity * maxDotRadius; 
                     let alpha = 0.05 + intensity * 0.95; 
 
@@ -349,7 +345,6 @@
                 const lang = btn.getAttribute('data-lang-entry');
                 try { localStorage.setItem('rl-lang', lang); } catch(e) {}
                 
-                // СОЗДАЕМ "БИЛЕТ" ДЛЯ ПЛАВНОГО ПОЯВЛЕНИЯ В HUB
                 try { sessionStorage.setItem('fromIntro', 'true'); } catch(e) {}
 
                 document.body.classList.add('transitioning');
