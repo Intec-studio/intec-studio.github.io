@@ -8,9 +8,16 @@
 }
 
 html[data-theme="light"] {
-    --c-bg: #FFFFFF; --c-bg-rgb: 255, 255, 255;
-    --c-panel: #EEEEEE; --c-border: #E0E0E0;
-    --c-text: #181818; --c-sub: #737373; --c-canvas: 24, 24, 24;
+    --c-bg: #FFFFFF; 
+    --c-bg-rgb: 255, 255, 255;
+    
+    --c-panel: #EEEEEE; /* Идеальная инверсия #111111 */
+    --c-border: #E0E0E0; /* Идеальная инверсия #1F1F1F */
+    
+    --c-text: #181818;   /* Идеальная инверсия #E7E7E7 */
+    --c-sub: #737373;    /* Идеальная инверсия #8C8C8C */
+    
+    --c-canvas: 24, 24, 24; /* RGB версия идеальной инверсии 231,231,231 */
 }
 
 /* СИСТЕМА ЛОКАЛИЗАЦИИ */
@@ -121,10 +128,7 @@ a { text-decoration: none; color: inherit; }
 
 .info-text { flex: 1; color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.5; text-align: justify; min-width: 0; }
 .info-text h2 { color: var(--c-text); font-size: 42px; font-weight: 900; letter-spacing: 0.05em; margin-bottom: 18px; text-align: left; }
-.info-text .highlight, .pn-card-desc .highlight { 
-    color: var(--c-text); 
-    font-weight: 700; 
-}
+.info-text .highlight, .pn-card-desc .highlight { color: var(--c-text); }
 .info-console { width: 240px; height: 240px; background: var(--c-bg); border: 3px solid var(--c-border); border-radius: 9px; flex-shrink: 0; position: relative; overflow: hidden; }
 .info-console canvas { display: block; width: 100%; height: 100%; }
 
@@ -229,4 +233,14 @@ a { text-decoration: none; color: inherit; }
     .back-btn { margin-right: 19.5px; } .settings-group { gap: 9px; margin-right: 9px; } .sidebar { width: auto; }
     .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
     .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100%; }
+}
+
+/* ============================================================
+   ФИКСЫ ДЛЯ СВЕТЛОЙ ТЕМЫ
+============================================================ */
+/* Увеличиваем выделенный текст ровно на 1px и делаем его чуть жирнее для читаемости на белом фоне */
+html[data-theme="light"] .info-text .highlight, 
+html[data-theme="light"] .pn-card-desc .highlight {
+    font-size: calc(1em + 1px);
+    font-weight: 600; 
 }
