@@ -163,6 +163,15 @@
             .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
         }
     </style>
+    <!-- Этот скрипт блокирует рендер на миллисекунду, чтобы применить правильную тему ДО первой отрисовки, убирая мерцание -->
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('rl-theme') || 'system';
+            const isLight = savedTheme === 'system' ? window.matchMedia('(prefers-color-scheme: light)').matches : savedTheme === 'light';
+            if (isLight) document.documentElement.setAttribute('data-theme', 'light');
+            else document.documentElement.removeAttribute('data-theme');
+        } catch(e) {}
+    </script>
 </head>
 <body>
 

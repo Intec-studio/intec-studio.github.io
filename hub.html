@@ -8,6 +8,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css"> <!-- Подключаем наши общие стили -->
+    <!-- Этот скрипт блокирует рендер на миллисекунду, чтобы применить правильную тему ДО первой отрисовки, убирая мерцание -->
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('rl-theme') || 'system';
+            const isLight = savedTheme === 'system' ? window.matchMedia('(prefers-color-scheme: light)').matches : savedTheme === 'light';
+            if (isLight) document.documentElement.setAttribute('data-theme', 'light');
+            else document.documentElement.removeAttribute('data-theme');
+        } catch(e) {}
+    </script>
 </head>
 <body>
     
