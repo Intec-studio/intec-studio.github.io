@@ -234,13 +234,3 @@ a { text-decoration: none; color: inherit; }
     .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
     .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100%; }
 }
-
-/* ============================================================
-   ФИКСЫ ДЛЯ СВЕТЛОЙ ТЕМЫ
-============================================================ */
-/* Увеличиваем выделенный текст ровно на 1px и делаем его чуть жирнее для читаемости на белом фоне */
-html[data-theme="light"] .info-text .highlight, 
-html[data-theme="light"] .pn-card-desc .highlight {
-    font-size: calc(1em + 0.0005px);
-    font-weight: 600; 
-}
