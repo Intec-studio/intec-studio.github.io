@@ -19,7 +19,7 @@
             --c-panel: #111111;
             --c-border: #1F1F1F;
             --c-text: #E7E7E7;
-            --c-canvas: 180, 190, 205;
+            --c-canvas: 180, 190, 205; /* Цвет точек в темной теме */
         }
 
         html[data-theme="light"] {
@@ -28,17 +28,7 @@
             --c-panel: #F0F0F0;
             --c-border: #D4D4D4;
             --c-text: #1F1F1F;
-            --c-canvas: 31, 31, 31;
-        }
-
-        /* СКРЫТАЯ ЗАГРУЗКА */
-        @keyframes secretLoad {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        body {
-            animation: secretLoad 1.5s ease-out forwards;
+            --c-canvas: 31, 31, 31; /* Цвет точек в светлой теме */
         }
 
         /* МЕДЛЕННАЯ АНИМАЦИЯ (для смены тем) */
@@ -52,7 +42,9 @@
         }
         svg { transition: stroke 0.1s ease, fill 0.1s ease; }
 
-        /* БАЗА */
+        /* ============================================================
+           СБРОС СТИЛЕЙ И БАЗА
+        ============================================================ */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body, html {
@@ -62,21 +54,23 @@
             display: flex; justify-content: center; align-items: center;
         }
 
+        /* Канвас на заднем фоне */
         #intro-canvas {
             position: absolute; inset: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none; opacity: 1;
             transition: opacity 0.8s ease;
         }
 
+        /* Виньетка для глубины */
         .vignette {
             position: absolute; inset: 0; z-index: 2; pointer-events: none;
             background: radial-gradient(circle at center, transparent 30%, rgba(var(--c-bg-rgb), 0.9) 100%);
         }
 
-        .corner-settings {
-            position: absolute; top: 18px; left: 18px; z-index: 10;
-        }
-        
+        /* ============================================================
+           УГЛОВОЙ БЛОК НАСТРОЕК
+        ============================================================ */
+        .corner-settings { position: absolute; top: 18px; left: 18px; z-index: 10; }
         .toggle-block { display: flex; gap: 3px; }
 
         .toggle-btn {
@@ -91,12 +85,16 @@
         @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
         .toggle-btn.active, .toggle-btn:active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
 
+        /* ============================================================
+           ЦЕНТРАЛЬНЫЙ БЛОК UI
+        ============================================================ */
         .intro-container {
             position: relative; z-index: 5;
             display: flex; flex-direction: column; align-items: center; gap: 36px;
             transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.8s ease;
         }
 
+        /* Глитч-логотип */
         .glitch-logo {
             font-size: clamp(4rem, 10vw, 12rem); font-weight: 900;
             text-transform: uppercase; letter-spacing: 0.25em;
@@ -129,6 +127,9 @@
             98%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
         }
 
+        /* ============================================================
+           ВХОДНЫЕ КНОПКИ (EN / RU)
+        ============================================================ */
         .lang-gate { display: flex; width: 261px; height: 36px; gap: 3px; }
 
         .gate-btn {
@@ -144,16 +145,20 @@
         @media (hover: hover) { .gate-btn:hover { border-color: var(--c-text); } }
         .gate-btn:active, .gate-btn.entering { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
 
+        /* Состояние перехода (при клике) */
         body.transitioning .intro-container { transform: scale(1.1); opacity: 0; }
         body.transitioning #intro-canvas { opacity: 0; transform: scale(1.05); transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1); }
 
+        /* Мобильный адаптив */
         @media (max-width: 900px) {
             .corner-settings { top: 9px; left: 9px; }
             .toggle-block { gap: 1.5px; } .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
             .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
             .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
             .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
-            .lang-gate { width: 130px; height: 18px; gap: 1.5px; } .gate-btn { font-size: 9px; border-width: 1px; }
+            
+            .lang-gate { width: 130px; height: 18px; gap: 1.5px; }
+            .gate-btn { font-size: 9px; border-width: 1px; }
             .lang-gate > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
             .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
         }
@@ -190,51 +195,48 @@
             let isLight = themeVal === 'system' ? sysMedia.matches : themeVal === 'light';
             if (isLight) rootTheme.setAttribute('data-theme', 'light'); else rootTheme.removeAttribute('data-theme');
             try { localStorage.setItem('rl-theme', themeVal); } catch(e) {}
-            themeBtns.forEach(btn => { if (btn.getAttribute('data-theme-val') === themeVal) btn.classList.add('active'); else btn.classList.remove('active'); });
+            
+            themeBtns.forEach(btn => {
+                if (btn.getAttribute('data-theme-val') === themeVal) btn.classList.add('active'); 
+                else btn.classList.remove('active');
+            });
             setTimeout(() => { currentCanvasColor = getComputedStyle(rootTheme).getPropertyValue('--c-canvas').trim(); }, 50);
         }
 
         themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
-        sysMedia.addEventListener('change', () => { let current = 'system'; try { current = localStorage.getItem('rl-theme') || 'system'; } catch(e) {} if (current === 'system') applyTheme('system'); });
-        let savedTheme = 'system'; try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {} applyTheme(savedTheme);
+        sysMedia.addEventListener('change', () => {
+            let current = 'system';
+            try { current = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
+            if (current === 'system') applyTheme('system');
+        });
 
-        const canvas = document.getElementById('intro-canvas'); const ctx = canvas.getContext('2d');
-        let width, height; const spacing = 24; let cols = 0, rows = 0; let mouseX = -1000, mouseY = -1000; let isEntering = false;
+        let savedTheme = 'system';
+        try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
+        applyTheme(savedTheme);
+
+        const canvas = document.getElementById('intro-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const spacing = 24; 
+        
+        let cols = 0, rows = 0;
+        let mouseX = -1000, mouseY = -1000;
+        let isEntering = false;
 
         function initCanvas() {
-            const dpr = window.devicePixelRatio || 1; width = window.innerWidth; height = window.innerHeight;
-            canvas.width = width * dpr; canvas.height = height * dpr; ctx.scale(dpr, dpr);
-            cols = Math.ceil(width / spacing) + 1; rows = Math.ceil(height / spacing) + 1;
+            const dpr = window.devicePixelRatio || 1;
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width * dpr; canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            cols = Math.ceil(width / spacing) + 1;
+            rows = Math.ceil(height / spacing) + 1;
         }
 
-        window.addEventListener('resize', initCanvas); window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }); window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+        window.addEventListener('mouseout', () => { mouseX = -1000; mouseY = -1000; });
+
         initCanvas();
 
         function drawGrid() {
-            ctx.clearRect(0, 0, width, height);
-            for (let c = 0; c < cols; c++) {
-                for (let r = 0; r < rows; r++) {
-                    let x = c * spacing + (width % spacing) / 2; let y = r * spacing + (height % spacing) / 2;
-                    let dx = mouseX - x; let dy = mouseY - y; let dist = Math.sqrt(dx*dx + dy*dy);
-                    let mouseInfluence = Math.max(0, 1 - dist / 200); let intensity = mouseInfluence * mouseInfluence * (3 - 2 * mouseInfluence);
-                    let radius = 0.8 + intensity * 3.2; let alpha = 0.05 + intensity * 0.95; 
-                    ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
-                }
-            }
-            if (!isEntering) requestAnimationFrame(drawGrid);
-        }
-        drawGrid();
-
-        const gateBtns = document.querySelectorAll('.gate-btn');
-        gateBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (isEntering) return;
-                isEntering = true; btn.classList.add('entering');
-                const lang = btn.getAttribute('data-lang-entry'); try { localStorage.setItem('rl-lang', lang); } catch(e) {}
-                document.body.classList.add('transitioning');
-                setTimeout(() => { window.location.href = 'hub.html#rl'; }, 800);
-            });
-        });
-    </script>
-</body>
-</html>

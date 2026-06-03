@@ -46,10 +46,6 @@ body, html {
     display: flex; flex-direction: column; touch-action: none; 
 }
 
-body {
-    animation: pageFadeIn 0.8s ease-out forwards; /* Скрытая тайная загрузка */
-}
-
 a { text-decoration: none; color: inherit; }
 
 /* ПАНЕЛИ И КНОПКИ */
@@ -121,7 +117,6 @@ a { text-decoration: none; color: inherit; }
 .tag-status { color: var(--c-sub); }
 
 .content-card { padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-/* ВОЗВРАЩЕН СТАРЫЙ АВТОМАТИЧЕСКИЙ ПЕРЕВОРОТ КАРТОЧЕК */
 .content-card:nth-child(even) { flex-direction: row-reverse; }
 
 .info-text { flex: 1; color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.5; text-align: justify; min-width: 0; }
@@ -166,69 +161,4 @@ a { text-decoration: none; color: inherit; }
 /* ПАТЧНОУТЫ */
 .pn-wrapper { display: flex; flex-direction: column; gap: 18px; width: 100%; }
 .search-block { width: 100%; height: 78px; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 0 18px; display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
-.pn-input-wrap { flex-grow: 1; height: 36px; position: relative; display: flex; align-items: center; color: var(--c-text); }
-.pn-input-wrap:focus-within, .pn-input-wrap.active-state { color: var(--c-panel); }
-.search-icon { position: absolute; left: 9px; width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; transition: stroke 0.1s ease; }
-.pn-input { width: 100%; height: 100%; display: block; margin: 0; background: var(--c-border); border: 2px solid transparent; border-radius: 9px; padding: 0 18px 0 36px; color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif; white-space: nowrap; outline: none; }
-.pn-input::placeholder { color: var(--c-text); opacity: 1; transition: opacity 0.1s ease; }
-@media (hover: hover) { .pn-input:hover { border-color: var(--c-text); } }
-.pn-input-wrap:focus-within .pn-input, .pn-input-wrap.active-state .pn-input { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
-.pn-input-wrap:focus-within .pn-input::placeholder, .pn-input-wrap.active-state .pn-input::placeholder { opacity: 0; }
-
-.pn-select-wrap { width: 261px; height: 36px; position: relative; flex-shrink: 0; }
-.pn-select { width: 100%; height: 100%; display: block; background: var(--c-border); border: 2px solid transparent; border-radius: 9px; padding: 0 36px 0 18px; color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif; appearance: none; outline: none; cursor: pointer; }
-.pn-select-wrap::after { content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; pointer-events: none; background-color: var(--c-text); -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat; mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat; }
-@media (hover: hover) { .pn-select:hover { border-color: var(--c-text); } }
-.pn-select-wrap:active .pn-select, .pn-select-wrap.active-state .pn-select { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
-.pn-select-wrap:active::after, .pn-select-wrap.active-state::after { background-color: var(--c-panel); }
-
-.pn-card { padding: 18px; display: flex; flex-direction: column; gap: 18px; }
-.pn-card-title { color: var(--c-text); font-size: 42px; font-weight: 900; letter-spacing: 0.05em; line-height: 1.1; }
-.pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
-.pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
-.pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
-
-/* МОБИЛЬНЫЙ АДАПТИВ */
-@media (max-width: 900px) {
-    .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; } .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
-    .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .settings-group { gap: 9px; margin-right: 19.5px; } .toggle-block { gap: 1.5px; }
-    .toggle-btn { width: 18px; height: 18px; border-width: 1px; } .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .toggle-btn.text-btn { font-size: 7px; }
-    .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; } .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
-    .breadcrumbs { height: 18px; border-radius: 4.5px; padding: 0 4.5px; } .bc-text { font-size: 7.5px; padding: 1px 0; } .bc-icon { width: 9px; height: 9px; margin: 0 3px; stroke-width: 1px; }
-    .sidebar { width: 150px; border-right-width: 1.5px; } .sidebar-nav { gap: 9px; padding: 9px; } .nav-btn { height: 18px; border-radius: 4.5px; padding: 0 4.5px; border-width: 1px; }
-    .nav-btn .nav-icon { width: 9px; height: 9px; margin-right: 4.5px; stroke-width: 1px; } .nav-btn span { font-size: 7.5px; padding: 1px 0; }
-    
-    .main-grad-bottom, .main-grad-top { height: 30px; }
-    .v-slider-container { right: 4px; top: 9px; bottom: 9px; width: 3px; } .v-track { width: 1.5px; } .v-thumb { width: 1.5px; }
-    
-    .cards-layout { padding: 9px 15px 9px 9px; gap: 9px; }
-    .hero-card, .content-card, .pn-card, .tv-combined-card { border-width: 1.5px; border-radius: 9px; }
-    .hero-banner { height: 160px; } .hero-title { font-size: clamp(24px, 7.5vw, 42px); } .hero-footer { height: 37.5px; border-top-width: 1.5px; padding: 0 9px; }
-    .tags-group { gap: 1.5px; } .tag { height: 18px; padding: 0 4.5px; font-size: 7px; border-radius: 4.5px; } .tag svg { width: 8px; height: 8px; margin-right: 4px; stroke-width: 1px; }
-    
-    .content-card, .tv-combined-card, .pn-card { padding: 9px; gap: 9px; }
-    .info-text { font-size: 9px; } .info-text h2 { font-size: 14px; margin-bottom: 6px; line-height: 1.2; }
-    .info-console { width: 90px; height: 90px; border-width: 1px; border-radius: 4.5px; }
-
-    .tv-screen { border-radius: 4.5px; border-width: 1.5px; }
-    .tv-text-box { font-size: 16px; padding: 6px 16px; border-width: 1px; box-shadow: 0 0 10px rgba(0,0,0,0.9); }
-    .osd-text { font-size: 12px; } .osd-text.top-right { top: 9px; right: 12px; }
-    .tv-controls-bar { height: 18px; } .tv-actions-group { gap: 9px; }
-    .vol-box { width: 31.5px; height: 18px; border-width: 1px; } .vol-box input { width: 14px; font-size: 8px; } .vol-box span { font-size: 8px; margin-left: 2px; }
-    .vol-slider { width: 57px; height: 9px; border-radius: 2.25px; } .vol-slider::-webkit-slider-thumb { width: 6px; height: 9px; border-radius: 2.25px; } .vol-slider::-moz-range-thumb { width: 6px; height: 9px; border-radius: 2.25px; }
-    
-    .pn-wrapper { gap: 9px; }
-    .search-block { border-width: 1.5px; border-radius: 9px; padding: 0 9px; height: 39px; gap: 9px; }
-    .pn-input-wrap { height: 18px; } .pn-select-wrap { height: 18px; width: 130px; }
-    .search-icon { left: 4.5px; width: 9px; height: 9px; stroke-width: 1px; }
-    .pn-input { border-width: 1px; border-radius: 4.5px; padding: 0 9px 0 18px; font-size: 7.5px; } 
-    .pn-select { border-width: 1px; border-radius: 4.5px; padding: 0 18px 0 9px; font-size: 7.5px; } 
-    .pn-select-wrap::after { right: 6px; width: 6px; height: 6px; }
-    .pn-card-title { font-size: 16px; margin-bottom: 0; line-height: 1.2; } .pn-card-desc { font-size: 9px; } 
-}
-
-@media (max-width: 900px) and (orientation: portrait) {
-    .back-btn { margin-right: 19.5px; } .settings-group { gap: 9px; margin-right: 9px; } .sidebar { width: auto; }
-    .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
-    .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100%; }
-}
+.pn-input-wrap { flex-grow: 1; height: 36px; position: rela

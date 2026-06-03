@@ -10,8 +10,19 @@
     <link rel="stylesheet" href="style.css"> <!-- Подключаем наши общие стили -->
 </head>
 <body>
+    
+    <!-- СКРЫТАЯ ЗАГРУЗКА: Сработает ТОЛЬКО если мы пришли со стартового экрана -->
+    <script>
+        try {
+            if (sessionStorage.getItem('fromIntro') === 'true') {
+                document.body.style.opacity = '0';
+                document.body.style.animation = 'pageFadeIn 0.8s ease-out forwards';
+                sessionStorage.removeItem('fromIntro'); // Сжигаем билет
+            }
+        } catch(e) {}
+    </script>
+
     <header class="top-bar">
-        <!-- Если у вас есть стартовый экран, оставьте ссылку, если нет - можно убрать href -->
         <a href="index.html" class="back-btn"><svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15"/></svg></a>
         
         <div class="settings-group">
@@ -29,7 +40,6 @@
         <div class="breadcrumbs">
             <span class="bc-text">Intec</span>
             <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15"/></svg>
-            <!-- Сюда JS будет подставлять текущий раздел -->
             <span class="bc-text" id="bcPageNameEn" data-lang="en">Race Legends</span>
             <span class="bc-text" id="bcPageNameRu" data-lang="ru">Race Legends</span>
         </div>
@@ -38,7 +48,6 @@
     <div class="content-wrapper">
         <aside class="sidebar">
             <div class="sidebar-nav" id="mainNav">
-                <!-- Ссылки теперь ведут на #хэши -->
                 <a href="#rl" class="nav-btn" data-target="rl">
                     <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg><span>Race Legends</span>
                 </a>
@@ -52,7 +61,6 @@
                     <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
                     <span data-lang="en">Patchnotes</span><span data-lang="ru">Патчноуты</span>
                 </a>
-                <!-- Прямая ссылка на Хронограф, так как он отдельный -->
                 <a href="chronograph.html" class="nav-btn">
                     <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     <span data-lang="en">Chronograph</span><span data-lang="ru">Хронограф</span>
@@ -64,7 +72,6 @@
             <div class="main-clip" id="mainClip">
                 <div class="main-panel" id="mainPanel">
                     
-                    <!-- СЮДА JS БУДЕТ ВБРАСЫВАТЬ КАРТОЧКИ СТРАНИЦ ЗА МИЛЛИСЕКУНДУ -->
                     <div class="cards-layout" id="dynamicContent"></div>
 
                 </div>
