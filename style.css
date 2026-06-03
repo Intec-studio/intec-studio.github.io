@@ -241,6 +241,6 @@ a { text-decoration: none; color: inherit; }
 /* Увеличиваем выделенный текст ровно на 1px и делаем его чуть жирнее для читаемости на белом фоне */
 html[data-theme="light"] .info-text .highlight, 
 html[data-theme="light"] .pn-card-desc .highlight {
-    font-size: calc(1em + 0.5px);
+    font-size: calc(1em + 0.1px);
     font-weight: 600; 
 }
