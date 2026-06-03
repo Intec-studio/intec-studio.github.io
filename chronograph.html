@@ -452,7 +452,7 @@
         let lineOpacities = new Array(NUM_LINES).fill(1);
         let lineSelectionProgress = new Array(NUM_LINES).fill(0); 
         let warpParticles = [], warpRAF = null, isWarpReverse = false, isStoppingWarp = false;
-        let sharedAudioCtx = null, audioUnlocked = false, lastHoverTime = 0;
+        let sharedAudioCtx = null, audioUnlocked = false;
 
         function playTone(type, startFreq, endFreq, maxVol, duration, attackTime = 0.003) {
             try {
@@ -468,17 +468,6 @@
             } catch (e) {}
         }
 
-        function playUIHover(e) {
-            if (e && e.pointerType !== 'mouse') return;
-            if (e.currentTarget && e.currentTarget.classList.contains('active')) return;
-            const now = Date.now(); if (now - lastHoverTime < 40) return; lastHoverTime = now;
-            playTone('sine', 180, 250, 0.35, 0.04, 0.005);
-        }
-
-        function playUIClick(e) {
-            if (e.currentTarget && e.currentTarget.classList.contains('active')) return;
-            playTone('sine', 190, 150, 0.6, 0.05, 0.0025);
-        }
 
         function updateCanvasColors() {
             currentBorderColor = getComputedStyle(rootTheme).getPropertyValue('--c-border').trim() || '#1F1F1F';
@@ -855,10 +844,6 @@
             canvasSvg.style.minWidth = SVG_WIDTH + 'px';
             canvasSvg.innerHTML = h;
             
-            document.querySelectorAll('.node').forEach(n => {
-                n.addEventListener('pointerenter', playUIHover); 
-                n.addEventListener('click', playUIClick, true);
-            });
         }
 
         window.selectNode = function(id) {
@@ -991,11 +976,6 @@
                 } else {
                     window.location.href = 'hub.html#rl'; 
                 }
-            });
-
-            document.querySelectorAll('.back-btn, .toggle-btn, .nav-btn, #p1-circle').forEach(btn => {
-                btn.addEventListener('pointerenter', playUIHover); 
-                btn.addEventListener('click', playUIClick, true);
             });
 
             const unlockAudio = () => {
