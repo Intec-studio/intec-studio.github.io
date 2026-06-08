@@ -182,20 +182,33 @@
         // ============================================================
         window.addEventListener('pageshow', (event) => {
             if (event.persisted) {
+                const intro = document.querySelector('.intro-container');
+                const cvs = document.getElementById('intro-canvas');
+                
+                // 1. Временно отключаем плавность анимации
+                intro.style.transition = 'none';
+                cvs.style.transition = 'none';
+                
+                // 2. Убираем класс (элементы мгновенно станут видимыми)
                 document.body.classList.remove('transitioning');
                 
-                // Если мы уходили, анимация останавливалась. Перезапускаем её!
+                // 3. Форсируем перерисовку кадра браузером (хитрость)
+                void intro.offsetWidth;
+                
+                // 4. Возвращаем плавность обратно (для будущих кликов)
+                intro.style.transition = '';
+                cvs.style.transition = '';
+                
+                // Перезапускаем фон
                 if (isEntering) {
                     isEntering = false;
-                    drawGrid(); // Снова заводим мотор канваса
+                    drawGrid();
                 }
                 
-                // Сбрасываем все прошлые нажатия, чтобы на экране не зависло старое пятно
-                mouseX = -1000; 
-                mouseY = -1000;
-                activePointers = [];
+                // Сбрасываем координаты
+                mouseX = -1000; mouseY = -1000; activePointers = [];
                 
-                // Убираем залипание с кнопок языков
+                // Убираем залипание с кнопок
                 document.querySelectorAll('.gate-btn').forEach(btn => {
                     btn.classList.remove('entering');
                 });
