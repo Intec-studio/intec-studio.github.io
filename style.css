@@ -111,7 +111,7 @@ a { text-decoration: none; color: inherit; }
 /* Фоны героев */
 .hero-bg-rl { background-image: linear-gradient(135deg, #ffb300 0%, #ff5e00 12.5%, #cc3a00 25%, #ff5e00 37.5%, #ffb300 50%, #ff5e00 62.5%, #cc3a00 75%, #ff5e00 87.5%, #ffb300 100%); }
 .hero-bg-ff { background-image: linear-gradient(135deg, #00e5ff 0%, #0066ff 12.5%, #0022cc 25%, #0066ff 37.5%, #00e5ff 50%, #0066ff 62.5%, #0022cc 75%, #0066ff 87.5%, #00e5ff 100%); }
-.hero-bg-rltv { background-image: linear-gradient(135deg, #FF0055 0%, #D4008B 12.5%, #9900CC 25%, #D4008B 37.5%, #FF0055 50%, #D4008B 62.5%, #9900CC 75%, #D4008B 87.5%, #FF0055 100%); }
+.hero-bg-rltv { background-image: linear-gradient(135deg, #FF007F 0%, #C800C8 12.5%, #8A00FF 25%, #C800C8 37.5%, #FF007F 50%, #C800C8 62.5%, #8A00FF 75%, #C800C8 87.5%, #FF007F 100%); }
 
 @keyframes gradientFlow { 0% { background-position: 0vw 0vw; } 100% { background-position: -75vw -75vw; } }
 .hero-banner::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); z-index: 1; }
