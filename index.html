@@ -76,8 +76,10 @@
         /* ============================================================
            УГЛОВОЙ БЛОК НАСТРОЕК
         ============================================================ */
-        .corner-settings { position: absolute; top: 18px; left: 18px; z-index: 10; }
-        .toggle-block { display: flex; gap: 3px; }
+        .corner-settings { 
+            position: absolute; top: 18px; left: 18px; z-index: 10; 
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); /* <--- ДОБАВИТЬ ЭТУ СТРОКУ */
+        }
 
         .toggle-btn {
             width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent;
@@ -154,6 +156,7 @@
         /* Состояние перехода (при клике) */
         body.transitioning .intro-container { transform: scale(1.1); opacity: 0; }
         body.transitioning #intro-canvas { opacity: 0; transform: scale(1.05); transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1); }
+        body.transitioning .corner-settings { transform: scale(0.9) translateY(-5px); opacity: 0; } /* <--- ДОБАВИТЬ ЭТУ СТРОКУ */
 
         /* Мобильный адаптив */
         @media (max-width: 900px) {
@@ -184,20 +187,27 @@
             if (event.persisted) {
                 const intro = document.querySelector('.intro-container');
                 const cvs = document.getElementById('intro-canvas');
+                const corner = document.querySelector('.corner-settings');
+                const gateBtns = document.querySelectorAll('.gate-btn');
                 
-                // 1. Временно отключаем плавность анимации
+                // 1. Временно отключаем плавность анимации ВСЕМ элементам
                 intro.style.transition = 'none';
                 cvs.style.transition = 'none';
+                if (corner) corner.style.transition = 'none';
+                gateBtns.forEach(btn => btn.style.transition = 'none');
                 
-                // 2. Убираем класс (элементы мгновенно станут видимыми)
+                // 2. Снимаем все классы (всё мгновенно станет видимым и серым)
                 document.body.classList.remove('transitioning');
+                gateBtns.forEach(btn => btn.classList.remove('entering'));
                 
-                // 3. Форсируем перерисовку кадра браузером (хитрость)
-                void intro.offsetWidth;
+                // 3. Форсируем перерисовку кадра браузером
+                void document.body.offsetWidth;
                 
-                // 4. Возвращаем плавность обратно (для будущих кликов)
+                // 4. Возвращаем плавность обратно
                 intro.style.transition = '';
                 cvs.style.transition = '';
+                if (corner) corner.style.transition = '';
+                gateBtns.forEach(btn => btn.style.transition = '');
                 
                 // Перезапускаем фон
                 if (isEntering) {
@@ -205,13 +215,8 @@
                     drawGrid();
                 }
                 
-                // Сбрасываем координаты
+                // Сбрасываем координаты касаний
                 mouseX = -1000; mouseY = -1000; activePointers = [];
-                
-                // Убираем залипание с кнопок
-                document.querySelectorAll('.gate-btn').forEach(btn => {
-                    btn.classList.remove('entering');
-                });
             }
         });
     </script>
