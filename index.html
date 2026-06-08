@@ -78,8 +78,10 @@
         ============================================================ */
         .corner-settings { 
             position: absolute; top: 18px; left: 18px; z-index: 10; 
-            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); /* <--- ДОБАВИТЬ ЭТУ СТРОКУ */
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
         }
+        
+        .toggle-block { display: flex; gap: 3px; } /* <--- ВОТ ЭТА СТРОЧКА ВЕРНУЛАСЬ */
 
         .toggle-btn {
             width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent;
