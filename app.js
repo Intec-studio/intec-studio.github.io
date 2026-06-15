@@ -430,11 +430,10 @@ function initPatchnotesUI() {
 //  ЛОГИКА ТЕЛЕВИЗОРА
 // ============================================================
 const appRLTV = {
-    // МАССИВ ССЫЛОК НА ВИДЕО.
-    // Если пусто [], сайт покажет заглушку "ОЖИДАНИЕ СИГНАЛА".
-    // Пример заполнения: 
-    // playlist: ["https://ссылка_на_видео_1.mp4", "https://ссылка_на_видео_2.mp4"],
-    playlist: [],
+    // МАССИВ ССЫЛОК НА ВИДЕО. (Не забывайте кавычки "" для ссылок!)
+    playlist: [
+        // "https://ссылка_на_ваше_видео.mp4"
+    ],
     
     currentIndex: 0,
     isPaused: false,
@@ -464,19 +463,15 @@ const appRLTV = {
         
         this.video.addEventListener('ended', () => this.changeChannel('next'));
 
-        // Автоматически показываем "BUFFERING..." при загрузке или лагах
         this.video.addEventListener('waiting', () => { if (this.tvLoading) this.tvLoading.style.display = 'block'; });
         this.video.addEventListener('playing', () => { if (this.tvLoading) this.tvLoading.style.display = 'none'; });
         this.video.addEventListener('canplay', () => { if (this.tvLoading) this.tvLoading.style.display = 'none'; });
 
-        // ЛОГИКА ОТОБРАЖЕНИЯ: Заглушка или Видео
         if (this.playlist.length === 0) {
-            // Если массив пуст - показываем ТВ-полосы и скрываем видео
             if (this.tvBars) this.tvBars.style.display = '';
             if (this.tvTextBox) this.tvTextBox.style.display = '';
             if (this.video) this.video.style.display = 'none';
         } else {
-            // Если есть видео - скрываем ТВ-полосы и запускаем плеер
             if (this.tvBars) this.tvBars.style.display = 'none';
             if (this.tvTextBox) this.tvTextBox.style.display = 'none';
             if (this.video) this.video.style.display = 'block';
@@ -485,7 +480,6 @@ const appRLTV = {
     },
 
     syncVol(source) {
-        // 1. Синхронизация значений между полем ввода и ползунком
         if (source === 'input') {
             const val = this.volInput.value.replace(/\D/g, '');
             this.volInput.value = val === '' ? '0' : Math.min(parseInt(val, 10), 100).toString();
@@ -494,15 +488,14 @@ const appRLTV = {
             this.volInput.value = this.volSlider.value;
         }
         
-        // 2. Применяем громкость к видео (от 0.0 до 1.0)
         if (this.video) {
             this.video.volume = this.volSlider.value / 100;
         }
 
-        // 3. Закрашиваем левую часть канавки слайдера цветом #8C8C8C (var(--c-sub))
+        // Закрашиваем канавку слайдера фирменным цветом
         const percent = this.volSlider.value;
         this.volSlider.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
-    }
+    }, // <--- ИМЕННО ЭТУ ЗАПЯТУЮ Я ЗАБЫЛ ВАМ НАПИСАТЬ! ИЗВИНИТЕ :)
 
     updateClock() {
         if (this.playlist.length > 0) return;
@@ -519,20 +512,20 @@ const appRLTV = {
 
     loadVideo() {
         if(this.playlist.length === 0) return;
-        if (this.tvLoading) this.tvLoading.style.display = 'block'; // Показываем загрузку при переключении
+        if (this.tvLoading) this.tvLoading.style.display = 'block';
         this.video.src = this.playlist[this.currentIndex];
         if (!this.isPaused) this.video.play().catch(()=>{});
     },
 
     changeChannel(dir) {
-        if(this.playlist.length === 0) return; // Блокируем кнопки, если нет видео
+        if(this.playlist.length === 0) return;
         playStaticNoiseSound();
         this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
         this.loadVideo();
     },
 
     togglePause() {
-        if(this.playlist.length === 0) return; // Блокируем паузу, если нет видео
+        if(this.playlist.length === 0) return;
         this.isPaused = !this.isPaused;
         if (this.isPaused) this.video.pause();
         else this.video.play();
