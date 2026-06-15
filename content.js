@@ -1,3 +1,96 @@
+// ============================================================
+// БАЗА ДАННЫХ ПОСТОВ (Сюда вставляй новые объекты из программы)
+// ============================================================
+const POSTS_DATABASE = [
+    {
+        id: "csclsclzscl",
+        timestamp: 1781524800000,
+        date: "15.06.2026",
+        tags: ["#Intec", "#Новости", "#News"],
+        title: {
+            en: "csclsclzscl",
+            ru: "csclsclzscl"
+        },
+        textRaw: {
+            en: "",
+            ru: "вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлзщфывлзщфывлзщфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ"
+        },
+        html: {
+            en: `<div data-lang="en" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
+    <!-- MODULE: BANNER -->
+        <div class="hero-card">
+            <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 200% 200%; animation: gradientFlow 18s linear infinite;">
+                <!-- Если есть кастомный HTML код анимации, он вставляется здесь -->
+                
+                <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px);">csclsclzscl</h1>
+            </div>
+            <div class="hero-footer">
+                <div class="tags-group">
+                    <!-- Теги генерируются здесь -->
+                    <div class="tag">#Intec</div>
+                    <div class="tag">#News</div>
+                </div>
+                <!-- ВАЖНО: Класс для даты строго tag-status, а не tag! -->
+                <div class="tag-status">15.06.2026</div>
+            </div>
+        </div>
+        <!-- MODULE: CONTENT BLOCK -->
+        <div class="pn-card">
+            <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
+                <div style="height: 12px;"></div>
+            </div>
+        </div>
+
+        <!-- MODULE: CONTENT BLOCK -->
+        <div class="pn-card">
+            <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
+                <div style="height: 12px;"></div>
+            </div>
+        </div>
+
+</div>`,
+            ru: `<div data-lang="ru" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
+    <!-- MODULE: BANNER -->
+        <div class="hero-card">
+            <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 200% 200%; animation: gradientFlow 18s linear infinite;">
+                <!-- Если есть кастомный HTML код анимации, он вставляется здесь -->
+                
+                <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px);">csclsclzscl</h1>
+            </div>
+            <div class="hero-footer">
+                <div class="tags-group">
+                    <!-- Теги генерируются здесь -->
+                    <div class="tag">#Intec</div>
+                    <div class="tag">#Новости</div>
+                </div>
+                <!-- ВАЖНО: Класс для даты строго tag-status, а не tag! -->
+                <div class="tag-status">15.06.2026</div>
+            </div>
+        </div>
+        <!-- MODULE: CONTENT BLOCK -->
+        <div class="pn-card">
+            <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
+                <div style="margin-bottom: 6px; color: var(--c-sub);">вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлзщфывлзщфывлзщфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ</div>
+            </div>
+        </div>
+
+        <!-- MODULE: CONTENT BLOCK -->
+        <div class="pn-card">
+            <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
+                <div style="margin-bottom: 6px; color: var(--c-sub);">вцфвфцвцфвцфвцфвцфвфцвцвфцвцфовшщцфовшщвошщфывоышфщвоыфшщвоыфшщвоыфшщвыфошщвыфошщвыфошщвыошщвошфыщвошщыфвошщыфвоышщфвофышщвофшщывофышщвошфыщвошфыщвошфыщвошщфывошфыщвошщфывофыщшвофыщшвофышщвофышщвофышщвоышщвоыфшщвофышщвофышщвофышщвошфщывошщфывофшщывофшщыовшщфыовшщфыовшщфыовшщфыовшщфывошщфыовфшы</div>
+                <div style="height: 12px;"></div>
+                <div style="margin-bottom: 6px; color: var(--c-sub);"><img src="https://raw.githubusercontent.com/Intec-studio/Media-storage/main/csclsclzscl/media/i%3E.png" alt="i>.png" style="width:100%; border-radius:9px; margin: 18px 0; border: 3px solid var(--c-border); display: block;"></div>
+            </div>
+        </div>
+
+</div>`
+        }
+    }
+];
+
+// ============================================================
+// КОНТЕНТ СТРАНИЦ
+// ============================================================
 const PAGE_CONTENT = {
     // ==========================================
     // RACE LEGENDS
@@ -112,7 +205,7 @@ const PAGE_CONTENT = {
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Generation Instead of Routine</h2>
-                    <p>Fractal Forge takes over the most tedious part of modeling. Instead of manually placing every single leaf, you generate ready-made vegetation via <span class="highlight">Geometry Nodes</span>. The addon instantly creates meshes fully ready for export to a game engine: with correct UV unwrapping, baked Vertex Color, and necessary attributes for masks. And if you need a dense canopy in <span class="highlight">Studio Ghibli</span> style, the base geometry turns into a proper stylized volume in a couple of clicks.</p>
+                    <p>Fractal Forge takes over the most tedious part of modeling. Instead of manually placing every single leaf, you generate ready-made vegetation via <span class="highlight">Geometry Nodes</span>. The addon instantly creates meshes fully ready for export to a game engine: with correct UV unwrapping, baked Vertex Color, and necessary attributes for masks. And if you need a dense canopy in <span class="highlight">Studio Ghibsli</span> style, the base geometry turns into a proper stylized volume in a couple of clicks.</p>
                 </div>
                 <div data-lang="ru">
                     <h2>Генерация вместо рутины</h2>
@@ -269,52 +362,34 @@ const PAGE_CONTENT = {
         </div>
     `,
 
-    // ==========================================
-    // PATCHNOTES
-    // ==========================================
+    // Новая динамическая оболочка для Постов
     'patchnotes': `
-        <div class="pn-wrapper">
-            <div class="search-block">
-                <form class="pn-input-wrap" id="searchForm" action="javascript:void(0);">
-                    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="searchInput" class="pn-input" placeholder="Search" enterkeyhint="search">
-                </form>
-                <div class="pn-select-wrap">
-                    <select id="filterSelect" class="pn-select">
-                        <option value="all">All categories / Все</option>
-                        <option value="rl">Race Legends</option>
-                        <option value="ff">Fractal Forge</option>
-                        <option value="dev">Devlog / Дневники</option>
-                        <option value="chrono">Chronograph / Хронограф</option>
-                    </select>
-                </div>
+        <div class="search-block" id="postsSearchBlock">
+            <div class="pn-input-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" class="pn-input" id="searchInput" placeholder="Поиск" autocomplete="off">
+            </div>
+            <div class="pn-select-wrap">
+                <select class="pn-select" id="filterSelect">
+                    <option value="newest">Newest / Сначала новые</option>
+                    <option value="oldest">Oldest / Сначала старые</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- КОНТЕЙНЕР ДЛЯ СПИСКА ПРЕВЬЮ-КАРТОЧЕК -->
+        <div id="postsList" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
+
+        <!-- КОНТЕЙНЕР ДЛЯ ОТКРЫТОЙ СТАТЬИ -->
+        <div id="singlePostView" style="display: none; flex-direction: column; gap: 18px; width: 100%;">
+            <div class="intec-icon-btn" id="backToPostsBtn" style="width: auto !important; padding: 0 18px !important; align-self: flex-start; gap: 9px; margin-bottom: 9px;">
+                <svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span data-lang="en" style="font-size: 13px; font-weight: 900; text-transform: uppercase;">Back to posts</span>
+                <span data-lang="ru" style="font-size: 13px; font-weight: 900; text-transform: uppercase;">К списку постов</span>
             </div>
             
-            <div id="patchnotesContainer" class="pn-wrapper">
-                <div class="pn-card" style="cursor: default;">
-                    <div class="pn-card-title" data-lang="en">Work in Progress</div>
-                    <div class="pn-card-title" data-lang="ru">В разработке</div>
-                    <div class="pn-card-desc">
-                        <!-- EN VERSION -->
-                        <div data-lang="en">
-                            The patchnotes section is still under development. Until I finish it, you can read all the update logs on my page at the <a href='https://clovi.ru/posts' target='_blank'>clovi.ru/posts</a> platform (just search for "Race Legends").<br><br>
-                            <span class="highlight">A quick note on donations:</span><br>
-                            If you want to support the game's development financially — I am deeply grateful for your intention. However, I don't need monetary support right now. What I desperately need is more free time, and sadly, that cannot be gifted.<br><br>
-                            But if you really want to do a good deed, please support the creator of the <span class="highlight">Clovi</span> platform (Kel Caffeine). This independent service is currently going through tough times: they simply don't have enough funds to pay for their hosting servers. Your contribution will save their project from shutting down and keep a great place for my patchnotes alive.<br><br>
-                            You can support Clovi here: <a href='https://dalink.to/kel_cu' target='_blank'>Tips</a>, <a href='https://boosty.to/simply_kel' target='_blank'>Boosty</a>, or directly via Telegram <a href='https://t.me/Kel_Caffeine' target='_blank'>@Kel_Caffeine</a>.
-                        </div>
-                        
-                        <!-- RU VERSION -->
-                        <div data-lang="ru">
-                            Раздел патчноутов всё ещё находится в разработке. Пока я не закончу, вы можете читать все списки изменений в моем профиле на платформе <a href='https://clovi.ru/posts' target='_blank'>clovi.ru/posts</a> (просто введите в поиске «Race Legends»).<br><br>
-                            <span class="highlight">Пару слов о поддержке:</span><br>
-                            Если вы хотите поддержать разработку игры финансово — я безмерно вам благодарен. Однако на данный момент в финансовой поддержке нет необходимости. Сейчас мне катастрофически не хватает свободного времени, а его, увы, не подаришь.<br><br>
-                            Но если вам очень хочется сделать доброе дело, пожалуйста, поддержите создателя платформы <span class="highlight">Clovi</span> (Кел Кофеин). Сейчас этот независимый сервис переживает тяжелые времена: ребятам банально не хватает средств на оплату серверов хостинга. Ваша помощь спасет их проект от закрытия, а мне сохранит удобную площадку для публикации патчноутов.<br><br>
-                            Поддержать проект Clovi можно тут: <a href='https://dalink.to/kel_cu' target='_blank'>Чаевые</a>, <a href='https://boosty.to/simply_kel' target='_blank'>Boosty</a> или напрямую в Telegram <a href='https://t.me/Kel_Caffeine' target='_blank'>@Kel_Caffeine</a>.
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- СЮДА JS БУДЕТ ВБРАСЫВАТЬ ПОЛНЫЙ КОД СТАТЬИ -->
+            <div id="singlePostContent" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
         </div>
     `
 };

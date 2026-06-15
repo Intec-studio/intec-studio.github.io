@@ -266,29 +266,113 @@ function drawConsoles() {
 //  СПЕЦИФИЧНАЯ ЛОГИКА СТРАНИЦ
 // ============================================================
 
-// --- ПАТЧНОУТЫ ---
+// --- ЛОГИКА БЛОГА (ПОСТЫ) ---
 function initPatchnotesUI() {
     const searchInput = document.getElementById('searchInput');
-    const searchForm = document.getElementById('searchForm');
+    const searchBlock = document.getElementById('postsSearchBlock');
     const filterSelect = document.getElementById('filterSelect');
+    const postsList = document.getElementById('postsList');
+    const singlePostView = document.getElementById('singlePostView');
+    const singlePostContent = document.getElementById('singlePostContent');
+    const backToPostsBtn = document.getElementById('backToPostsBtn');
     
     if(!searchInput) return;
 
-    // ИСПРАВЛЕНИЕ: Обновляем placeholder сразу после генерации HTML
-    searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
+    // Обновляем placeholder языка
+    searchInput.placeholder = currentLang === 'en' ? "Search..." : "Поиск...";
 
-    function updateInputStates() {
-        if (searchInput.value.trim().length > 0) searchForm.classList.add('active-state');
-        else searchForm.classList.remove('active-state');
-        const selectWrap = document.querySelector('.pn-select-wrap');
-        if (filterSelect.value !== 'all') selectWrap.classList.add('active-state');
-        else selectWrap.classList.remove('active-state');
+    // Функция отрисовки списка превью-карточек
+    function renderPostsList() {
+        postsList.innerHTML = '';
+        const query = searchInput.value.toLowerCase().trim();
+        const sortOrder = filterSelect.value;
+
+        // Фильтрация
+        let filtered = POSTS_DATABASE.filter(post => {
+            if (!query) return true;
+            const searchStr = `
+                ${post.title.en.toLowerCase()} ${post.title.ru.toLowerCase()} 
+                ${post.textRaw.en.toLowerCase()} ${post.textRaw.ru.toLowerCase()} 
+                ${post.tags.join(' ').toLowerCase()} ${post.date}
+            `;
+            return searchStr.includes(query);
+        });
+
+        // Сортировка по дате
+        filtered.sort((a, b) => {
+            return sortOrder === 'newest' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp;
+        });
+
+        if (filtered.length === 0) {
+            postsList.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px;">Ничего не найдено / Nothing found</div>`;
+            return;
+        }
+
+        // Рендер карточек
+        filtered.forEach(post => {
+            const card = document.createElement('div');
+            card.className = 'pn-card';
+            // Делаем карточку кликабельной и добавляем ховер-эффект
+            card.style.cssText = 'cursor: pointer; transition: border-color 0.1s ease;';
+            card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
+            card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
+            
+            // Собираем HTML превью-карточки
+            const tagsHtml = post.tags.map(t => `<div class="tag" style="height: 24px; font-size: 12px; padding: 0 6px; border-radius: 6px;">${t}</div>`).join('');
+            
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 18px;">
+                    <div>
+                        <div class="pn-card-title" data-lang="en" style="font-size: 24px; margin-bottom: 9px;">${post.title.en}</div>
+                        <div class="pn-card-title" data-lang="ru" style="font-size: 24px; margin-bottom: 9px;">${post.title.ru}</div>
+                        <div class="tags-group" style="margin-bottom: 12px;">${tagsHtml}</div>
+                    </div>
+                    <div class="tag-status" style="flex-shrink: 0; font-size: 13px;">${post.date}</div>
+                </div>
+                <div class="pn-card-desc" data-lang="en" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.en || '...'}</div>
+                <div class="pn-card-desc" data-lang="ru" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.ru || '...'}</div>
+            `;
+            
+            // Событие клика по карточке -> Открываем статью
+            card.addEventListener('click', () => {
+                openPost(post);
+            });
+            
+            postsList.appendChild(card);
+        });
     }
 
-    filterSelect.addEventListener('change', () => { filterSelect.blur(); updateInputStates(); });
-    searchInput.addEventListener('input', updateInputStates);
-    searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') searchInput.blur(); });
-    searchForm.addEventListener('submit', (e) => { e.preventDefault(); searchInput.blur(); });
+    // Функция открытия полной статьи
+    function openPost(post) {
+        searchBlock.style.display = 'none'; // Прячем поиск
+        postsList.style.display = 'none';   // Прячем список
+        singlePostView.style.display = 'flex'; // Показываем блок статьи
+        
+        // Вставляем сразу оба языка, CSS сам скроет ненужный через data-lang
+        singlePostContent.innerHTML = `
+            ${post.html.en}
+            ${post.html.ru}
+        `;
+        
+        // Сбрасываем скролл наверх
+        setPanelOffset(0); 
+    }
+
+    // Функция возврата к списку
+    backToPostsBtn.addEventListener('click', () => {
+        singlePostView.style.display = 'none';
+        searchBlock.style.display = 'flex';
+        postsList.style.display = 'flex';
+        singlePostContent.innerHTML = ''; // Очищаем память
+        setPanelOffset(0);
+    });
+
+    // Обработчики событий (Поиск и Фильтр)
+    searchInput.addEventListener('input', renderPostsList);
+    filterSelect.addEventListener('change', renderPostsList);
+
+    // Первичная отрисовка списка
+    renderPostsList();
 }
 
 // --- RACE LEGENDS TV ---
