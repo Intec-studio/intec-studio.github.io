@@ -353,7 +353,7 @@ const PAGE_CONTENT = {
                 <input type="text" class="pn-input" id="searchInput" placeholder="Поиск" autocomplete="off">
             </div>
             <!-- ФИЛЬТР ПО ПРОЕКТАМ -->
-            <div class="pn-select-wrap" style="width: 220px;">
+            <div class="pn-select-wrap cat-box">
                 <select class="pn-select" id="categorySelect">
                     <option value="all">All / Все проекты</option>
                     <option value="#RaceLegends">Race Legends</option>
@@ -362,7 +362,7 @@ const PAGE_CONTENT = {
                 </select>
             </div>
             <!-- ФИЛЬТР ПО ДАТЕ -->
-            <div class="pn-select-wrap" style="width: 190px;">
+            <div class="pn-select-wrap sort-box">
                 <select class="pn-select" id="sortSelect">
                     <option value="newest">Newest / Новые</option>
                     <option value="oldest">Oldest / Старые</option>
