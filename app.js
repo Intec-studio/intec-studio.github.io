@@ -459,7 +459,7 @@ function initPatchnotesUI() {
             const htmlData = await response.json();
             
             // Вставляем скачанный HTML
-            singlePostContent.innerHTML = (currentLang === 'en' ? htmlData.en : htmlData.ru);
+            singlePostContent.innerHTML = htmlData.en + htmlData.ru;
         } catch (error) {
             singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px; color: var(--c-sub);">Error loading content / Ошибка загрузки контента</div>`;
         }
