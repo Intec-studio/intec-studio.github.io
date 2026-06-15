@@ -1,10 +1,10 @@
 // ============================================================
-//  ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И DOM-ЭЛЕМЕНТЫ (ВЕРХНИЙ УРОВЕНЬ)
+//  ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И DOM-ЭЛЕМЕНТЫ
 // ============================================================
 const rootTheme = document.documentElement;
 let currentCanvasColor = '231, 231, 231';
 let currentLang = localStorage.getItem('rl-lang') || 'en';
-let currentHash = ''; // Теперь объявлено до любого использования!
+let currentHash = '';
 
 const dynamicContent = document.getElementById('dynamicContent');
 const bcPageNameEn = document.getElementById('bcPageNameEn');
@@ -15,7 +15,7 @@ const langBtns = document.querySelectorAll('.lang-group .toggle-btn');
 const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
 
 // ============================================================
-//  СИСТЕМА ЗВУКОВ (ТОЛЬКО БЕЛЫЙ ШУМ ДЛЯ ТЕЛЕВИЗОРА)
+//  СИСТЕМА ЗВУКОВ (БЕЛЫЙ ШУМ ДЛЯ ТЕЛЕВИЗОРА)
 // ============================================================
 let sharedAudioCtx = null;
 let audioUnlocked = false;
@@ -98,62 +98,48 @@ themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getA
 langBtns.forEach(btn => btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang-val'))));
 sysMedia.addEventListener('change', () => { if ((localStorage.getItem('rl-theme') || 'system') === 'system') applyTheme('system'); });
 
-// Инициализация при старте скрипта
 applyTheme(localStorage.getItem('rl-theme') || 'system');
 applyLang(currentLang);
 
 // ============================================================
-//  РОУТЕР (SPA) И РЕНДЕР КАРТОЧЕК
+//  РОУТЕР (SPA)
 // ============================================================
 function loadPage(hash) {
-    // 1. Очистка старой страницы
     if (currentHash === 'rltv' && typeof appRLTV !== 'undefined' && appRLTV.video) {
         appRLTV.video.pause();
     }
 
-    // 2. Защита, если хэш кривой
-    if (!PAGE_CONTENT[hash]) hash = 'rl'; 
+    if (typeof PAGE_CONTENT === 'undefined' || !PAGE_CONTENT[hash]) hash = 'rl'; 
     
-    // --- ДОБАВКА ДЛЯ ИДЕАЛЬНЫХ СВАЙПОВ ---
-    // Если хэша не было в адресной строке, принудительно его дописываем,
-    // чтобы история браузера не путалась при свайпе "Назад"
     if (window.location.hash !== `#${hash}`) {
         window.history.replaceState(null, '', `#${hash}`);
     }
-    // -------------------------------------
 
     currentHash = hash;
     
-    // 3. Вставляем HTML из базы content.js
     if (dynamicContent) {
         dynamicContent.innerHTML = PAGE_CONTENT[hash];
     }
     
     updateBreadcrumbsTitle();
     
-    // 4. Подсвечиваем нужное меню
     document.querySelectorAll('.sidebar a.nav-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-target') === hash);
     });
 
-    // 5. Обнуляем скролл
     panelOffset = 0;
     setPanelOffset(0);
 
-    // 6. Запускаем специфичную логику страницы (Телевизор или Патчноуты)
     if (hash === 'rltv' && typeof appRLTV !== 'undefined') appRLTV.init();
     if (hash === 'patchnotes') initPatchnotesUI();
     
-    // 7. Перезапускаем анимации канвасов
     initCanvases();
 }
 
-// Слушаем изменения хэша в адресной строке
 window.addEventListener('hashchange', () => {
     loadPage(window.location.hash.replace('#', ''));
 });
 
-// Первичная загрузка страницы
 document.addEventListener('DOMContentLoaded', () => {
     let initialHash = window.location.hash.replace('#', '') || 'rl';
     loadPage(initialHash);
@@ -201,13 +187,8 @@ vThumb.addEventListener('pointerdown', e => { activeDrag = true; startY = e.page
 vThumb.addEventListener('pointermove', e => { if (activeDrag) { e.preventDefault(); const trackSpace = vTrack.clientHeight - vThumb.offsetHeight; if (trackSpace > 0) setPanelOffset(startPanelOffset + ((e.pageY - startY) / trackSpace) * getPanelMaxOffset()); } });
 vThumb.addEventListener('pointerup', e => { activeDrag = false; try { vThumb.releasePointerCapture(e.pointerId); } catch(err) {} });
 
-let touchStartY = 0, touchStartOffset = 0, touchVelocity = 0, lastTouchY = 0, lastTouchTime = 0, inertiaFrame;
-mainClip.addEventListener('touchstart', (e) => { if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return; if(e.touches.length > 1) return; cancelAnimationFrame(inertiaFrame); touchStartY = e.touches[0].clientY; lastTouchY = touchStartY; lastTouchTime = Date.now(); touchStartOffset = panelOffset; }, { passive: false }); 
-mainClip.addEventListener('touchmove', (e) => { if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return; if(e.touches.length > 1) return; e.preventDefault(); const touchY = e.touches[0].clientY; const now = Date.now(); touchVelocity = (touchY - lastTouchY) / (now - lastTouchTime || 1); lastTouchY = touchY; lastTouchTime = now; setPanelOffset(touchStartOffset + (touchStartY - touchY)); }, { passive: false });
-mainClip.addEventListener('touchend', (e) => { if(e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return; let v = touchVelocity * 15; const step = () => { if (Math.abs(v) < 0.5) return; let prevOffset = panelOffset; setPanelOffset(panelOffset - v); if (panelOffset === prevOffset) { v = 0; return; } v *= 0.92; inertiaFrame = requestAnimationFrame(step); }; step(); });
-
 // ============================================================
-//  АНИМАЦИИ КАНВАСОВ (УНИВЕРСАЛЬНЫЕ)
+//  АНИМАЦИИ КАНВАСОВ
 // ============================================================
 let time = 0;
 let consData = [];
@@ -263,9 +244,8 @@ function drawConsoles() {
 }
 
 // ============================================================
-//  СПЕЦИФИЧНАЯ ЛОГИКА СТРАНИЦ
+//  ЛОГИКА РАЗДЕЛА СТАТЕЙ
 // ============================================================
-
 function initPatchnotesUI() {
     const searchInput = document.getElementById('searchInput');
     const searchBlock = document.getElementById('postsSearchBlock');
@@ -281,12 +261,13 @@ function initPatchnotesUI() {
     searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
 
     function renderPostsList() {
+        if (!postsList) return;
         postsList.innerHTML = '';
         const query = searchInput.value.toLowerCase().trim();
         const category = categorySelect.value;
         const sortOrder = sortSelect.value;
 
-        let filtered = POSTS_DATABASE.filter(post => {
+        let filtered = (typeof POSTS_DATABASE !== 'undefined' ? POSTS_DATABASE : []).filter(post => {
             const matchesSearch = !query || `
                 ${post.title.en.toLowerCase()} ${post.title.ru.toLowerCase()} 
                 ${post.textRaw.en.toLowerCase()} ${post.textRaw.ru.toLowerCase()} 
@@ -326,23 +307,19 @@ function initPatchnotesUI() {
                 postsList.appendChild(card);
             });
         }
-        // --- ЛОГИКА ПОДСВЕТКИ (УНИВЕРСАЛЬНАЯ) ---
-        
-        // 1. Поиск: белый, если в поле есть текст
+
+        // --- ЛОГИКА ПОДСВЕТКИ ---
         const searchWrap = searchInput.closest('.pn-input-wrap');
         if (query.length > 0) searchWrap.classList.add('active-state');
         else searchWrap.classList.remove('active-state');
 
-        // 2. Категории: белый, если выбрано что-то кроме "All"
         const catWrap = categorySelect.closest('.pn-select-wrap');
         if (categorySelect.value !== 'all') catWrap.classList.add('active-state');
         else catWrap.classList.remove('active-state');
 
-        // 3. Сортировка: белый, если выбрано что-то кроме "Newest"
-        const sortWrap = sortSelect.closest('.pn-select-wrap');
-        if (sortSelect.value !== 'newest') sortWrap.classList.add('active-state');
-        else sortWrap.classList.remove('active-state');
-    }
+        const sWrap = sortSelect.closest('.pn-select-wrap');
+        if (sortSelect.value !== 'newest') sWrap.classList.add('active-state');
+        else sWrap.classList.remove('active-state');
     }
 
     function openPost(post) {
@@ -355,7 +332,6 @@ function initPatchnotesUI() {
         setPanelOffset(0); 
     }
 
-    // ДОПИСЫВАЕМ ОБОРВАННЫЙ КЛИК
     if (backToPostsBtn) {
         backToPostsBtn.addEventListener('click', () => {
             singlePostView.style.display = 'none';
@@ -371,10 +347,12 @@ function initPatchnotesUI() {
     categorySelect.addEventListener('change', renderPostsList);
     sortSelect.addEventListener('change', renderPostsList);
 
-    renderPostsList(); // Первый запуск
+    renderPostsList();
 }
 
-// --- RACE LEGENDS TV ---
+// ============================================================
+//  ЛОГИКА ТЕЛЕВИЗОРА
+// ============================================================
 const appRLTV = {
     playlist: [],
     currentIndex: 0,
@@ -389,8 +367,6 @@ const appRLTV = {
         this.clock = document.getElementById('localTimeClock');
         
         this.volInput.addEventListener('input', () => this.syncVol('input'));
-        this.volInput.addEventListener('focus', () => this.volInput.select());
-        this.volInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.volInput.blur(); });
         this.volSlider.addEventListener('input', () => this.syncVol('slider'));
         this.syncVol('slider');
 
@@ -399,17 +375,10 @@ const appRLTV = {
         this.updateClock();
 
         this.video.addEventListener('timeupdate', () => { if(this.playlist.length > 0) this.clock.textContent = `${this.fmt(this.video.currentTime)} / ${this.fmt(this.video.duration)}`; });
-        this.video.addEventListener('loadedmetadata', () => { if(this.playlist.length > 0) this.clock.textContent = `0:00 / ${this.fmt(this.video.duration)}`; });
         this.video.addEventListener('ended', () => this.changeChannel('next'));
 
-        if (this.playlist.length === 0) {
-            this.fetchPlaylist();
-        } else {
-            document.getElementById('tvBars').style.display = 'none';
-            document.getElementById('tvTextBox').style.display = 'none';
-            this.video.style.display = 'block';
-            this.loadVideo();
-        }
+        if (this.playlist.length === 0) this.fetchPlaylist();
+        else this.loadVideo();
     },
 
     syncVol(source) {
@@ -420,9 +389,7 @@ const appRLTV = {
         } else {
             this.volInput.value = this.volSlider.value;
         }
-        const v = this.volSlider.value;
-        this.volSlider.style.background = `linear-gradient(to right, var(--c-sub) 0%, var(--c-sub) ${v}%, var(--c-border) ${v}%, var(--c-border) 100%)`;
-        if (this.video) this.video.volume = v / 100;
+        if (this.video) this.video.volume = this.volSlider.value / 100;
     },
 
     updateClock() {
@@ -436,56 +403,32 @@ const appRLTV = {
     async fetchPlaylist() {
         try {
             const response = await fetch(`https://api.github.com/repos/ZAKFUN35/Intec/contents/videos`);
-            if (!response.ok) throw new Error();
             const files = await response.json();
             this.playlist = files.filter(f => f.name.endsWith('.mp4')).map(f => f.download_url);
-            
-            for (let i = this.playlist.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[this.playlist[i], this.playlist[j]] = [this.playlist[j], this.playlist[i]]; }
-            
             if(this.playlist.length > 0) {
                 document.getElementById('tvBars').style.display = 'none';
                 document.getElementById('tvTextBox').style.display = 'none';
                 this.video.style.display = 'block';
                 this.loadVideo();
             }
-        } catch (e) { console.warn('TV playlist error', e); }
+        } catch (e) {}
     },
 
     loadVideo() {
         if(this.playlist.length === 0) return;
         this.video.src = this.playlist[this.currentIndex];
-        this.video.volume = this.volSlider.value / 100;
         if (!this.isPaused) this.video.play().catch(()=>{});
     },
 
     changeChannel(dir) {
-        if(this.playlist.length === 0) return;
-        const screen = document.getElementById('tvScreen');
-        screen.classList.add('switching');
-        
-        playStaticNoiseSound(); // ДОБАВЛЕН БЕЛЫЙ ШУМ
-
-        this.video.pause();
-        setTimeout(() => {
-            this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
-            this.loadVideo();
-        }, 250);
-        setTimeout(() => screen.classList.remove('switching'), 500);
-        
-        if (this.isPaused) this.togglePause();
+        playStaticNoiseSound();
+        this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
+        this.loadVideo();
     },
 
     togglePause() {
         this.isPaused = !this.isPaused;
-        const btn = document.getElementById('btnPause');
-        if (this.isPaused) {
-            btn.innerHTML = `<svg viewBox="0 0 24 24"><polygon points="7 4 19 12 7 20 7 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
-            btn.classList.remove('active'); document.getElementById('osdPause').style.display = 'flex'; 
-            document.getElementById('tvScreen').classList.add('paused'); this.video.pause();
-        } else {
-            btn.innerHTML = `<svg viewBox="0 0 24 24"><rect x="7" y="5" width="3" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="14" y="5" width="3" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
-            btn.classList.add('active'); document.getElementById('osdPause').style.display = 'none'; 
-            document.getElementById('tvScreen').classList.remove('paused'); this.video.play().catch(()=>{});
-        }
+        if (this.isPaused) this.video.pause();
+        else this.video.play();
     }
 };
