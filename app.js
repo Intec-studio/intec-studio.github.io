@@ -266,7 +266,6 @@ function drawConsoles() {
 //  СПЕЦИФИЧНАЯ ЛОГИКА СТРАНИЦ
 // ============================================================
 
-// --- ЛОГИКА БЛОГА (ПОСТЫ) ---
 function initPatchnotesUI() {
     const searchInput = document.getElementById('searchInput');
     const searchBlock = document.getElementById('postsSearchBlock');
@@ -287,99 +286,84 @@ function initPatchnotesUI() {
         const category = categorySelect.value;
         const sortOrder = sortSelect.value;
 
-        // Фильтрация (Поиск + Категория)
         let filtered = POSTS_DATABASE.filter(post => {
             const matchesSearch = !query || `
                 ${post.title.en.toLowerCase()} ${post.title.ru.toLowerCase()} 
                 ${post.textRaw.en.toLowerCase()} ${post.textRaw.ru.toLowerCase()} 
                 ${post.tags.join(' ').toLowerCase()} ${post.date}
             `.includes(query);
-            
             const matchesCategory = category === 'all' || post.tags.includes(category);
-            
             return matchesSearch && matchesCategory;
         });
 
-        // Сортировка
         filtered.sort((a, b) => sortOrder === 'newest' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp);
 
         if (filtered.length === 0) {
             postsList.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px;">Ничего не найдено / Nothing found</div>`;
-            return;
-        }
-
-        filtered.forEach(post => {
-            const card = document.createElement('div');
-            card.className = 'pn-card';
-            card.style.cssText = 'cursor: pointer; transition: border-color 0.1s ease;';
-            card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
-            card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
-            
-            const tagsHtml = post.tags.map(t => `<div class="tag" style="height: 24px; font-size: 12px; padding: 0 6px; border-radius: 6px;">${t}</div>`).join('');
-            
-            card.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 18px;">
-                    <div>
-                        <div class="pn-card-title" data-lang="en" style="font-size: 24px; margin-bottom: 9px;">${post.title.en}</div>
-                        <div class="pn-card-title" data-lang="ru" style="font-size: 24px; margin-bottom: 9px;">${post.title.ru}</div>
-                        <div class="tags-group" style="margin-bottom: 12px;">${tagsHtml}</div>
+        } else {
+            filtered.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'pn-card';
+                card.style.cssText = 'cursor: pointer; transition: border-color 0.1s ease;';
+                card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
+                card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
+                
+                const tagsHtml = post.tags.map(t => `<div class="tag" style="height: 24px; font-size: 12px; padding: 0 6px; border-radius: 6px;">${t}</div>`).join('');
+                
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 18px;">
+                        <div>
+                            <div class="pn-card-title" data-lang="en" style="font-size: 24px; margin-bottom: 9px;">${post.title.en}</div>
+                            <div class="pn-card-title" data-lang="ru" style="font-size: 24px; margin-bottom: 9px;">${post.title.ru}</div>
+                            <div class="tags-group" style="margin-bottom: 12px;">${tagsHtml}</div>
+                        </div>
+                        <div class="tag-status" style="flex-shrink: 0; font-size: 13px;">${post.date}</div>
                     </div>
-                    <div class="tag-status" style="flex-shrink: 0; font-size: 13px;">${post.date}</div>
-                </div>
-                <div class="pn-card-desc" data-lang="en" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.en || '...'}</div>
-                <div class="pn-card-desc" data-lang="ru" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.ru || '...'}</div>
-            `;
-            card.addEventListener('click', () => openPost(post));
-            postsList.appendChild(card);
-        });
-        // --- ЛОГИКА ПОДСВЕТКИ КОМБОБОКСОВ (ACTIVE-STATE) ---
-        
-        // Для категорий (проектов): если НЕ All, то белый
-        const catWrap = categorySelect.closest('.pn-select-wrap');
-        if (categorySelect.value !== 'all') {
-            catWrap.classList.add('active-state');
-        } else {
-            catWrap.classList.remove('active-state');
+                    <div class="pn-card-desc" data-lang="en" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.en || '...'}</div>
+                    <div class="pn-card-desc" data-lang="ru" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.ru || '...'}</div>
+                `;
+                card.addEventListener('click', () => openPost(post));
+                postsList.appendChild(card);
+            });
         }
 
-        // Для сортировки: если НЕ Newest (новые), то белый
+        // --- ЛОГИКА ПОДСВЕТКИ ---
+        const catWrap = categorySelect.closest('.pn-select-wrap');
+        if (categorySelect.value !== 'all') catWrap.classList.add('active-state');
+        else catWrap.classList.remove('active-state');
+
         const sortWrap = sortSelect.closest('.pn-select-wrap');
-        if (sortSelect.value !== 'newest') {
-            sortWrap.classList.add('active-state');
-        } else {
-            sortWrap.classList.remove('active-state');
-        }
+        if (sortSelect.value !== 'newest') sortWrap.classList.add('active-state');
+        else sortWrap.classList.remove('active-state');
     }
 
     function openPost(post) {
         searchBlock.style.display = 'none';
         postsList.style.display = 'none';
         singlePostView.style.display = 'flex';
-        singlePostContent.innerHTML = `${post.html.en}${post.html.ru}`;
-        
-        // ОБНОВЛЯЕМ ХЛЕБНЫЕ КРОШКИ
-        if(bcPageNameEn) bcPageNameEn.innerHTML = `Posts <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.en}`;
-        if(bcPageNameRu) bcPageNameRu.innerHTML = `Посты <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.ru}`;
-        
+        singlePostContent.innerHTML = (currentLang === 'en' ? post.html.en : post.html.ru);
+        if(bcPageNameEn) bcPageNameEn.innerHTML = `Articles <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.en}`;
+        if(bcPageNameRu) bcPageNameRu.innerHTML = `Статьи <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.ru}`;
         setPanelOffset(0); 
     }
 
-    backToPostsBtn.addEventListener('click', () => {
-        singlePostView.style.display = 'none';
-        searchBlock.style.display = 'flex';
-        postsList.style.display = 'flex';
-        singlePostContent.innerHTML = ''; 
-        
-        // ВОЗВРАЩАЕМ ХЛЕБНЫЕ КРОШКИ ОБРАТНО
-        updateBreadcrumbsTitle();
-        setPanelOffset(0);
-    });
+    // ДОПИСЫВАЕМ ОБОРВАННЫЙ КЛИК
+    if (backToPostsBtn) {
+        backToPostsBtn.addEventListener('click', () => {
+            singlePostView.style.display = 'none';
+            searchBlock.style.display = 'flex';
+            postsList.style.display = 'flex';
+            singlePostContent.innerHTML = ''; 
+            updateBreadcrumbsTitle();
+            setPanelOffset(0);
+        });
+    }
 
     searchInput.addEventListener('input', renderPostsList);
     categorySelect.addEventListener('change', renderPostsList);
     sortSelect.addEventListener('change', renderPostsList);
 
-    renderPostsList();
+    renderPostsList(); // Первый запуск
 }
 
 // --- RACE LEGENDS TV ---
