@@ -323,5 +323,5 @@ const PAGE_TITLES = {
     'rl': { en: 'Race Legends', ru: 'Race Legends' },
     'ff': { en: 'Fractal Forge', ru: 'Fractal Forge' },
     'rltv': { en: '#RaceLegendsTV', ru: '#RaceLegendsTV' },
-    'patchnotes': { en: 'Patchnotes', ru: 'Патчноуты' }
+    'patchnotes': { en: 'Posts', ru: 'Посты' }
 };
