@@ -398,14 +398,31 @@ function initPatchnotesUI() {
         else sWrap.classList.remove('active-state');
     }
 
-    function openPost(post) {
+    async function openPost(post) {
         searchBlock.style.display = 'none';
         postsList.style.display = 'none';
         singlePostView.style.display = 'flex';
-        singlePostContent.innerHTML = (currentLang === 'en' ? post.html.en : post.html.ru);
+        
+        // Показываем загрузку, пока файл скачивается
+        singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px;"><span data-lang="en">Loading...</span><span data-lang="ru">Загрузка...</span></div>`;
+        
+        // Меняем хлебные крошки
         if(bcPageNameEn) bcPageNameEn.innerHTML = `Articles <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.en}`;
         if(bcPageNameRu) bcPageNameRu.innerHTML = `Статьи <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.ru}`;
         setPanelOffset(0); 
+
+        try {
+            // Подгружаем внешний файл статьи
+            const response = await fetch(post.contentFile);
+            if (!response.ok) throw new Error("File not found");
+            
+            const htmlData = await response.json();
+            
+            // Вставляем скачанный HTML
+            singlePostContent.innerHTML = (currentLang === 'en' ? htmlData.en : htmlData.ru);
+        } catch (error) {
+            singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px; color: var(--c-sub);">Error loading content / Ошибка загрузки контента</div>`;
+        }
     }
 
     if (backToPostsBtn) {
