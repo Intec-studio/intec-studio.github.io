@@ -270,7 +270,8 @@ function drawConsoles() {
 function initPatchnotesUI() {
     const searchInput = document.getElementById('searchInput');
     const searchBlock = document.getElementById('postsSearchBlock');
-    const filterSelect = document.getElementById('filterSelect');
+    const categorySelect = document.getElementById('categorySelect');
+    const sortSelect = document.getElementById('sortSelect');
     const postsList = document.getElementById('postsList');
     const singlePostView = document.getElementById('singlePostView');
     const singlePostContent = document.getElementById('singlePostContent');
@@ -278,46 +279,42 @@ function initPatchnotesUI() {
     
     if(!searchInput) return;
 
-    // Обновляем placeholder языка
     searchInput.placeholder = currentLang === 'en' ? "Search..." : "Поиск...";
 
-    // Функция отрисовки списка превью-карточек
     function renderPostsList() {
         postsList.innerHTML = '';
         const query = searchInput.value.toLowerCase().trim();
-        const sortOrder = filterSelect.value;
+        const category = categorySelect.value;
+        const sortOrder = sortSelect.value;
 
-        // Фильтрация
+        // Фильтрация (Поиск + Категория)
         let filtered = POSTS_DATABASE.filter(post => {
-            if (!query) return true;
-            const searchStr = `
+            const matchesSearch = !query || `
                 ${post.title.en.toLowerCase()} ${post.title.ru.toLowerCase()} 
                 ${post.textRaw.en.toLowerCase()} ${post.textRaw.ru.toLowerCase()} 
                 ${post.tags.join(' ').toLowerCase()} ${post.date}
-            `;
-            return searchStr.includes(query);
+            `.includes(query);
+            
+            const matchesCategory = category === 'all' || post.tags.includes(category);
+            
+            return matchesSearch && matchesCategory;
         });
 
-        // Сортировка по дате
-        filtered.sort((a, b) => {
-            return sortOrder === 'newest' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp;
-        });
+        // Сортировка
+        filtered.sort((a, b) => sortOrder === 'newest' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp);
 
         if (filtered.length === 0) {
             postsList.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px;">Ничего не найдено / Nothing found</div>`;
             return;
         }
 
-        // Рендер карточек
         filtered.forEach(post => {
             const card = document.createElement('div');
             card.className = 'pn-card';
-            // Делаем карточку кликабельной и добавляем ховер-эффект
             card.style.cssText = 'cursor: pointer; transition: border-color 0.1s ease;';
             card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
             card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
             
-            // Собираем HTML превью-карточки
             const tagsHtml = post.tags.map(t => `<div class="tag" style="height: 24px; font-size: 12px; padding: 0 6px; border-radius: 6px;">${t}</div>`).join('');
             
             card.innerHTML = `
@@ -332,46 +329,39 @@ function initPatchnotesUI() {
                 <div class="pn-card-desc" data-lang="en" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.en || '...'}</div>
                 <div class="pn-card-desc" data-lang="ru" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.ru || '...'}</div>
             `;
-            
-            // Событие клика по карточке -> Открываем статью
-            card.addEventListener('click', () => {
-                openPost(post);
-            });
-            
+            card.addEventListener('click', () => openPost(post));
             postsList.appendChild(card);
         });
     }
 
-    // Функция открытия полной статьи
     function openPost(post) {
-        searchBlock.style.display = 'none'; // Прячем поиск
-        postsList.style.display = 'none';   // Прячем список
-        singlePostView.style.display = 'flex'; // Показываем блок статьи
+        searchBlock.style.display = 'none';
+        postsList.style.display = 'none';
+        singlePostView.style.display = 'flex';
+        singlePostContent.innerHTML = `${post.html.en}${post.html.ru}`;
         
-        // Вставляем сразу оба языка, CSS сам скроет ненужный через data-lang
-        singlePostContent.innerHTML = `
-            ${post.html.en}
-            ${post.html.ru}
-        `;
+        // ОБНОВЛЯЕМ ХЛЕБНЫЕ КРОШКИ
+        if(bcPageNameEn) bcPageNameEn.innerHTML = `Posts <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.en}`;
+        if(bcPageNameRu) bcPageNameRu.innerHTML = `Посты <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.ru}`;
         
-        // Сбрасываем скролл наверх
         setPanelOffset(0); 
     }
 
-    // Функция возврата к списку
     backToPostsBtn.addEventListener('click', () => {
         singlePostView.style.display = 'none';
         searchBlock.style.display = 'flex';
         postsList.style.display = 'flex';
-        singlePostContent.innerHTML = ''; // Очищаем память
+        singlePostContent.innerHTML = ''; 
+        
+        // ВОЗВРАЩАЕМ ХЛЕБНЫЕ КРОШКИ ОБРАТНО
+        updateBreadcrumbsTitle();
         setPanelOffset(0);
     });
 
-    // Обработчики событий (Поиск и Фильтр)
     searchInput.addEventListener('input', renderPostsList);
-    filterSelect.addEventListener('change', renderPostsList);
+    categorySelect.addEventListener('change', renderPostsList);
+    sortSelect.addEventListener('change', renderPostsList);
 
-    // Первичная отрисовка списка
     renderPostsList();
 }
 

@@ -1,33 +1,35 @@
-// ============================================================
-// БАЗА ДАННЫХ ПОСТОВ (Сюда вставляй новые объекты из программы через запятую)
-// ============================================================
+// 1. СЮДА ВСТАВЛЯЕШЬ БАЗУ ДАННЫХ ИЗ ПРОГРАММЫ
 const POSTS_DATABASE = [
     {
-        id: "csclsclzscl",
-        timestamp: 1781524800000,
-        date: "15.06.2026",
-        tags: ["#Intec", "#Новости", "#News"],
-        title: {
-            en: "csclsclzscl",
-            ru: "csclsclzscl"
-        },
-        textRaw: {
-            en: "",
-            ru: "вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлзщфывлщзфывлщзфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ"
-        },
-        html: {
-            en: `<div data-lang="en" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
+  id: "patch___________",
+  timestamp: 1781524800000,
+  date: "15.06.2026",
+  tags: ["#Intec","#Новости"],
+  title: {
+    en: "ввфывывыфв",
+    ru: "ввфывывыфв"
+  },
+  textRaw: {
+    en: "",
+    ru: "вцфвцфввцфвцфвцф"
+  },
+  html: {
+    en: `<div data-lang="en" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
     <!-- MODULE: BANNER -->
-        <div class="hero-card">
-            <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 200% 200%; animation: gradientFlow 18s linear infinite;">
-                <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px);">csclsclzscl</h1>
+        <div class="hero-card" style="margin-bottom: 18px;">
+            <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 400% 400%; animation: gradientFlow 15s ease infinite; border-radius: 9px 9px 0 0;">
+                <!-- Если есть кастомный HTML код анимации, он вставляется здесь -->
+                
+                <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px); margin: 0;">ввфывывыфв</h1>
             </div>
-            <div class="hero-footer">
+            <div class="hero-footer" style="border-radius: 0 0 9px 9px;">
                 <div class="tags-group">
+                    <!-- Теги генерируются здесь -->
                     <div class="tag">#Intec</div>
-                    <div class="tag">#News</div>
+            <div class="tag">#News</div>
                 </div>
-                <div class="tag-status">15.06.2026</div>
+                <!-- ТЕПЕРЬ ДАТА ИМЕЕТ СЕРЫЙ ФОН (tag) -->
+                <div class="tag">15.06.2026</div>
             </div>
         </div>
         <!-- MODULE: CONTENT BLOCK -->
@@ -36,49 +38,38 @@ const POSTS_DATABASE = [
                 <div style="height: 12px;"></div>
             </div>
         </div>
-        <!-- MODULE: CONTENT BLOCK -->
-        <div class="pn-card">
-            <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
-                <div style="height: 12px;"></div>
-            </div>
-        </div>
+
 </div>`,
-            ru: `<div data-lang="ru" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
+    ru: `<div data-lang="ru" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
     <!-- MODULE: BANNER -->
-        <div class="hero-card">
-            <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 200% 200%; animation: gradientFlow 18s linear infinite;">
-                <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px);">csclsclzscl</h1>
+        <div class="hero-card" style="margin-bottom: 18px;">
+            <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 400% 400%; animation: gradientFlow 15s ease infinite; border-radius: 9px 9px 0 0;">
+                <!-- Если есть кастомный HTML код анимации, он вставляется здесь -->
+                
+                <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px); margin: 0;">ввфывывыфв</h1>
             </div>
-            <div class="hero-footer">
+            <div class="hero-footer" style="border-radius: 0 0 9px 9px;">
                 <div class="tags-group">
+                    <!-- Теги генерируются здесь -->
                     <div class="tag">#Intec</div>
-                    <div class="tag">#Новости</div>
+            <div class="tag">#Новости</div>
                 </div>
-                <div class="tag-status">15.06.2026</div>
+                <!-- ТЕПЕРЬ ДАТА ИМЕЕТ СЕРЫЙ ФОН (tag) -->
+                <div class="tag">15.06.2026</div>
             </div>
         </div>
         <!-- MODULE: CONTENT BLOCK -->
         <div class="pn-card">
             <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
-                <div style="margin-bottom: 6px; color: var(--c-sub);">вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлщзфывлщзфывлщзфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ</div>
+                <div style="margin-bottom: 6px; color: var(--c-sub);">вцфвцфввцфвцфвцф</div>
             </div>
         </div>
-        <!-- MODULE: CONTENT BLOCK -->
-        <div class="pn-card">
-            <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
-                <div style="margin-bottom: 6px; color: var(--c-sub);">вцфвфцвцфвцфвцфвцфвфцвцвфцвцфовшщцфовшщвошщфывоышфщвоыфшщвоыфшщвоыфшщвыфошщвыфошщвыфошщвыошщвошфыщвошщыфвошщыфвоышщфвофышщвофшщывофышщвошфыщвошфыщвошфыщвошщфывошфыщвошщфывофыщшвофыщшвофышщвофышщвофышщвоышщвоыфшщвофышщвофышщвофышщвошфщывошщфывофшщывофшщыовшщфыовшщфыовшщфыовшщфыовшщфывошщфыовфшы</div>
-                <div style="height: 12px;"></div>
-                <div style="margin-bottom: 6px; color: var(--c-sub);"><img src="https://raw.githubusercontent.com/Intec-studio/Media-storage/main/csclsclzscl/media/i%3E.png" alt="i>.png" style="width:100%; border-radius:9px; margin: 18px 0; border: 3px solid var(--c-border); display: block;"></div>
-            </div>
-        </div>
-    </div>`
-        }
-    }
+
+</div>`
+  }
+},
 ];
 
-// ============================================================
-// КОНТЕНТ СТРАНИЦ
-// ============================================================
 const PAGE_CONTENT = {
     // ==========================================
     // RACE LEGENDS
@@ -350,33 +341,43 @@ const PAGE_CONTENT = {
         </div>
     `,
 
-    // Новая динамическая оболочка для Постов
+    // ==========================================
+    // PATCHNOTES
+    // ==========================================
     'patchnotes': `
         <div class="search-block" id="postsSearchBlock">
             <div class="pn-input-wrap">
                 <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input type="text" class="pn-input" id="searchInput" placeholder="Поиск" autocomplete="off">
             </div>
-            <div class="pn-select-wrap">
-                <select class="pn-select" id="filterSelect">
-                    <option value="newest">Newest / Сначала новые</option>
-                    <option value="oldest">Oldest / Сначала старые</option>
+            <!-- ФИЛЬТР ПО ПРОЕКТАМ -->
+            <div class="pn-select-wrap" style="width: 220px;">
+                <select class="pn-select" id="categorySelect">
+                    <option value="all">All / Все проекты</option>
+                    <option value="#RaceLegends">Race Legends</option>
+                    <option value="#FractalForge">Fractal Forge</option>
+                    <option value="#RaceLegendsTV">#RaceLegendsTV</option>
+                </select>
+            </div>
+            <!-- ФИЛЬТР ПО ДАТЕ -->
+            <div class="pn-select-wrap" style="width: 190px;">
+                <select class="pn-select" id="sortSelect">
+                    <option value="newest">Newest / Новые</option>
+                    <option value="oldest">Oldest / Старые</option>
                 </select>
             </div>
         </div>
 
-        <!-- КОНТЕЙНЕР ДЛЯ СПИСКА ПРЕВЬЮ-КАРТОЧЕК -->
         <div id="postsList" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
 
-        <!-- КОНТЕЙНЕР ДЛЯ ОТКРЫТОЙ СТАТЬИ -->
         <div id="singlePostView" style="display: none; flex-direction: column; gap: 18px; width: 100%;">
-            <div class="intec-icon-btn" id="backToPostsBtn" style="width: auto !important; padding: 0 18px !important; align-self: flex-start; gap: 9px; margin-bottom: 9px;">
-                <svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span data-lang="en" style="font-size: 13px; font-weight: 900; text-transform: uppercase;">Back to posts</span>
-                <span data-lang="ru" style="font-size: 13px; font-weight: 900; text-transform: uppercase;">К списку постов</span>
-            </div>
+            <!-- ПРАВИЛЬНАЯ ФИРМЕННАЯ КНОПКА НАЗАД -->
+            <button class="intec-btn" id="backToPostsBtn" style="align-self: flex-start; margin-bottom: 9px;">
+                <svg viewBox="0 0 18 18" style="width: 18px; height: 18px; margin-right: 6px;"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span data-lang="en">BACK TO POSTS</span>
+                <span data-lang="ru">К СПИСКУ ПОСТОВ</span>
+            </button>
             
-            <!-- СЮДА JS БУДЕТ ВБРАСЫВАТЬ ПОЛНЫЙ КОД СТАТЬИ -->
             <div id="singlePostContent" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
         </div>
     `
@@ -386,5 +387,5 @@ const PAGE_TITLES = {
     'rl': { en: 'Race Legends', ru: 'Race Legends' },
     'ff': { en: 'Fractal Forge', ru: 'Fractal Forge' },
     'rltv': { en: '#RaceLegendsTV', ru: '#RaceLegendsTV' },
-    'patchnotes': { en: 'Posts', ru: 'Посты' }
+    'patchnotes': { en: 'Patchnotes', ru: 'Патчноуты' }
 };
