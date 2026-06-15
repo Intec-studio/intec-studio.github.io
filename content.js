@@ -1,5 +1,5 @@
 // ============================================================
-// БАЗА ДАННЫХ ПОСТОВ (Сюда вставляй новые объекты из программы)
+// БАЗА ДАННЫХ ПОСТОВ (Сюда вставляй новые объекты из программы через запятую)
 // ============================================================
 const POSTS_DATABASE = [
     {
@@ -13,24 +13,20 @@ const POSTS_DATABASE = [
         },
         textRaw: {
             en: "",
-            ru: "вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлзщфывлзщфывлзщфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ"
+            ru: "вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлзщфывлщзфывлщзфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ"
         },
         html: {
             en: `<div data-lang="en" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
     <!-- MODULE: BANNER -->
         <div class="hero-card">
             <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 200% 200%; animation: gradientFlow 18s linear infinite;">
-                <!-- Если есть кастомный HTML код анимации, он вставляется здесь -->
-                
                 <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px);">csclsclzscl</h1>
             </div>
             <div class="hero-footer">
                 <div class="tags-group">
-                    <!-- Теги генерируются здесь -->
                     <div class="tag">#Intec</div>
                     <div class="tag">#News</div>
                 </div>
-                <!-- ВАЖНО: Класс для даты строго tag-status, а не tag! -->
                 <div class="tag-status">15.06.2026</div>
             </div>
         </div>
@@ -40,40 +36,33 @@ const POSTS_DATABASE = [
                 <div style="height: 12px;"></div>
             </div>
         </div>
-
         <!-- MODULE: CONTENT BLOCK -->
         <div class="pn-card">
             <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
                 <div style="height: 12px;"></div>
             </div>
         </div>
-
 </div>`,
             ru: `<div data-lang="ru" style="width: 100%; display: flex; flex-direction: column; gap: 18px;">
     <!-- MODULE: BANNER -->
         <div class="hero-card">
             <div class="hero-banner" style="height: 441px; background-image: linear-gradient(135deg, #1F1F1F 0%, #8C8C8C 12.5%, #E7E7E7 25%, #8C8C8C 37.5%, #1F1F1F 50%, #8C8C8C 62.5%, #E7E7E7 75%, #8C8C8C 87.5%, #1F1F1F 100%); background-size: 200% 200%; animation: gradientFlow 18s linear infinite;">
-                <!-- Если есть кастомный HTML код анимации, он вставляется здесь -->
-                
                 <h1 class="hero-title" style="font-size: clamp(36px, 7vw, 96px);">csclsclzscl</h1>
             </div>
             <div class="hero-footer">
                 <div class="tags-group">
-                    <!-- Теги генерируются здесь -->
                     <div class="tag">#Intec</div>
                     <div class="tag">#Новости</div>
                 </div>
-                <!-- ВАЖНО: Класс для даты строго tag-status, а не tag! -->
                 <div class="tag-status">15.06.2026</div>
             </div>
         </div>
         <!-- MODULE: CONTENT BLOCK -->
         <div class="pn-card">
             <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
-                <div style="margin-bottom: 6px; color: var(--c-sub);">вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлзщфывлзщфывлзщфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ</div>
+                <div style="margin-bottom: 6px; color: var(--c-sub);">вфувфввыфввывфывывввцвцфвцфвофцшщвцфошвщфцлвфцшщвлфцщшвцлфщзвцфлвшщцфлвщзцвлщфвлфцщзвлфыщзвлыщзвлыщзвлвщзфылвщзылвщзыфвщзыфвлщзфывлыфзщвлыфщзвлфызщвлыфщзвлыфщзвлыфщзвлыфщзвыфлзщлвзщыфлвввввввввввввввввввлзщылвзыщфлвщзфылвщзыфвлзыщфвлыфзщвлыфщзвлыфщзвлыфщзвлыфзщвылфзщвыфлщзвлзщыфвлзщыфвлщзыфвлзщфывлщзфывлщзфывлщзфылвщзфывлщзыфвлзщфывлызфщвлыфзщвлыфзщвлфыщзвлфызщвлфыщзвлзщыфвлщзыфвлзщфывлзщфывлыщзфвлщзыфвлзыщфвлывлыфщзвлыщфзвлщзыфвлщзыфвлзщфывлзщыфвлзщфывлщзфывлщзфывлщзфывлщзфывлщзфывлфщызвлфыщзвлфыщзвлыфзщ</div>
             </div>
         </div>
-
         <!-- MODULE: CONTENT BLOCK -->
         <div class="pn-card">
             <div class="pn-card-desc" style="overflow-wrap: break-word; word-wrap: break-word; word-break: break-word;">
@@ -82,8 +71,7 @@ const POSTS_DATABASE = [
                 <div style="margin-bottom: 6px; color: var(--c-sub);"><img src="https://raw.githubusercontent.com/Intec-studio/Media-storage/main/csclsclzscl/media/i%3E.png" alt="i>.png" style="width:100%; border-radius:9px; margin: 18px 0; border: 3px solid var(--c-border); display: block;"></div>
             </div>
         </div>
-
-</div>`
+    </div>`
         }
     }
 ];
@@ -205,7 +193,7 @@ const PAGE_CONTENT = {
             <div class="info-text">
                 <div data-lang="en">
                     <h2>Generation Instead of Routine</h2>
-                    <p>Fractal Forge takes over the most tedious part of modeling. Instead of manually placing every single leaf, you generate ready-made vegetation via <span class="highlight">Geometry Nodes</span>. The addon instantly creates meshes fully ready for export to a game engine: with correct UV unwrapping, baked Vertex Color, and necessary attributes for masks. And if you need a dense canopy in <span class="highlight">Studio Ghibsli</span> style, the base geometry turns into a proper stylized volume in a couple of clicks.</p>
+                    <p>Fractal Forge takes over the most tedious part of modeling. Instead of manually placing every single leaf, you generate ready-made vegetation via <span class="highlight">Geometry Nodes</span>. The addon instantly creates meshes fully ready for export to a game engine: with correct UV unwrapping, baked Vertex Color, and necessary attributes for masks. And if you need a dense canopy in <span class="highlight">Studio Ghibli</span> style, the base geometry turns into a proper stylized volume in a couple of clicks.</p>
                 </div>
                 <div data-lang="ru">
                     <h2>Генерация вместо рутины</h2>
