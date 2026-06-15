@@ -374,11 +374,6 @@ const PAGE_CONTENT = {
 
         <div id="singlePostView" style="display: none; flex-direction: column; gap: 18px; width: 100%;">
             <!-- ПРАВИЛЬНАЯ ФИРМЕННАЯ КНОПКА НАЗАД -->
-            <button class="intec-btn" id="backToPostsBtn" style="align-self: flex-start; margin-bottom: 9px;">
-                <svg viewBox="0 0 18 18" style="width: 18px; height: 18px; margin-right: 6px;"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span data-lang="en">BACK TO POSTS</span>
-                <span data-lang="ru">К СПИСКУ ПОСТОВ</span>
-            </button>
             
             <div id="singlePostContent" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
         </div>

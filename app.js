@@ -289,20 +289,18 @@ function initPatchnotesUI() {
                 card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
                 card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
                 
-                const tagsHtml = post.tags.map(t => `<div class="tag" style="height: 24px; font-size: 12px; padding: 0 6px; border-radius: 6px;">${t}</div>`).join('');
+                const tagsHtml = post.tags.map(t => `<div class="tag">${t}</div>`).join('');
                 
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 18px;">
-                        <div>
-                            <div class="pn-card-title" data-lang="en" style="font-size: 24px; margin-bottom: 9px;">${post.title.en}</div>
-                            <div class="pn-card-title" data-lang="ru" style="font-size: 24px; margin-bottom: 9px;">${post.title.ru}</div>
-                            <div class="tags-group" style="margin-bottom: 12px;">${tagsHtml}</div>
-                        </div>
-                        <div class="tag-status" style="flex-shrink: 0; font-size: 13px;">${post.date}</div>
+                    <div class="pn-card-title" data-lang="en" style="font-size: 21px; text-align: center; color: var(--c-text); margin: 0;">${post.title.en}</div>
+                    <div class="pn-card-title" data-lang="ru" style="font-size: 21px; text-align: center; color: var(--c-text); margin: 0;">${post.title.ru}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 18px;">
+                        <div class="tags-group">${tagsHtml}</div>
+                        <div class="tag" style="color: var(--c-sub);">${post.date}</div>
                     </div>
-                    <div class="pn-card-desc" data-lang="en" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.en || '...'}</div>
-                    <div class="pn-card-desc" data-lang="ru" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">${post.textRaw.ru || '...'}</div>
                 `;
+                
+                // ЭТИ ДВЕ СТРОКИ ОЧЕНЬ ВАЖНЫ (иначе карточки не появятся и не будут кликаться)
                 card.addEventListener('click', () => openPost(post));
                 postsList.appendChild(card);
             });
@@ -453,3 +451,19 @@ const appRLTV = {
         else this.video.play();
     }
 };
+// ГЛОБАЛЬНАЯ КНОПКА НАЗАД В HUB
+document.getElementById('globalBackBtn').addEventListener('click', () => {
+    const singlePostView = document.getElementById('singlePostView');
+    // Если мы внутри статьи - возвращаемся к списку статей
+    if (singlePostView && singlePostView.style.display === 'flex') {
+        singlePostView.style.display = 'none';
+        document.getElementById('postsSearchBlock').style.display = 'flex';
+        document.getElementById('postsList').style.display = 'flex';
+        document.getElementById('singlePostContent').innerHTML = ''; 
+        updateBreadcrumbsTitle();
+        setPanelOffset(0);
+    } else {
+        // Иначе выходим на стартовый экран
+        window.location.href = '/';
+    }
+});
