@@ -354,7 +354,12 @@ function initPatchnotesUI() {
 //  ЛОГИКА ТЕЛЕВИЗОРА
 // ============================================================
 const appRLTV = {
+    // МАССИВ ССЫЛОК НА ВИДЕО.
+    // Если пусто [], сайт покажет заглушку "ОЖИДАНИЕ СИГНАЛА".
+    // Пример заполнения: 
+    // playlist: ["https://ссылка_на_видео_1.mp4", "https://ссылка_на_видео_2.mp4"],
     playlist: [],
+    
     currentIndex: 0,
     isPaused: false,
     clockInterval: null,
@@ -365,6 +370,9 @@ const appRLTV = {
         this.volSlider = document.getElementById('volSlider');
         this.video = document.getElementById('tvVideoPlayer');
         this.clock = document.getElementById('localTimeClock');
+        this.tvBars = document.getElementById('tvBars');
+        this.tvTextBox = document.getElementById('tvTextBox');
+        this.tvLoading = document.getElementById('tvLoading');
         
         this.volInput.addEventListener('input', () => this.syncVol('input'));
         this.volSlider.addEventListener('input', () => this.syncVol('slider'));
@@ -374,11 +382,30 @@ const appRLTV = {
         this.clockInterval = setInterval(() => this.updateClock(), 1000);
         this.updateClock();
 
-        this.video.addEventListener('timeupdate', () => { if(this.playlist.length > 0) this.clock.textContent = `${this.fmt(this.video.currentTime)} / ${this.fmt(this.video.duration)}`; });
+        this.video.addEventListener('timeupdate', () => { 
+            if(this.playlist.length > 0) this.clock.textContent = `${this.fmt(this.video.currentTime)} / ${this.fmt(this.video.duration)}`; 
+        });
+        
         this.video.addEventListener('ended', () => this.changeChannel('next'));
 
-        if (this.playlist.length === 0) this.fetchPlaylist();
-        else this.loadVideo();
+        // Автоматически показываем "BUFFERING..." при загрузке или лагах
+        this.video.addEventListener('waiting', () => { if (this.tvLoading) this.tvLoading.style.display = 'block'; });
+        this.video.addEventListener('playing', () => { if (this.tvLoading) this.tvLoading.style.display = 'none'; });
+        this.video.addEventListener('canplay', () => { if (this.tvLoading) this.tvLoading.style.display = 'none'; });
+
+        // ЛОГИКА ОТОБРАЖЕНИЯ: Заглушка или Видео
+        if (this.playlist.length === 0) {
+            // Если массив пуст - показываем ТВ-полосы и скрываем видео
+            if (this.tvBars) this.tvBars.style.display = '';
+            if (this.tvTextBox) this.tvTextBox.style.display = '';
+            if (this.video) this.video.style.display = 'none';
+        } else {
+            // Если есть видео - скрываем ТВ-полосы и запускаем плеер
+            if (this.tvBars) this.tvBars.style.display = 'none';
+            if (this.tvTextBox) this.tvTextBox.style.display = 'none';
+            if (this.video) this.video.style.display = 'block';
+            this.loadVideo();
+        }
     },
 
     syncVol(source) {
@@ -398,35 +425,29 @@ const appRLTV = {
         this.clock.textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     },
 
-    fmt(sec) { if (isNaN(sec)) return "0:00"; const m = Math.floor(sec / 60); const s = Math.floor(sec % 60).toString().padStart(2, '0'); return `${m}:${s}`; },
-
-    async fetchPlaylist() {
-        try {
-            const response = await fetch(`https://api.github.com/repos/ZAKFUN35/Intec/contents/videos`);
-            const files = await response.json();
-            this.playlist = files.filter(f => f.name.endsWith('.mp4')).map(f => f.download_url);
-            if(this.playlist.length > 0) {
-                document.getElementById('tvBars').style.display = 'none';
-                document.getElementById('tvTextBox').style.display = 'none';
-                this.video.style.display = 'block';
-                this.loadVideo();
-            }
-        } catch (e) {}
+    fmt(sec) { 
+        if (isNaN(sec)) return "0:00"; 
+        const m = Math.floor(sec / 60); 
+        const s = Math.floor(sec % 60).toString().padStart(2, '0'); 
+        return `${m}:${s}`; 
     },
 
     loadVideo() {
         if(this.playlist.length === 0) return;
+        if (this.tvLoading) this.tvLoading.style.display = 'block'; // Показываем загрузку при переключении
         this.video.src = this.playlist[this.currentIndex];
         if (!this.isPaused) this.video.play().catch(()=>{});
     },
 
     changeChannel(dir) {
+        if(this.playlist.length === 0) return; // Блокируем кнопки, если нет видео
         playStaticNoiseSound();
         this.currentIndex = dir === 'next' ? (this.currentIndex + 1) % this.playlist.length : (this.currentIndex - 1 + this.playlist.length) % this.playlist.length;
         this.loadVideo();
     },
 
     togglePause() {
+        if(this.playlist.length === 0) return; // Блокируем паузу, если нет видео
         this.isPaused = !this.isPaused;
         if (this.isPaused) this.video.pause();
         else this.video.play();

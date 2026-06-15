@@ -274,6 +274,8 @@ const PAGE_CONTENT = {
                         <rect x="14" y="4" width="4" height="16" />
                     </svg>
                 </div>
+                <!-- НОВЫЙ БЛОК ЗАГРУЗКИ -->
+                <div class="osd-text center osd-blink" id="tvLoading" style="display: none;">BUFFERING...</div>
             </div>
 
             <div class="tv-controls-bar">
