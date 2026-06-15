@@ -13,7 +13,7 @@ const POSTS_DATABASE = [
             en: "",
             ru: "вцфвцфввцфвцфвцф"
         },
-        contentFile: "articles/patch_001.json" 
+        contentFile: "articles/patch_001.js" 
     }
 ];
 
