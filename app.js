@@ -137,7 +137,41 @@ function loadPage(hash) {
 }
 
 window.addEventListener('hashchange', () => {
-    loadPage(window.location.hash.replace('#', ''));
+    let hash = window.location.hash.replace('#', '');
+
+    // === НОВАЯ ЛОГИКА КНОПКИ "НАЗАД" ДЛЯ СТАТЕЙ ===
+    // Если мы вернулись из статьи назад в список
+    if (hash === 'patchnotes' && currentHash === 'article') {
+        currentHash = 'patchnotes';
+        const singlePostView = document.getElementById('singlePostView');
+        if (singlePostView && singlePostView.style.display === 'flex') {
+            // Просто скрываем статью, не перерисовывая страницу заново
+            singlePostView.style.display = 'none';
+            document.getElementById('postsSearchBlock').style.display = 'flex';
+            document.getElementById('postsList').style.display = 'flex';
+            document.getElementById('singlePostContent').innerHTML = ''; 
+            updateBreadcrumbsTitle();
+            setPanelOffset(0);
+            return; // Прерываем работу роутера
+        }
+    }
+
+    // Если мы только что кликнули на статью
+    if (hash === 'article') {
+        if (document.getElementById('postsList')) {
+            // Мы перешли из списка, просто запоминаем состояние
+            currentHash = 'article';
+            return; 
+        } else {
+            // Срабатывает, если вернулись назад с другой вкладки (например с #rl)
+            // Просто кидаем пользователя в список статей
+            window.location.replace('#patchnotes');
+            return;
+        }
+    }
+    // ==============================================
+
+    loadPage(hash);
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -399,6 +433,12 @@ function initPatchnotesUI() {
     }
 
     async function openPost(post) {
+        // --- 1. ДОБАВЛЕННЫЙ КОД ДЛЯ ИСТОРИИ ---
+        if (window.location.hash !== '#article') {
+            window.location.hash = 'article';
+        }
+        // --------------------------------------
+
         searchBlock.style.display = 'none';
         postsList.style.display = 'none';
         singlePostView.style.display = 'flex';
@@ -427,12 +467,8 @@ function initPatchnotesUI() {
 
     if (backToPostsBtn) {
         backToPostsBtn.addEventListener('click', () => {
-            singlePostView.style.display = 'none';
-            searchBlock.style.display = 'flex';
-            postsList.style.display = 'flex';
-            singlePostContent.innerHTML = ''; 
-            updateBreadcrumbsTitle();
-            setPanelOffset(0);
+            // --- 2. МЕНЯЕМ ЛОГИКУ КНОПКИ ВНУТРИ СТАТЬИ ---
+            window.history.back();
         });
     }
 
@@ -551,14 +587,10 @@ const appRLTV = {
 // ГЛОБАЛЬНАЯ КНОПКА НАЗАД В HUB
 document.getElementById('globalBackBtn').addEventListener('click', () => {
     const singlePostView = document.getElementById('singlePostView');
-    // Если мы внутри статьи - возвращаемся к списку статей
+    
+    // Если мы внутри статьи - эмулируем системную кнопку "Назад"
     if (singlePostView && singlePostView.style.display === 'flex') {
-        singlePostView.style.display = 'none';
-        document.getElementById('postsSearchBlock').style.display = 'flex';
-        document.getElementById('postsList').style.display = 'flex';
-        document.getElementById('singlePostContent').innerHTML = ''; 
-        updateBreadcrumbsTitle();
-        setPanelOffset(0);
+        window.history.back();
     } else {
         // Иначе выходим на стартовый экран
         window.location.href = '/';
