@@ -182,10 +182,88 @@ window.addEventListener('keydown', e => {
     if (handled) { e.preventDefault(); setPanelOffset(newOffset); }
 });
 
-let activeDrag = false, startY, startPanelOffset;
-vThumb.addEventListener('pointerdown', e => { activeDrag = true; startY = e.pageY; startPanelOffset = panelOffset; vThumb.setPointerCapture(e.pointerId); e.stopPropagation(); });
-vThumb.addEventListener('pointermove', e => { if (activeDrag) { e.preventDefault(); const trackSpace = vTrack.clientHeight - vThumb.offsetHeight; if (trackSpace > 0) setPanelOffset(startPanelOffset + ((e.pageY - startY) / trackSpace) * getPanelMaxOffset()); } });
-vThumb.addEventListener('pointerup', e => { activeDrag = false; try { vThumb.releasePointerCapture(e.pointerId); } catch(err) {} });
+let activeDrag = null; 
+let startY = 0; 
+let startPanelOffset = 0;
+
+// Переменные для инерции свайпа на телефонах
+let touchVelocity = 0;
+let lastTouchY = 0;
+let lastTouchTime = 0;
+let inertiaFrame = null;
+
+// 1. Логика ползунка скролла (Справа)
+vThumb.addEventListener('pointerdown', e => { 
+    activeDrag = 'thumb'; 
+    startY = e.pageY; 
+    startPanelOffset = panelOffset; 
+    vThumb.setPointerCapture(e.pointerId); 
+    e.stopPropagation(); 
+});
+
+// 2. Логика свайпов по самой странице (Для смартфонов)
+mainClip.addEventListener('pointerdown', e => {
+    // Игнорируем мышь (оставляем ей колесо), а также инпуты и кнопки
+    if (e.pointerType === 'mouse') return;
+    if (['INPUT', 'TEXTAREA', 'BUTTON', 'SELECT'].includes(e.target.tagName)) return;
+    
+    activeDrag = 'clip';
+    startY = e.pageY;
+    startPanelOffset = panelOffset;
+    
+    cancelAnimationFrame(inertiaFrame);
+    lastTouchY = e.pageY;
+    lastTouchTime = Date.now();
+    
+    mainClip.setPointerCapture(e.pointerId);
+});
+
+// Глобальный слушатель движения
+window.addEventListener('pointermove', e => { 
+    if (!activeDrag) return;
+    
+    if (activeDrag === 'thumb') {
+        e.preventDefault(); 
+        const trackSpace = vTrack.clientHeight - vThumb.offsetHeight; 
+        if (trackSpace > 0) {
+            setPanelOffset(startPanelOffset + ((e.pageY - startY) / trackSpace) * getPanelMaxOffset()); 
+        }
+    } else if (activeDrag === 'clip') {
+        e.preventDefault();
+        const now = Date.now();
+        // Считаем скорость движения пальца для инерции
+        touchVelocity = (e.pageY - lastTouchY) / (now - lastTouchTime || 1);
+        lastTouchY = e.pageY;
+        lastTouchTime = now;
+        
+        // Смещаем панель синхронно с пальцем
+        setPanelOffset(startPanelOffset + (startY - e.pageY));
+    }
+}, { passive: false });
+
+// Окончание касания
+window.addEventListener('pointerup', e => { 
+    if (activeDrag === 'thumb') {
+        try { vThumb.releasePointerCapture(e.pointerId); } catch(err) {}
+    } else if (activeDrag === 'clip') {
+        try { mainClip.releasePointerCapture(e.pointerId); } catch(err) {}
+        
+        // Запускаем плавную инерцию скролла
+        let v = touchVelocity * 15; 
+        const step = () => {
+            if (Math.abs(v) < 0.5) return; 
+            let prevOffset = panelOffset; 
+            setPanelOffset(panelOffset - v);
+            if (panelOffset === prevOffset) { v = 0; return; } // Уперлись в конец страницы
+            v *= 0.92; // Коэффициент трения
+            inertiaFrame = requestAnimationFrame(step);
+        };
+        step();
+    }
+    activeDrag = null; 
+});
+
+window.addEventListener('pointercancel', () => { activeDrag = null; });
 
 // ============================================================
 //  АНИМАЦИИ КАНВАСОВ
