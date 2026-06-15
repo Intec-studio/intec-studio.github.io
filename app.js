@@ -332,6 +332,23 @@ function initPatchnotesUI() {
             card.addEventListener('click', () => openPost(post));
             postsList.appendChild(card);
         });
+        // --- ЛОГИКА ПОДСВЕТКИ КОМБОБОКСОВ (ACTIVE-STATE) ---
+        
+        // Для категорий (проектов): если НЕ All, то белый
+        const catWrap = categorySelect.closest('.pn-select-wrap');
+        if (categorySelect.value !== 'all') {
+            catWrap.classList.add('active-state');
+        } else {
+            catWrap.classList.remove('active-state');
+        }
+
+        // Для сортировки: если НЕ Newest (новые), то белый
+        const sortWrap = sortSelect.closest('.pn-select-wrap');
+        if (sortSelect.value !== 'newest') {
+            sortWrap.classList.add('active-state');
+        } else {
+            sortWrap.classList.remove('active-state');
+        }
     }
 
     function openPost(post) {
