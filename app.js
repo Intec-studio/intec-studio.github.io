@@ -279,7 +279,7 @@ function initPatchnotesUI() {
     
     if(!searchInput) return;
 
-    searchInput.placeholder = currentLang === 'en' ? "Search articles..." : "Поиск статей...";
+    searchInput.placeholder = currentLang === 'en' ? "Search" : "Поиск";
 
     function renderPostsList() {
         postsList.innerHTML = '';
