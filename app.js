@@ -407,6 +407,7 @@ const appRLTV = {
     },
 
     syncVol(source) {
+        // 1. Синхронизация значений между полем ввода и ползунком
         if (source === 'input') {
             const val = this.volInput.value.replace(/\D/g, '');
             this.volInput.value = val === '' ? '0' : Math.min(parseInt(val, 10), 100).toString();
@@ -414,8 +415,16 @@ const appRLTV = {
         } else {
             this.volInput.value = this.volSlider.value;
         }
-        if (this.video) this.video.volume = this.volSlider.value / 100;
-    },
+        
+        // 2. Применяем громкость к видео (от 0.0 до 1.0)
+        if (this.video) {
+            this.video.volume = this.volSlider.value / 100;
+        }
+
+        // 3. Закрашиваем левую часть канавки слайдера цветом #8C8C8C (var(--c-sub))
+        const percent = this.volSlider.value;
+        this.volSlider.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+    }
 
     updateClock() {
         if (this.playlist.length > 0) return;
