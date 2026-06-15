@@ -326,15 +326,23 @@ function initPatchnotesUI() {
                 postsList.appendChild(card);
             });
         }
+        // --- ЛОГИКА ПОДСВЕТКИ (УНИВЕРСАЛЬНАЯ) ---
+        
+        // 1. Поиск: белый, если в поле есть текст
+        const searchWrap = searchInput.closest('.pn-input-wrap');
+        if (query.length > 0) searchWrap.classList.add('active-state');
+        else searchWrap.classList.remove('active-state');
 
-        // --- ЛОГИКА ПОДСВЕТКИ ---
+        // 2. Категории: белый, если выбрано что-то кроме "All"
         const catWrap = categorySelect.closest('.pn-select-wrap');
         if (categorySelect.value !== 'all') catWrap.classList.add('active-state');
         else catWrap.classList.remove('active-state');
 
+        // 3. Сортировка: белый, если выбрано что-то кроме "Newest"
         const sortWrap = sortSelect.closest('.pn-select-wrap');
         if (sortSelect.value !== 'newest') sortWrap.classList.add('active-state');
         else sortWrap.classList.remove('active-state');
+    }
     }
 
     function openPost(post) {

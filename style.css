@@ -94,7 +94,7 @@ a { text-decoration: none; color: inherit; }
 .v-thumb { width: 3px; top: 0; left: 0; background: var(--c-text); position: absolute; cursor: grab; touch-action: none; border-radius: 0; }
 .v-thumb:active { cursor: grabbing; }
 
-/* КАРТОЧКИ */
+/* КАРТОЧКИ ПРОЕКТОВ */
 .cards-layout { width: 100%; padding: 18px 30px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
 .hero-card, .content-card, .pn-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; overflow: hidden; }
 .hero-banner { position: relative; width: 100%; height: 441px; display: flex; justify-content: center; align-items: center; background-size: 150vw 150vw; animation: gradientFlow 18s linear infinite; will-change: background-position; overflow: hidden; }
@@ -132,55 +132,71 @@ a { text-decoration: none; color: inherit; }
 .vol-slider { -webkit-appearance: none; width: 114px; height: 18px; border-radius: 4.5px; background: var(--c-border); outline: none; }
 .vol-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 18px; border-radius: 4.5px; background: var(--c-text); }
 
-/* СТАТЬИ / ПОСТЫ */
+/* --- РАЗДЕЛ СТАТЕЙ (ОБНОВЛЕННЫЙ) --- */
 .pn-wrapper { display: flex; flex-direction: column; gap: 18px; width: 100%; }
 .search-block { width: 100%; height: 78px; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 0 18px; display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
-.pn-input-wrap { flex-grow: 1; height: 36px; position: relative; display: flex; align-items: center; color: var(--c-text); }
-.pn-input-wrap:focus-within, .pn-input-wrap.active-state { color: var(--c-panel); }
 
+/* СТИЛИ ПОИСКА */
+.pn-input-wrap { flex-grow: 1; height: 36px; position: relative; display: flex; align-items: center; color: #E7E7E7; }
 .search-icon { position: absolute; left: 9px; width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2px; pointer-events: none; }
-.pn-input { width: 100%; height: 100%; background: var(--c-border); border: 2px solid transparent; border-radius: 9px; padding: 0 18px 0 36px; color: var(--c-text); font-size: 15px; font-weight: 500; outline: none; }
-.pn-input-wrap:focus-within .pn-input, .pn-input-wrap.active-state .pn-input { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+.pn-input { 
+    width: 100%; height: 100%; background: var(--c-border); 
+    border: 2px solid transparent; border-radius: 9px; 
+    padding: 0 18px 0 36px; color: #E7E7E7; 
+    font-size: 15px; font-weight: 500; outline: none; 
+}
+.pn-input::placeholder { color: #E7E7E7 !important; opacity: 1; }
 
+/* Активное состояние поиска */
+.pn-input-wrap:focus-within .pn-input, 
+.pn-input-wrap.active-state .pn-input { 
+    background-color: var(--c-text) !important; 
+    color: #1F1F1F !important; 
+    border-color: var(--c-text) !important; 
+}
+.pn-input-wrap:focus-within, 
+.pn-input-wrap.active-state { color: #1F1F1F !important; }
+
+/* СТИЛИ КОМБОБОКСОВ */
 .pn-select-wrap { width: 261px; height: 36px; position: relative; flex-shrink: 0; }
-.pn-select { width: 100%; height: 100%; background: var(--c-border); border: 2px solid transparent; border-radius: 9px; padding: 0 36px 0 18px; color: var(--c-text); font-size: 15px; font-weight: 500; appearance: none; outline: none; cursor: pointer; }
+.pn-select { 
+    width: 100%; height: 100%; background: var(--c-border); 
+    border: 2px solid transparent; border-radius: 9px; 
+    padding: 0 36px 0 18px; color: #E7E7E7; 
+    font-size: 15px; font-weight: 500; appearance: none; outline: none; cursor: pointer; 
+}
+.pn-select-wrap::after { 
+    content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
+    width: 12px; height: 12px; pointer-events: none; background-color: #E7E7E7; 
+    -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat;
+    mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat;
+}
 
-.pn-select-wrap::after { content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; pointer-events: none; background-color: var(--c-text); -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat; mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat; transition: background-color 0.1s ease; }
-
-/* ХИТРАЯ СИСТЕМА: Подсветка при выборе (active-state) */
+/* Активное состояние комбобокса */
 .pn-select-wrap:active .pn-select, 
 .pn-select-wrap.active-state .pn-select { 
     background-color: var(--c-text) !important; 
-    color: var(--c-panel) !important; 
+    color: #1F1F1F !important; 
     border-color: var(--c-text) !important; 
 }
-
 .pn-select-wrap:active::after, 
 .pn-select-wrap.active-state::after { 
-    background-color: var(--c-panel) !important; 
+    background-color: #1F1F1F !important; 
 }
 
+/* КАРТОЧКИ СТАТЕЙ */
 .pn-card { padding: 18px; display: flex; flex-direction: column; gap: 18px; }
 .pn-card-title { color: var(--c-text); font-size: 42px; font-weight: 900; line-height: 1.1; }
 .pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
 .pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease; position: relative; z-index: 5; }
 .pn-card-desc a:hover { text-decoration: underline; }
 
-/* КНОПКА ВОЗВРАТА В СТАТЬЯХ */
+/* КНОПКА ВОЗВРАТА */
 .intec-btn {
-    height: 36px;
-    background: var(--c-border);
-    border-radius: 9px;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 12px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    color: var(--c-text);
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 900;
-    letter-spacing: 0.05em;
+    height: 36px; background: var(--c-border); border-radius: 9px;
+    display: inline-flex; align-items: center; padding: 0 12px;
+    cursor: pointer; border: 2px solid transparent; color: var(--c-text);
+    font-family: 'Noto Sans', sans-serif; font-size: 14px; font-weight: 900; letter-spacing: 0.05em;
 }
 .intec-btn:hover { border-color: var(--c-text); }
 .intec-btn:active { background: var(--c-text); color: var(--c-panel); }
@@ -200,7 +216,6 @@ a { text-decoration: none; color: inherit; }
     .tag { height: 18px; font-size: 7px; }
     .info-text { font-size: 9px; } .info-text h2 { font-size: 14px; }
     .info-console { width: 90px; height: 90px; }
-    .tv-screen { aspect-ratio: 16/9; } .tv-text-box { font-size: 16px; padding: 6px; }
     .intec-btn { height: 18px; border-radius: 4.5px; font-size: 8px; padding: 0 6px; }
     
     .search-block { height: 39px; border-radius: 9px; }
