@@ -380,11 +380,16 @@ function initPatchnotesUI() {
         const sortOrder = sortSelect.value;
 
         let filtered = (typeof POSTS_DATABASE !== 'undefined' ? POSTS_DATABASE : []).filter(post => {
+            // Безопасно достаем описание (если его вдруг нет, берем пустую строку)
+            const descEn = post.description?.en || '';
+            const descRu = post.description?.ru || '';
+
             const matchesSearch = !query || `
                 ${post.title.en.toLowerCase()} ${post.title.ru.toLowerCase()} 
-                ${post.textRaw.en.toLowerCase()} ${post.textRaw.ru.toLowerCase()} 
+                ${descEn.toLowerCase()} ${descRu.toLowerCase()} 
                 ${post.tags.join(' ').toLowerCase()} ${post.date}
             `.includes(query);
+            
             const matchesCategory = category === 'all' || post.tags.includes(category);
             return matchesSearch && matchesCategory;
         });
