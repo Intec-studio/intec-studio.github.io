@@ -199,12 +199,12 @@ a { text-decoration: none; color: inherit; }
 
 /* --- СТИЛИ ДЛЯ КАРТИНОК В СТАТЬЯХ (ПК) --- */
 .pn-card-desc img {
-    max-width: 100%;
-    max-height: 70vh; /* Ограничиваем высоту (70% от высоты экрана) */
-    width: auto;      /* Разрешаем картинке быть уже, чем 100% */
+    max-width: 100%;   
+    max-height: 70vh;  
+    width: auto;       
     border-radius: 9px;
     border: 3px solid var(--c-border);
-    margin: 18px auto; /* Выравниваем картинку строго по центру */
+    margin: 18px auto; 
     display: block;
 }
 
