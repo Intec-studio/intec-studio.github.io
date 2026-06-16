@@ -5,8 +5,8 @@ const POSTS_DATABASE = [
         date: "16.06.2026",
         tags: ["#RaceLegends"],
         title: {
-            en: "P-A 100",
-            ru: "P-A 100"
+            en: "p-a 100",
+            ru: "p-a 100"
         },
         description: {
             en: "Hi!",
