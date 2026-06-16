@@ -1,18 +1,18 @@
 const POSTS_DATABASE = [
     {
-        id: "patch_____",
+        id: "patch_p_a_100",
         timestamp: 1781611200000,
         date: "16.06.2026",
         tags: ["#RaceLegends"],
         title: {
-            en: "Тест",
-            ru: "Тест"
+            en: "P-A 100",
+            ru: "P-A 100"
         },
         description: {
-            en: "",
+            en: "Hi!",
             ru: "Привет!"
         },
-        contentFile: "articles/patch_____.json"
+        contentFile: "articles/patch_p_a_100.json"
     }
 ];
 
