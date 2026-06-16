@@ -1,19 +1,18 @@
-// 1. СЮДА ВСТАВЛЯЕШЬ БАЗУ ДАННЫХ ИЗ ПРОГРАММЫ
 const POSTS_DATABASE = [
     {
-        id: "patch_001",
-        timestamp: 1781524800000,
-        date: "15.06.2026",
-        tags: ["#Intec", "#Новости"],
+        id: "patch_____",
+        timestamp: 1781611200000,
+        date: "16.06.2026",
+        tags: ["#RaceLegends"],
         title: {
-            en: "ввфывывыфв",
-            ru: "ввфывывыфв"
+            en: "Тест",
+            ru: "Тест"
         },
-        textRaw: { 
+        description: {
             en: "",
-            ru: "вцфвцфввцфвцфвцф"
+            ru: "Привет!"
         },
-        contentFile: "articles/patch_001.json" 
+        contentFile: "articles/patch_____.json"
     }
 ];
 
