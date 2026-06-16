@@ -409,8 +409,8 @@ function initPatchnotesUI() {
                 const tagsHtml = post.tags.map(t => `<div class="tag">${t}</div>`).join('');
                 
                 card.innerHTML = `
-                    <div class="pn-card-title" data-lang="en" style="font-size: 21px; color: var(--c-text); margin: 0;">${post.title.en}</div>
-                    <div class="pn-card-title" data-lang="ru" style="font-size: 21px; color: var(--c-text); margin: 0;">${post.title.ru}</div>
+                    <div class="pn-card-title" data-lang="en">${post.title.en}</div>
+                    <div class="pn-card-title" data-lang="ru">${post.title.ru}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="tags-group">${tagsHtml}</div>
                         <div class="tag">${post.date}</div>
