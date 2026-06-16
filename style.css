@@ -197,8 +197,22 @@ a { text-decoration: none; color: inherit; }
 .pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
 .pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
 
+/* --- СТИЛИ ДЛЯ КАРТИНОК В СТАТЬЯХ (ПК) --- */
+.pn-card-desc img {
+    width: 100%;
+    border-radius: 9px;
+    border: 3px solid var(--c-border);
+    margin: 18px 0;
+    display: block;
+}
+
 /* МОБИЛЬНЫЙ АДАПТИВ */
 @media (max-width: 900px) {
+    /* --- АДАПТИВ КАРТИНОК ДЛЯ ТЕЛЕФОНОВ --- */
+    .pn-card-desc img { 
+    border-radius: 4.5px; 
+    border-width: 1.5px; 
+    margin: 9px 0;  }
     .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; } .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
     .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .settings-group { gap: 9px; margin-right: 19.5px; } .toggle-block { gap: 1.5px; }
     .toggle-btn { width: 18px; height: 18px; border-width: 1px; } .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .toggle-btn.text-btn { font-size: 7px; }
