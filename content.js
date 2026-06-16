@@ -302,8 +302,8 @@ const PAGE_CONTENT = {
             <div class="pn-select-wrap cat-box">
                 <select class="pn-select" id="categorySelect">
                     <option value="all">All / Все проекты</option>
-                    <option value="#RaceLegends">Race Legends</option>
-                    <option value="#FractalForge">Fractal Forge</option>
+                    <option value="#RaceLegends">#RaceLegends</option>
+                    <option value="#FractalForge">#FractalForge</option>
                     <option value="#RaceLegendsTV">#RaceLegendsTV</option>
                 </select>
             </div>
