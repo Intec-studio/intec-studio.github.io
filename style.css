@@ -192,7 +192,7 @@ a { text-decoration: none; color: inherit; }
 .pn-select-wrap:active::after, .pn-select-wrap.active-state::after { background-color: var(--c-panel); }
 
 .pn-card { padding: 18px; display: flex; flex-direction: column; gap: 18px; }
-.pn-card-title { color: var(--c-text); font-size: 42px; font-weight: 900; letter-spacing: 0.05em; line-height: 1.1; }
+.pn-card-title { color: var(--c-text); font-size: 21px; font-weight: 900; letter-spacing: 0.05em; line-height: 1.1; }
 .pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
 .pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
 .pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
@@ -247,7 +247,7 @@ a { text-decoration: none; color: inherit; }
     .pn-input { border-width: 1px; border-radius: 4.5px; padding: 0 9px 0 18px; font-size: 7.5px; } 
     .pn-select { border-width: 1px; border-radius: 4.5px; padding: 0 18px 0 9px; font-size: 7.5px; } 
     .pn-select-wrap::after { right: 6px; width: 6px; height: 6px; }
-    .pn-card-title { font-size: 16px; margin-bottom: 0; line-height: 1.2; } .pn-card-desc { font-size: 9px; } 
+    .pn-card-title { font-size: 9px; margin-bottom: 0; line-height: 1.2; } .pn-card-desc { font-size: 9px; } 
 }
 
 @media (max-width: 900px) and (orientation: portrait) {
