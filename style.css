@@ -199,10 +199,12 @@ a { text-decoration: none; color: inherit; }
 
 /* --- СТИЛИ ДЛЯ КАРТИНОК В СТАТЬЯХ (ПК) --- */
 .pn-card-desc img {
-    width: 100%;
+    max-width: 100%;
+    max-height: 70vh; /* Ограничиваем высоту (70% от высоты экрана) */
+    width: auto;      /* Разрешаем картинке быть уже, чем 100% */
     border-radius: 9px;
     border: 3px solid var(--c-border);
-    margin: 18px 0;
+    margin: 18px auto; /* Выравниваем картинку строго по центру */
     display: block;
 }
 
@@ -212,7 +214,7 @@ a { text-decoration: none; color: inherit; }
     .pn-card-desc img { 
     border-radius: 4.5px; 
     border-width: 1.5px; 
-    margin: 9px 0;  }
+    margin: 9px auto;  }
     .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; } .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
     .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .settings-group { gap: 9px; margin-right: 19.5px; } .toggle-block { gap: 1.5px; }
     .toggle-btn { width: 18px; height: 18px; border-width: 1px; } .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .toggle-btn.text-btn { font-size: 7px; }
