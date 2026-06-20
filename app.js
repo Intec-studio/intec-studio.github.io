@@ -467,25 +467,32 @@ function initPatchnotesUI() {
             singlePostContent.innerHTML = htmlData.en + htmlData.ru;
             
             // =========================================================
-            // --- ЛОГИКА КАСТОМНЫХ ПЛЕЕРОВ (Вставляется прямо СЮДА) ---
+            // --- ЛОГИКА КАСТОМНЫХ ПЛЕЕРОВ ---
             // =========================================================
             let currentAudio = null;
             let currentBtn = null;
+
+            // SVG Иконки (идентично RLTV)
+            const svgPlay = `<svg viewBox="0 0 24 24"><polygon points="6 4 18 12 6 20 6 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+            const svgPause = `<svg viewBox="0 0 24 24"><rect x="7" y="5" width="3" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" /><rect x="14" y="5" width="3" height="14" rx="1" fill="none" stroke="currentColor" stroke-width="1.5" /></svg>`;
 
             singlePostContent.querySelectorAll('.article-player').forEach(player => {
                 const btn = player.querySelector('.player-btn');
                 const timeline = player.querySelector('.player-timeline');
                 const volume = player.querySelector('.player-volume');
+                const volInput = player.querySelector('.player-vol-input');
                 const timeCurrent = player.querySelector('.time-current');
                 const timeTotal = player.querySelector('.time-total');
                 const src = player.getAttribute('data-src');
                 
                 if (!src || !btn) return;
 
+                // Устанавливаем иконку Play по умолчанию
+                btn.innerHTML = svgPlay;
+
                 const audio = new Audio(src);
                 if (volume) audio.volume = volume.value / 100;
 
-                // Функция формата времени (секунды -> 0:00)
                 const formatTime = (sec) => {
                     if (isNaN(sec)) return "0:00";
                     const m = Math.floor(sec / 60);
@@ -495,42 +502,46 @@ function initPatchnotesUI() {
 
                 // 1. Кнопка Play / Pause
                 btn.addEventListener('click', () => {
-                    // Выключаем предыдущий трек, если включили новый
                     if (currentAudio && currentAudio !== audio) {
                         currentAudio.pause();
-                        if (currentBtn) currentBtn.textContent = '▶';
+                        if (currentBtn) {
+                            currentBtn.innerHTML = svgPlay;
+                            currentBtn.classList.remove('playing');
+                        }
                     }
 
                     if (audio.paused) {
                         audio.play();
-                        btn.textContent = '⏸';
+                        btn.innerHTML = svgPause;
+                        btn.classList.add('playing'); // Включает белый фон!
                         currentAudio = audio;
                         currentBtn = btn;
                     } else {
                         audio.pause();
-                        btn.textContent = '▶';
+                        btn.innerHTML = svgPlay;
+                        btn.classList.remove('playing'); // Возвращает темный фон 1F1F1F
                     }
                 });
 
-                // 2. Получение длительности трека при загрузке
+                // 2. Длительность трека
                 audio.addEventListener('loadedmetadata', () => {
                     if (timeTotal) timeTotal.textContent = formatTime(audio.duration);
                 });
 
-                // 3. Обновление ползунка времени и таймера при воспроизведении
+                // 3. Обновление ползунка и таймера
                 audio.addEventListener('timeupdate', () => {
                     if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
                     if (timeline && audio.duration) {
                         const percent = (audio.currentTime / audio.duration) * 100;
                         timeline.value = percent;
-                        // Закрашиваем канавку
                         timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
                     }
                 });
 
                 // 4. Трек закончился
                 audio.addEventListener('ended', () => {
-                    btn.textContent = '▶';
+                    btn.innerHTML = svgPlay;
+                    btn.classList.remove('playing');
                     if (timeline) {
                         timeline.value = 0;
                         timeline.style.background = `linear-gradient(to right, var(--c-sub) 0%, var(--c-border) 0%)`;
@@ -538,29 +549,38 @@ function initPatchnotesUI() {
                     if (timeCurrent) timeCurrent.textContent = "0:00";
                 });
 
-                // 5. Перемотка трека кликом по ползунку
+                // 5. Перемотка
                 if (timeline) {
                     timeline.addEventListener('input', (e) => {
                         const percent = e.target.value;
-                        if (audio.duration) {
-                            audio.currentTime = (percent / 100) * audio.duration;
-                        }
+                        if (audio.duration) audio.currentTime = (percent / 100) * audio.duration;
                         timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
                     });
                 }
 
-                // 6. Управление громкостью
-                if (volume) {
-                    // Первоначальная закраска ползунка громкости
-                    volume.style.background = `linear-gradient(to right, var(--c-sub) ${volume.value}%, var(--c-border) ${volume.value}%)`;
-                    volume.addEventListener('input', (e) => {
-                        const val = e.target.value;
+                // 6. Управление громкостью (Синхронизация инпута и ползунка как в RLTV)
+                if (volume && volInput) {
+                    const syncVol = (source) => {
+                        let val;
+                        if (source === 'input') {
+                            let raw = volInput.value.replace(/\D/g, '');
+                            val = raw === '' ? 0 : Math.min(parseInt(raw, 10), 100);
+                            volInput.value = val;
+                            volume.value = val;
+                        } else {
+                            val = volume.value;
+                            volInput.value = val;
+                        }
                         audio.volume = val / 100;
                         volume.style.background = `linear-gradient(to right, var(--c-sub) ${val}%, var(--c-border) ${val}%)`;
-                    });
+                    };
+
+                    syncVol('slider'); // Инициализация
+
+                    volume.addEventListener('input', () => syncVol('slider'));
+                    volInput.addEventListener('input', () => syncVol('input'));
                 }
             });
-            // =========================================================
             // =========================================================
 
         } catch (error) {
