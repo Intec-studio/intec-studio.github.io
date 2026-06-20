@@ -1,18 +1,18 @@
 const POSTS_DATABASE = [
     {
-        id: "patch_p_a_100",
-        timestamp: 1781611200000,
-        date: "16.06.2026",
+        id: "patch_rl_p_a001",
+        timestamp: 1757073600000,
+        date: "05.09.2025",
         tags: ["#RaceLegends"],
         title: {
-            en: "p-a 100",
-            ru: "p-a 100"
+            en: "RL-P-A001",
+            ru: "RL-P-A001"
         },
         description: {
-            en: "Hi!",
-            ru: "Привет!"
+            en: "First development diary for Race Legends (pre-alpha). Removed realism, new cartoon graphics, stylized city. Completely redesigned minimalist UI (like realme), settings search, carousel picker, menu, laboratory. Colorblind settings, FOV, field of view. Added English and Russian languages, audio preview. Disappearing chat messages, chat timer, empty messages ban. New tracks and music. New car physics, how to drift, custom yellow car, flying car, mid-air tricks, loop-the-loop, 4 cameras (first and third-person view). 100 player servers, new tab screen, scoreboard, online list. Plans for 2026: concept arts, keybinds, shaders, visual profiles.",
+            ru: "Первый дневник разработки Race Legends (пре-альфа). Убрали реализм, новая мультяшная графика, стилизованный город. Полностью новый минималистичный интерфейс (как realme), поиск по настройкам, барабан, меню, лаборатория. Настройки дальтонизма, FOV, угол обзора. Добавлен русский и английский язык, предпрослушка звука. В чате пропадают сообщения, таймер чата, запрет пустых сообщений. Новые треки и музыка. Новая физика машин, как дрифтить, своя желтая машина, полет на машине, трюки в воздухе, мертвая петля, 4 камеры (вид от первого и третьего лица). Сервера на 100 игроков, новый таб (tab), список онлайна. Планы на 2026 год: концепт-арты, бинды на кнопки, шейдеры, визуальные профили.\n"
         },
-        contentFile: "articles/patch_p_a_100.json"
+        contentFile: "articles/patch_rl_p_a001.json"
     }
 ];
 
