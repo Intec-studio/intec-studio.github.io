@@ -211,14 +211,21 @@ a { text-decoration: none; color: inherit; }
    МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ
 ============================================================ */
 .article-player {
-    display: flex; align-items: center; gap: 18px;
+    display: flex; align-items: center; 
+    gap: 18px; /* Отступы 18px между таймлайном и боковыми группами */
     margin: 18px 0; width: 100%;
 }
 
-/* Левый блок (Кнопка + Время) объединенный в капсулу */
-.player-left-group { display: flex; gap: 0; flex-shrink: 0; }
+/* Левый блок (Кнопка + Время) */
+.player-left-group { 
+    display: flex; 
+    gap: 9px; /* Тот самый отступ 9px между кнопкой и временем */
+    flex-shrink: 0; 
+}
+
 .article-player .player-btn {
-    width: 36px; height: 36px; background: var(--c-border); border-radius: 9px 0 0 9px;
+    width: 36px; height: 36px; background: var(--c-border); 
+    border-radius: 9px; /* Полное скругление со всех сторон */
     display: flex; justify-content: center; align-items: center; cursor: pointer;
     color: var(--c-text); border: 2px solid transparent; flex-shrink: 0;
     transition: background-color 0.1s, border-color 0.1s, color 0.1s;
@@ -228,7 +235,8 @@ a { text-decoration: none; color: inherit; }
 @media (hover: hover) { .article-player .player-btn:hover { border-color: var(--c-text); } }
 
 .player-time-box {
-    width: 102px; height: 36px; background: var(--c-border); border-radius: 0 9px 9px 0;
+    width: 102px; height: 36px; background: var(--c-border); 
+    border-radius: 9px; /* Полное скругление со всех сторон */
     display: flex; justify-content: center; align-items: center;
     color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif;
     border: 2px solid transparent; white-space: nowrap;
@@ -238,19 +246,24 @@ a { text-decoration: none; color: inherit; }
 .player-timeline { flex-grow: 1; width: 100% !important; margin: 0; }
 
 /* Правый блок (Громкость) */
-.player-right-group { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
-.article-player .vol-box { border-radius: 9px; } /* Закругляем коробочку именно в плеере */
+.player-right-group { 
+    display: flex; align-items: center; 
+    gap: 18px; /* Отступ 18px между процентами и ползунком звука */
+    flex-shrink: 0; 
+}
+.article-player .vol-box { border-radius: 9px; } 
 .player-volume { width: 114px !important; margin: 0; }
 
 /* МОБИЛЬНЫЙ АДАПТИВ */
 @media (max-width: 900px) {
     /* Адаптив плеера */
     .article-player { gap: 9px; margin: 9px 0; }
-    .player-left-group { gap: 0; }
-    .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
+    .player-left-group { gap: 4.5px; } /* 9px делим на 2 */
+    .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px; border-width: 1px; }
     .article-player .player-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
-    .player-time-box { width: 51px; height: 18px; border-radius: 0 4.5px 4.5px 0; font-size: 7.5px; border-width: 1px; }
-    .player-right-group { gap: 9px; }
+    .player-time-box { width: 51px; height: 18px; border-radius: 4.5px; font-size: 7.5px; border-width: 1px; }
+    
+    .player-right-group { gap: 9px; } /* 18px делим на 2 */
     .article-player .vol-box { border-radius: 4.5px; }
     .player-volume { width: 57px !important; }
 
