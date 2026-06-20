@@ -219,49 +219,53 @@ a { text-decoration: none; color: inherit; }
 /* Левый блок (Кнопка + Время) */
 .player-left-group { 
     display: flex; 
-    gap: 9px; /* Тот самый отступ 9px между кнопкой и временем */
+    gap: 3px; /* Отступ изменен на 3px */
     flex-shrink: 0; 
 }
 
 .article-player .player-btn {
     width: 36px; height: 36px; background: var(--c-border); 
-    border-radius: 9px; /* Полное скругление со всех сторон */
+    border-radius: 9px 0 0 9px; /* Внутренние углы прямые, внешние скругленные */
     display: flex; justify-content: center; align-items: center; cursor: pointer;
     color: var(--c-text); border: 2px solid transparent; flex-shrink: 0;
     transition: background-color 0.1s, border-color 0.1s, color 0.1s;
 }
-.article-player .player-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
-.article-player .player-btn.playing { background: var(--c-text); color: var(--c-panel); }
-@media (hover: hover) { .article-player .player-btn:hover { border-color: var(--c-text); } }
 
 .player-time-box {
     width: 102px; height: 36px; background: var(--c-border); 
-    border-radius: 9px; /* Полное скругление со всех сторон */
+    border-radius: 0 9px 9px 0; /* Внутренние углы прямые, внешние скругленные */
     display: flex; justify-content: center; align-items: center;
-    color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif;
+    color: var(--c-sub); /* Цвет блока серый (для слэша "/") */
+    font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif;
     border: 2px solid transparent; white-space: nowrap;
 }
 
-/* Переиспользуем стиль ползунков */
-.player-timeline { flex-grow: 1; width: 100% !important; margin: 0; }
-
-/* Правый блок (Громкость) */
-.player-right-group { 
-    display: flex; align-items: center; 
-    gap: 18px; /* Отступ 18px между процентами и ползунком звука */
-    flex-shrink: 0; 
+/* Белый цвет для самих цифр внутри серого блока таймкодов */
+.time-current, .time-total {
+    color: var(--c-text);
 }
-.article-player .vol-box { border-radius: 9px; } 
-.player-volume { width: 114px !important; margin: 0; }
+
+/* ОБНОВЛЕННЫЙ СЛАЙДЕР С ТОЧНОЙ МАТЕМАТИКОЙ ЦЕНТРА ПОЛЗУНКА */
+.vol-slider { 
+    -webkit-appearance: none; appearance: none; width: 114px; height: 18px; border-radius: 4.5px; 
+    background: var(--c-border); /* Фолбэк */
+    outline: none; cursor: pointer; display: block; 
+    
+    /* Переменные для точной заливки от центра ползунка */
+    --val: 0;
+    --thumb-r: 6px; /* Радиус ползунка (половина от его ширины 12px) */
+    background: linear-gradient(to right, var(--c-sub) calc(var(--val) * 1% + var(--thumb-r) - (var(--val) * var(--thumb-r) * 2 / 100)), var(--c-border) 0);
+}
 
 /* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
 @media (max-width: 900px) {
-    /* Адаптив плеера */
-    .article-player { gap: 9px; margin: 9px 0; }
-    .player-left-group { gap: 4.5px; } /* 9px делим на 2 */
-    .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px; border-width: 1px; }
-    .article-player .player-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
-    .player-time-box { width: 51px; height: 18px; border-radius: 4.5px; font-size: 7.5px; border-width: 1px; }
+    /* Адаптив левого блока (делим значения на 2) */
+    .player-left-group { gap: 1.5px; } 
+    .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
+    .player-time-box { width: 51px; height: 18px; border-radius: 0 4.5px 4.5px 0; font-size: 7.5px; border-width: 1px; }
+
+    /* Радиус ползунка для телефонов (ширина 6px -> радиус 3px) */
+    .vol-slider { width: 57px; height: 9px; border-radius: 2.25px; --thumb-r: 3px; }
     
     .player-right-group { gap: 9px; } /* 18px делим на 2 */
     .article-player .vol-box { border-radius: 4.5px; }

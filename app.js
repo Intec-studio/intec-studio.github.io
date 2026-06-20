@@ -506,7 +506,7 @@ function initPatchnotesUI() {
                     if (timeline && audio.duration) {
                         const percent = (audio.currentTime / audio.duration) * 100;
                         timeline.value = percent;
-                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                        timeline.style.setProperty('--val', percent);
                     }
                     if (!audio.paused) {
                         animFrame = requestAnimationFrame(updatePlayState);
@@ -550,7 +550,7 @@ function initPatchnotesUI() {
                     cancelAnimationFrame(animFrame);
                     if (timeline) {
                         timeline.value = 0;
-                        timeline.style.background = `linear-gradient(to right, var(--c-sub) 0%, var(--c-border) 0%)`;
+                        timeline.style.setProperty('--val', 0);
                     }
                     if (timeCurrent) timeCurrent.textContent = "0:00";
                 });
@@ -560,7 +560,7 @@ function initPatchnotesUI() {
                     timeline.addEventListener('input', (e) => {
                         const percent = e.target.value;
                         if (audio.duration) audio.currentTime = (percent / 100) * audio.duration;
-                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                        timeline.style.setProperty('--val', percent);
                         if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
                     });
                 }
@@ -579,7 +579,7 @@ function initPatchnotesUI() {
                             volInput.value = val;
                         }
                         audio.volume = val / 100;
-                        volume.style.background = `linear-gradient(to right, var(--c-sub) ${val}%, var(--c-border) ${val}%)`;
+                        volume.style.setProperty('--val', val);
                     };
 
                     syncVol('slider'); 
@@ -676,7 +676,7 @@ const appRLTV = {
 
         // Закрашиваем канавку слайдера фирменным цветом
         const percent = this.volSlider.value;
-        this.volSlider.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+        this.volSlider.style.setProperty('--val', percent);
     }, // <--- ИМЕННО ЭТУ ЗАПЯТУЮ Я ЗАБЫЛ ВАМ НАПИСАТЬ! ИЗВИНИТЕ :)
 
     updateClock() {
