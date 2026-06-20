@@ -212,26 +212,25 @@ a { text-decoration: none; color: inherit; }
 ============================================================ */
 .article-player {
     display: flex; align-items: center; 
-    gap: 18px; /* Отступы между центральным ползунком и боковыми группами */
+    gap: 18px; /* Отступы 18px между таймлайном и боковыми группами */
     margin: 18px 0; width: 100%;
 }
 
 /* Левый блок (Кнопка + Время) */
 .player-left-group { 
     display: flex; 
-    gap: 0; /* СТАВИМ 0: чтобы прямые углы идеально сомкнулись в единую капсулу, как на 2 фото */
+    gap: 3px; /* Идеальный отступ 3px */
     flex-shrink: 0; 
 }
 
 .article-player .player-btn {
     width: 36px; height: 36px; background: var(--c-border); 
-    border-radius: 9px 0 0 9px; /* Скругление только слева */
+    border-radius: 9px 0 0 9px; /* Внутренние углы прямые, внешние скругленные */
     display: flex; justify-content: center; align-items: center; cursor: pointer;
-    color: var(--c-text); border: 2px solid transparent; border-right: none; flex-shrink: 0;
+    color: var(--c-text); border: 2px solid transparent; flex-shrink: 0; /* Убрали border-right: none */
     transition: background-color 0.1s, border-color 0.1s, color 0.1s;
 }
 
-/* ВОЗВРАЩАЕМ РАЗМЕР ИКОНОК */
 .article-player .player-btn svg { 
     width: 18px; height: 18px; stroke: currentColor; fill: none; 
     stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; 
@@ -242,11 +241,11 @@ a { text-decoration: none; color: inherit; }
 
 .player-time-box {
     width: 102px; height: 36px; background: var(--c-border); 
-    border-radius: 0 9px 9px 0; /* Скругление только справа */
+    border-radius: 0 9px 9px 0; /* Внутренние углы прямые, внешние скругленные */
     display: flex; justify-content: center; align-items: center;
-    color: var(--c-sub); /* Серый цвет для слэша "/" */
+    color: var(--c-sub); /* Цвет блока серый (для слэша "/") */
     font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif;
-    border: 2px solid transparent; border-left: none; white-space: nowrap;
+    border: 2px solid transparent; white-space: nowrap; /* Убрали border-left: none */
 }
 
 /* Белый цвет для самих цифр внутри серого блока таймкодов */
@@ -269,23 +268,21 @@ a { text-decoration: none; color: inherit; }
 /* Правый блок (Громкость) */
 .player-right-group { 
     display: flex; align-items: center; 
-    gap: 18px; 
+    gap: 18px; /* Отступ 18px между процентами и ползунком звука */
     flex-shrink: 0; 
 }
-
-/* ВОЗВРАЩАЕМ СКРУГЛЕНИЕ БЛОКУ ГРОМКОСТИ ДЛЯ ПК */
 .article-player .vol-box { border-radius: 9px; } 
 .player-volume { width: 114px !important; margin: 0; }
 
 /* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
 @media (max-width: 900px) {
     .article-player { gap: 9px; margin: 9px 0; }
-    .player-left-group { gap: 0; } /* Слитно на мобильных */
+    .player-left-group { gap: 1.5px; } /* Отступ 3px / 2 = 1.5px */
     .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
     .article-player .player-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
     .player-time-box { width: 51px; height: 18px; border-radius: 0 4.5px 4.5px 0; font-size: 7.5px; border-width: 1px; }
     
-    .player-right-group { gap: 9px; } 
+    .player-right-group { gap: 9px; } /* Отступ 18px / 2 = 9px */
     .article-player .vol-box { border-radius: 4.5px; }
     .player-volume { width: 57px !important; }
     .vol-slider { width: 57px; height: 9px; border-radius: 2.25px; --thumb-r: 3px; }
