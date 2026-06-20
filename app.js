@@ -487,7 +487,6 @@ function initPatchnotesUI() {
                 
                 if (!src || !btn) return;
 
-                // Устанавливаем иконку Play по умолчанию
                 btn.innerHTML = svgPlay;
 
                 const audio = new Audio(src);
@@ -498,6 +497,20 @@ function initPatchnotesUI() {
                     const m = Math.floor(sec / 60);
                     const s = Math.floor(sec % 60).toString().padStart(2, '0');
                     return `${m}:${s}`;
+                };
+
+                // Функция ПЛАВНОГО обновления (60 раз в секунду)
+                let animFrame;
+                const updatePlayState = () => {
+                    if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
+                    if (timeline && audio.duration) {
+                        const percent = (audio.currentTime / audio.duration) * 100;
+                        timeline.value = percent;
+                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                    }
+                    if (!audio.paused) {
+                        animFrame = requestAnimationFrame(updatePlayState);
+                    }
                 };
 
                 // 1. Кнопка Play / Pause
@@ -513,13 +526,15 @@ function initPatchnotesUI() {
                     if (audio.paused) {
                         audio.play();
                         btn.innerHTML = svgPause;
-                        btn.classList.add('playing'); // Включает белый фон!
+                        btn.classList.add('playing'); 
                         currentAudio = audio;
                         currentBtn = btn;
+                        updatePlayState(); // Запуск плавной анимации
                     } else {
                         audio.pause();
                         btn.innerHTML = svgPlay;
-                        btn.classList.remove('playing'); // Возвращает темный фон 1F1F1F
+                        btn.classList.remove('playing');
+                        cancelAnimationFrame(animFrame); // Остановка анимации
                     }
                 });
 
@@ -528,24 +543,11 @@ function initPatchnotesUI() {
                     if (timeTotal) timeTotal.textContent = formatTime(audio.duration);
                 });
 
-                // 3. Обновление ползунка и таймера (ПЛАВНОЕ)
-                audio.addEventListener('timeupdate', () => {
-                    if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
-                    if (timeline && audio.duration) {
-                        // Рассчитываем процент с высокой точностью
-                        const percent = (audio.currentTime / audio.duration) * 100;
-                        timeline.value = percent;
-                        
-                        // Плавная закраска дорожки
-                        // Используем toFixed(2), чтобы дорожка не отставала от белого ползунка
-                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent.toFixed(2)}%, var(--c-border) ${percent.toFixed(2)}%)`;
-                    }
-                });
-
-                // 4. Трек закончился
+                // 3. Трек закончился
                 audio.addEventListener('ended', () => {
                     btn.innerHTML = svgPlay;
                     btn.classList.remove('playing');
+                    cancelAnimationFrame(animFrame);
                     if (timeline) {
                         timeline.value = 0;
                         timeline.style.background = `linear-gradient(to right, var(--c-sub) 0%, var(--c-border) 0%)`;
@@ -553,16 +555,17 @@ function initPatchnotesUI() {
                     if (timeCurrent) timeCurrent.textContent = "0:00";
                 });
 
-                // 5. Перемотка
+                // 4. Перемотка
                 if (timeline) {
                     timeline.addEventListener('input', (e) => {
                         const percent = e.target.value;
                         if (audio.duration) audio.currentTime = (percent / 100) * audio.duration;
                         timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                        if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
                     });
                 }
 
-                // 6. Управление громкостью (Синхронизация инпута и ползунка как в RLTV)
+                // 5. Управление громкостью
                 if (volume && volInput) {
                     const syncVol = (source) => {
                         let val;
@@ -579,8 +582,7 @@ function initPatchnotesUI() {
                         volume.style.background = `linear-gradient(to right, var(--c-sub) ${val}%, var(--c-border) ${val}%)`;
                     };
 
-                    syncVol('slider'); // Инициализация
-
+                    syncVol('slider'); 
                     volume.addEventListener('input', () => syncVol('slider'));
                     volInput.addEventListener('input', () => syncVol('input'));
                 }

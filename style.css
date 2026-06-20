@@ -212,8 +212,7 @@ a { text-decoration: none; color: inherit; }
 ============================================================ */
 .article-player {
     display: flex; align-items: center; gap: 18px;
-    background: var(--c-panel); border: none;
-    padding: 18px; margin: 18px 0; width: 100%;
+    margin: 18px 0; width: 100%;
 }
 
 /* Левый блок (Кнопка + Время) объединенный в капсулу */
@@ -246,7 +245,7 @@ a { text-decoration: none; color: inherit; }
 /* МОБИЛЬНЫЙ АДАПТИВ */
 @media (max-width: 900px) {
     /* Адаптив плеера */
-    .article-player { padding: 9px; gap: 9px; border-width: 1.5px; border-radius: 9px; margin: 9px 0; }
+    .article-player { gap: 9px; margin: 9px 0; }
     .player-left-group { gap: 0; }
     .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
     .article-player .player-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
