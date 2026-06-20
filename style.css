@@ -216,8 +216,8 @@ a { text-decoration: none; color: inherit; }
     padding: 18px; margin: 18px 0; width: 100%;
 }
 
-/* Левый блок (Кнопка + Время) */
-.player-left-group { display: flex; gap: 3px; flex-shrink: 0; }
+/* Левый блок (Кнопка + Время) объединенный в капсулу */
+.player-left-group { display: flex; gap: 0; flex-shrink: 0; }
 .article-player .player-btn {
     width: 36px; height: 36px; background: var(--c-border); border-radius: 9px 0 0 9px;
     display: flex; justify-content: center; align-items: center; cursor: pointer;
@@ -235,24 +235,26 @@ a { text-decoration: none; color: inherit; }
     border: 2px solid transparent; white-space: nowrap;
 }
 
-/* Переиспользуем стиль ползунков, но меняем ширину */
+/* Переиспользуем стиль ползунков */
 .player-timeline { flex-grow: 1; width: 100% !important; margin: 0; }
 
 /* Правый блок (Громкость) */
 .player-right-group { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+.article-player .vol-box { border-radius: 9px; } /* Закругляем коробочку именно в плеере */
 .player-volume { width: 114px !important; margin: 0; }
 
 /* МОБИЛЬНЫЙ АДАПТИВ */
 @media (max-width: 900px) {
     /* Адаптив плеера */
     .article-player { padding: 9px; gap: 9px; border-width: 1.5px; border-radius: 9px; margin: 9px 0; }
-    .player-left-group { gap: 1.5px; }
+    .player-left-group { gap: 0; }
     .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
     .article-player .player-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
     .player-time-box { width: 51px; height: 18px; border-radius: 0 4.5px 4.5px 0; font-size: 7.5px; border-width: 1px; }
-    
     .player-right-group { gap: 9px; }
+    .article-player .vol-box { border-radius: 4.5px; }
     .player-volume { width: 57px !important; }
+    
     /* --- АДАПТИВ КАРТИНОК ДЛЯ ТЕЛЕФОНОВ --- */
     .pn-card-desc img { 
     border-radius: 4.5px; 
