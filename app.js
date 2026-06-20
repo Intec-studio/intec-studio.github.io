@@ -465,6 +465,40 @@ function initPatchnotesUI() {
             
             // Вставляем скачанный HTML
             singlePostContent.innerHTML = htmlData.en + htmlData.ru;
+
+            let currentAudio = null;
+            let currentBtn = null;
+
+            singlePostContent.querySelectorAll('.article-player').forEach(player => {
+                const btn = player.querySelector('.player-btn');
+                const src = player.getAttribute('data-src');
+                if (!src || !btn) return;
+
+                const audio = new Audio(src);
+
+                btn.addEventListener('click', () => {
+                    // Если нажали на другой трек — ставим предыдущий на паузу
+                    if (currentAudio && currentAudio !== audio) {
+                        currentAudio.pause();
+                        if (currentBtn) currentBtn.textContent = '▶';
+                    }
+
+                    if (audio.paused) {
+                        audio.play();
+                        btn.textContent = '⏸'; // Меняем на паузу
+                        currentAudio = audio;
+                        currentBtn = btn;
+                    } else {
+                        audio.pause();
+                        btn.textContent = '▶'; // Меняем на плей
+                    }
+                });
+
+                // Когда трек закончился, возвращаем кнопку ▶
+                audio.addEventListener('ended', () => {
+                    btn.textContent = '▶';
+                });
+            });
         } catch (error) {
             singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px; color: var(--c-sub);">Error loading content / Ошибка загрузки контента</div>`;
         }
