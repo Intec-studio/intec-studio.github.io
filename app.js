@@ -465,19 +465,37 @@ function initPatchnotesUI() {
             
             // Вставляем скачанный HTML
             singlePostContent.innerHTML = htmlData.en + htmlData.ru;
-
+            
+            // =========================================================
+            // --- ЛОГИКА КАСТОМНЫХ ПЛЕЕРОВ (Вставляется прямо СЮДА) ---
+            // =========================================================
             let currentAudio = null;
             let currentBtn = null;
 
             singlePostContent.querySelectorAll('.article-player').forEach(player => {
                 const btn = player.querySelector('.player-btn');
+                const timeline = player.querySelector('.player-timeline');
+                const volume = player.querySelector('.player-volume');
+                const timeCurrent = player.querySelector('.time-current');
+                const timeTotal = player.querySelector('.time-total');
                 const src = player.getAttribute('data-src');
+                
                 if (!src || !btn) return;
 
                 const audio = new Audio(src);
+                if (volume) audio.volume = volume.value / 100;
 
+                // Функция формата времени (секунды -> 0:00)
+                const formatTime = (sec) => {
+                    if (isNaN(sec)) return "0:00";
+                    const m = Math.floor(sec / 60);
+                    const s = Math.floor(sec % 60).toString().padStart(2, '0');
+                    return `${m}:${s}`;
+                };
+
+                // 1. Кнопка Play / Pause
                 btn.addEventListener('click', () => {
-                    // Если нажали на другой трек — ставим предыдущий на паузу
+                    // Выключаем предыдущий трек, если включили новый
                     if (currentAudio && currentAudio !== audio) {
                         currentAudio.pause();
                         if (currentBtn) currentBtn.textContent = '▶';
@@ -485,20 +503,66 @@ function initPatchnotesUI() {
 
                     if (audio.paused) {
                         audio.play();
-                        btn.textContent = '⏸'; // Меняем на паузу
+                        btn.textContent = '⏸';
                         currentAudio = audio;
                         currentBtn = btn;
                     } else {
                         audio.pause();
-                        btn.textContent = '▶'; // Меняем на плей
+                        btn.textContent = '▶';
                     }
                 });
 
-                // Когда трек закончился, возвращаем кнопку ▶
+                // 2. Получение длительности трека при загрузке
+                audio.addEventListener('loadedmetadata', () => {
+                    if (timeTotal) timeTotal.textContent = formatTime(audio.duration);
+                });
+
+                // 3. Обновление ползунка времени и таймера при воспроизведении
+                audio.addEventListener('timeupdate', () => {
+                    if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
+                    if (timeline && audio.duration) {
+                        const percent = (audio.currentTime / audio.duration) * 100;
+                        timeline.value = percent;
+                        // Закрашиваем канавку
+                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                    }
+                });
+
+                // 4. Трек закончился
                 audio.addEventListener('ended', () => {
                     btn.textContent = '▶';
+                    if (timeline) {
+                        timeline.value = 0;
+                        timeline.style.background = `linear-gradient(to right, var(--c-sub) 0%, var(--c-border) 0%)`;
+                    }
+                    if (timeCurrent) timeCurrent.textContent = "0:00";
                 });
+
+                // 5. Перемотка трека кликом по ползунку
+                if (timeline) {
+                    timeline.addEventListener('input', (e) => {
+                        const percent = e.target.value;
+                        if (audio.duration) {
+                            audio.currentTime = (percent / 100) * audio.duration;
+                        }
+                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                    });
+                }
+
+                // 6. Управление громкостью
+                if (volume) {
+                    // Первоначальная закраска ползунка громкости
+                    volume.style.background = `linear-gradient(to right, var(--c-sub) ${volume.value}%, var(--c-border) ${volume.value}%)`;
+                    volume.addEventListener('input', (e) => {
+                        const val = e.target.value;
+                        audio.volume = val / 100;
+                        volume.style.background = `linear-gradient(to right, var(--c-sub) ${val}%, var(--c-border) ${val}%)`;
+                    });
+                }
             });
+            // =========================================================
+            // =========================================================
+
         } catch (error) {
             singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px; color: var(--c-sub);">Error loading content / Ошибка загрузки контента</div>`;
         }
