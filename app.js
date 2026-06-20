@@ -528,13 +528,17 @@ function initPatchnotesUI() {
                     if (timeTotal) timeTotal.textContent = formatTime(audio.duration);
                 });
 
-                // 3. Обновление ползунка и таймера
+                // 3. Обновление ползунка и таймера (ПЛАВНОЕ)
                 audio.addEventListener('timeupdate', () => {
                     if (timeCurrent) timeCurrent.textContent = formatTime(audio.currentTime);
                     if (timeline && audio.duration) {
+                        // Рассчитываем процент с высокой точностью
                         const percent = (audio.currentTime / audio.duration) * 100;
                         timeline.value = percent;
-                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent}%, var(--c-border) ${percent}%)`;
+                        
+                        // Плавная закраска дорожки
+                        // Используем toFixed(2), чтобы дорожка не отставала от белого ползунка
+                        timeline.style.background = `linear-gradient(to right, var(--c-sub) ${percent.toFixed(2)}%, var(--c-border) ${percent.toFixed(2)}%)`;
                     }
                 });
 
