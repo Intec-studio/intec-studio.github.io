@@ -255,6 +255,7 @@ a { text-decoration: none; color: inherit; }
 .player-volume { width: 114px !important; margin: 0; }
 
 /* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
+@media (max-width: 900px) {
     /* Адаптив плеера */
     .article-player { gap: 9px; margin: 9px 0; }
     .player-left-group { gap: 4.5px; } /* 9px делим на 2 */
