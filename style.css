@@ -208,34 +208,39 @@ a { text-decoration: none; color: inherit; }
     display: block;
 }
 /* ============================================================
-   МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ (ОБНОВЛЕННЫЙ)
+   МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ
 ============================================================ */
 .article-player {
     display: flex; align-items: center; gap: 18px;
-    background: var(--c-panel); border: none; /* УБРАЛИ ОБВОДКУ */
-    border-radius: 18px;
+    background: var(--c-panel); border: none;
     padding: 18px; margin: 18px 0; width: 100%;
 }
 
-/* ОСТАЛЬНЫЕ СТИЛИ БЕЗ ИЗМЕНЕНИЙ (см. предыдущий ответ) */
+/* Левый блок (Кнопка + Время) объединенный в капсулу */
 .player-left-group { display: flex; gap: 0; flex-shrink: 0; }
 .article-player .player-btn {
     width: 36px; height: 36px; background: var(--c-border); border-radius: 9px 0 0 9px;
     display: flex; justify-content: center; align-items: center; cursor: pointer;
     color: var(--c-text); border: 2px solid transparent; flex-shrink: 0;
+    transition: background-color 0.1s, border-color 0.1s, color 0.1s;
 }
-.article-player .player-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; }
+.article-player .player-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
 .article-player .player-btn.playing { background: var(--c-text); color: var(--c-panel); }
+@media (hover: hover) { .article-player .player-btn:hover { border-color: var(--c-text); } }
 
 .player-time-box {
     width: 102px; height: 36px; background: var(--c-border); border-radius: 0 9px 9px 0;
     display: flex; justify-content: center; align-items: center;
-    color: var(--c-text); font-size: 15px; font-weight: 500;
+    color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif;
+    border: 2px solid transparent; white-space: nowrap;
 }
 
+/* Переиспользуем стиль ползунков */
 .player-timeline { flex-grow: 1; width: 100% !important; margin: 0; }
 
+/* Правый блок (Громкость) */
 .player-right-group { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+.article-player .vol-box { border-radius: 9px; } /* Закругляем коробочку именно в плеере */
 .player-volume { width: 114px !important; margin: 0; }
 
 /* МОБИЛЬНЫЙ АДАПТИВ */
