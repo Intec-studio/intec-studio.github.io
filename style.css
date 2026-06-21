@@ -52,6 +52,7 @@ svg { transition: stroke 0.1s ease, fill 0.1s ease; }
 body, html { 
     width: 100vw; height: 100vh; height: 100dvh; 
     background: var(--c-bg); font-family: 'Noto Sans', sans-serif; 
+    font-weight: 500; /* Добавь эту строку */
     overflow: hidden; user-select: none; 
     display: flex; flex-direction: column; touch-action: none; 
 }
@@ -69,7 +70,11 @@ a { text-decoration: none; color: inherit; }
 .toggle-block { display: flex; gap: 3px; }
 .toggle-btn { width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--c-text); }
 .toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
-.toggle-btn.text-btn { font-size: 14px; font-weight: 900; line-height: 1; }
+.toggle-btn.text-btn { 
+    font-size: 15px;   /* Было 14 */
+    font-weight: 500;  /* Было 900 */
+    line-height: 1; 
+}
 .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
 .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
 @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
@@ -130,7 +135,15 @@ a { text-decoration: none; color: inherit; }
 .content-card:nth-child(even) { flex-direction: row-reverse; }
 
 .info-text { flex: 1; color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.5; text-align: justify; min-width: 0; }
-.info-text h2 { color: var(--c-text); font-size: 42px; font-weight: 900; letter-spacing: 0.05em; margin-bottom: 18px; text-align: left; }
+/* Найти .info-text h2 */
+.info-text h2 { 
+    color: var(--c-text); 
+    font-size: 42px; 
+    font-weight: 500;  /* Было 900 */
+    letter-spacing: 0.05em; 
+    margin-bottom: 18px; 
+    text-align: left; 
+}
 .info-text .highlight, .pn-card-desc .highlight { color: var(--c-text); }
 .info-console { width: 240px; height: 240px; background: var(--c-bg); border: 3px solid var(--c-border); border-radius: 9px; flex-shrink: 0; position: relative; overflow: hidden; }
 .info-console canvas { display: block; width: 100%; height: 100%; }
@@ -145,7 +158,7 @@ a { text-decoration: none; color: inherit; }
 .scanlines { position: absolute; inset: 0; z-index: 10; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; }
 .crt-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.4) 100%); mix-blend-mode: overlay; animation: crtFlicker 0.15s infinite; }
 .vhs-noise { position: absolute; inset: 0; z-index: 16; pointer-events: none; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="1"/%3E%3C/svg%3E'); opacity: 0.15; mix-blend-mode: screen; filter: contrast(3); animation: noiseJitter 0.3s steps(3) infinite; }
-.osd-text { position: absolute; z-index: 20; color: #00ff00; font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: bold; text-shadow: 2px 2px 0px #000, 0 0 10px #00ff00; pointer-events: none; text-transform: uppercase; }
+.osd-text { position: absolute; z-index: 20; color: #00ff00; font-family: 'Noto Sans', sans-serif; font-size: 21px; font-weight: 500; text-shadow: 2px 2px 0px #000, 0 0 10px #00ff00; pointer-events: none; text-transform: uppercase; }
 .osd-text.top-right { top: 18px; right: 24px; }
 .osd-text.center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 .osd-blink { animation: recBlink 1s infinite; }
@@ -196,7 +209,14 @@ a { text-decoration: none; color: inherit; }
 .pn-card > *:first-child { 
     margin-top: 18px !important; 
 }
-.pn-card-title { color: var(--c-text); font-size: 21px; font-weight: 900; letter-spacing: 0.05em; line-height: 1.1; }
+/* Найти .pn-card-title */
+.pn-card-title { 
+    color: var(--c-text); 
+    font-size: 21px; 
+    font-weight: 500;  /* Было 900 */
+    letter-spacing: 0.05em; 
+    line-height: 1.1; 
+}
 .pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
 .pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
 .pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
@@ -363,7 +383,10 @@ a { text-decoration: none; color: inherit; }
     .info-console { width: 90px; height: 90px; border-width: 1px; border-radius: 4.5px; }
 
     .tv-screen { border-radius: 4.5px; border-width: 1.5px; }
-    .tv-text-box { font-size: 16px; padding: 6px 16px; border-width: 1px; box-shadow: 0 0 10px rgba(0,0,0,0.9); }
+    .tv-text-box { 
+    /* ... остальные свойства ... */
+    font-size: 48px; 
+    font-weight: 500;  /* Было 900 */}
     .osd-text { font-size: 12px; } .osd-text.top-right { top: 9px; right: 12px; }
     .tv-controls-bar { height: 18px; } .tv-actions-group { gap: 9px; }
     .vol-box { width: 31.5px; height: 18px; border-width: 1px; } .vol-box input { width: 14px; font-size: 8px; } .vol-box span { font-size: 8px; margin-left: 2px; }
