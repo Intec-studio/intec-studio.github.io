@@ -457,11 +457,14 @@ function drawConsoles() {
                 }
                 // ТВОЙ НОВЫЙ БЛОК:
                 else if (c.type === 'article_loader') {
-                    let angle = Math.atan2(ny, nx) + t * 5; 
+                    let angle = Math.atan2(ny, nx) + t * 0.8; 
                     angle = ((angle % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
                     if (dist > 0.55 && dist < 0.7) {
-                        if (angle < Math.PI) alpha = 1.0;
-                        else alpha = 0.15;
+                        if (angle < Math.PI) {
+                            alpha = 1.0;
+                        } else {
+                            alpha = 0.15; 
+                        }
                     }
                 }
 
@@ -574,10 +577,12 @@ function initPatchnotesUI() {
         
         // ОБНОВЛЕННЫЙ БЛОК ЗАГРУЗКИ
         singlePostContent.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 60vh;">
-            <div style="background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 18px; width: fit-content;">
-                <canvas class="mini-console" data-type="article_loader" style="width: 240px; height: 240px; display: block;"></canvas>
-                <div style="color: var(--c-text); font-size: 15px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; user-select: none;">Loading...</div>
+        <div style="display: flex; flex: 1; align-items: center; justify-content: center; min-height: calc(100vh - 200px); width: 100%;">
+            <div style="background: #111111; border: 3px solid #1F1F1F; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 18px; width: fit-content;">
+                <div class="info-console" style="border: 3px solid #1F1F1F; background: #000; border-radius: 9px;">
+                    <canvas class="mini-console" data-type="article_loader"></canvas>
+                </div>
+                <div style="color: #E7E7E7; font-size: 21px; font-weight: 900; letter-spacing: 0.05em; user-select: none;">Loading...</div>
             </div>
         </div>
         `;
