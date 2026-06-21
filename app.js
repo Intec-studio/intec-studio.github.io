@@ -469,12 +469,14 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nerd_ackchyually') {
-                    // Анимация покачивания
+                    // Прыжок
                     let yBounce = Math.abs(Math.sin(t * 2.5)) * 0.1; 
-                    let pnx = nx;
+                    
+                    // Сдвигаем всё влево на 0.12, чтобы центрировать голову + руку
+                    let pnx = nx + 0.12;
                     let pny = ny + 0.1 - yBounce; 
                     
-                    // 1. Увеличенная Голова (радиус увеличен до 0.7)
+                    // 1. Большая Белая Голова
                     let headDist = Math.hypot(pnx, pny);
                     
                     if (headDist < 0.7) {
@@ -482,17 +484,17 @@ function drawConsoles() {
                         
                         let isFeature = false; 
                         
-                        // 2. Увеличенные Очки (центры раздвинуты и подняты)
-                        let eyX = 0.3;  // Смещение глаз от центра
-                        let eyY = 0.15; // Высота глаз
+                        // 2. Очки
+                        let eyX = 0.3;  
+                        let eyY = 0.15; 
                         let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
                         let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
                         
-                        // Тонкая оправа очков (линзы стали заметно больше)
-                        if ((distEyeL < 0.26 && distEyeL > 0.20) || (distEyeR < 0.26 && distEyeR > 0.20)) {
+                        // Тонкая оправа (1 точка толщиной)
+                        if ((distEyeL < 0.25 && distEyeL > 0.19) || (distEyeR < 0.25 && distEyeR > 0.19)) {
                             isFeature = true;
                         }
-                        // Дужка очков (переносица)
+                        // Дужка
                         if (Math.abs(pny + eyY) < 0.02 && pnx > -eyX && pnx < eyX) {
                             isFeature = true;
                         }
@@ -501,24 +503,23 @@ function drawConsoles() {
                             isFeature = true;
                         }
 
-                        // 3. Улыбка (подстроена под масштаб лица)
+                        // 3. Улыбка
                         let smileCurve = 0.25 + (pnx * pnx * 1.5);
                         if (pny > 0.15 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.2 && pnx < 0.2) {
                             isFeature = true;
                         }
 
-                        if (isFeature) {
-                            alpha = 0.15; 
-                        }
+                        if (isFeature) alpha = 0.15; 
                     }
                     
-                    // 4. Рука Правши (сдвинута чуть левее, чтобы не касаться большой головы)
-                    // Кулак
-                    if (pnx < -0.75 && pnx > -0.95 && pny > 0.25 && pny < 0.5) {
+                    // 4. Рука Правши (Слева от нас)
+                    // Кулак (основание)
+                    if (pnx < -0.72 && pnx > -0.95 && pny > 0.25 && pny < 0.5) {
                         alpha = 1.0;
                     }
-                    // Указательный палец (теперь ровно 2 точки в ширину)
-                    if (pnx < -0.75 && pnx > -0.85 && pny > -0.1 && pny <= 0.25) {
+                    // Указательный палец ТОЛЩИНОЙ В 2 ТОЧКИ
+                    // Диапазон 0.13 на сетке 32x32 гарантирует ровно 2 колонки точек
+                    if (pnx < -0.72 && pnx > -0.85 && pny > -0.1 && pny <= 0.25) {
                         alpha = 1.0;
                     }
                 }
