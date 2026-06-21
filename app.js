@@ -474,7 +474,7 @@ function drawConsoles() {
                     let pnx = nx; 
                     let pny = ny - yBounce; 
                     
-                    // Обновленная матрица 50x28 (с новыми округлыми краями очков и пальцем)
+                    // Палец придвинут чуть ближе к щеке
                     const grid = [
                         "..........####################....................", // 0
                         "........##YYYYYYYYYYYYYYYYYYYY##..................", // 1
@@ -487,21 +487,21 @@ function drawConsoles() {
                         ".##YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY##...........", // 8
                         "##################YYYY##################..........", // 9
                         "##YYYYY###WW###YY######YY###WW###YYYYY##..........", // 10
-                        ".#YYYYY###WW###YY#YYYY#YY###WW###YYYYY#...........", // 11 (Обновленный суженный край)
-                        ".##YYYY########YY#YYYY#YY########YYYY##...........", // 12 (Обновленный суженный край)
-                        "..#YYYYY#####YYYY#YYYY#YYYY#####YYYYY#.....######.", // 13 (Кончик пальца)
-                        "..###YYYYYYYYYY###YYYY###YYYYYYYYYY###.....#YYYY#.", // 14
-                        "..#YY###########YYYYYYYY###########YY#.....#YYYY#.", // 15
-                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#.....#YYYY#.", // 16
-                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#.....#YYYY#.", // 17
-                        "..#YYYYYYYYYY##############YYYYYYYYYY#.....#YYYY#.", // 18
-                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##......#YYYY#.", // 19
-                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##.....##YYYY#.", // 20
-                        "....#YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY#.....##YYYYY#.", // 21 (Переход к кисти)
-                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##.....#YYYYYYY#.", // 22 (Кулак)
-                        ".......###YYYYYYYYYYYYYYYYYYYY###.......#YYY##YY#.", // 23 (Сложенный большой палец)
-                        "........#####YYYYYYYYYYYYYY#####........#YYY##YY#.", // 24
-                        "............################.............#######..", // 25 (Низ кулака)
+                        ".#YYYYY###WW###YY#YYYY#YY###WW###YYYYY#...........", // 11
+                        ".##YYYY########YY#YYYY#YY########YYYY##...........", // 12
+                        "..#YYYYY#####YYYY#YYYY#YYYY#####YYYYY#...######...", // 13 (Палец ближе)
+                        "..###YYYYYYYYYY###YYYY###YYYYYYYYYY###...#YYYY#...", // 14
+                        "..#YY###########YYYYYYYY###########YY#...#YYYY#...", // 15
+                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#...#YYYY#...", // 16
+                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#...#YYYY#...", // 17
+                        "..#YYYYYYYYYY##############YYYYYYYYYY#...#YYYY#...", // 18
+                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##....#YYYY#...", // 19
+                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...##YYYY#...", // 20
+                        "....#YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY#...##YYYYY#...", // 21
+                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##...#YYYYYYY#...", // 22
+                        ".......###YYYYYYYYYYYYYYYYYYYY###.....#YYY##YY#...", // 23
+                        "........#####YYYYYYYYYYYYYY#####......#YYY##YY#...", // 24
+                        "............################...........#######....", // 25
                         "..................................................", // 26
                         ".................................................."  // 27
                     ];
@@ -509,15 +509,16 @@ function drawConsoles() {
                     let gridWidth = 50;
                     let gridHeight = 28;
                     
-                    let pixelSizeX = 0.045; 
-                    let pixelSizeY = 0.058; // Если захочется сделать лицо чуть круглее, можно снизить до 0.055
+                    // УВЕЛИЧИЛИ pixelSize, чтобы ОТДАЛИТЬ рисунок (теперь он поместится целиком)
+                    let pixelSizeX = 0.052; 
+                    let pixelSizeY = 0.067; // Пропорции лица строго сохранены
                     
-                    let col = Math.floor((pnx / pixelSizeX) + 20);
-                    let row = Math.floor((pny / pixelSizeY) + 13);
+                    // ЦЕНТР СДВИНУТ: теперь мы центруем не лицо (20), а всю композицию вместе с пальцем (24)
+                    let col = Math.floor((pnx / pixelSizeX) + 24);
+                    let row = Math.floor((pny / pixelSizeY) + 14);
                     
                     alpha = 0.0; // По умолчанию фон прозрачный
                     
-                    // Если точка попадает в границы нашего пиксель-арта
                     if (col >= 0 && col < gridWidth && row >= 0 && row < gridHeight) {
                         let char = grid[row][col];
                         
