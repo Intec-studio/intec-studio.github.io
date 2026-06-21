@@ -594,9 +594,6 @@ function initPatchnotesUI() {
         setPanelOffset(0);
 
         try {
-            // ВРЕМЕННАЯ ЗАДЕРЖКА НА 2 СЕКУНДЫ (только чтобы посмотреть анимацию)
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        
             // Подгружаем внешний файл статьи
             const response = await fetch(post.contentFile);
             if (!response.ok) throw new Error("File not found");
