@@ -358,26 +358,10 @@ html[data-theme="light"] .pn-card-desc .highlight {
 }
 
 /* ============================================================
-   КАСТОМНЫЙ АВТОСКРОЛЛ КОЛЕСИКОМ
+   АВТОСКРОЛЛ КОЛЕСИКОМ (СИСТЕМНЫЙ КУРСОР)
 ============================================================ */
-.autoscroll-indicator {
-    position: fixed;
-    width: 32px;
-    height: 32px;
-    background: var(--c-panel);
-    border: 2px solid var(--c-text);
-    border-radius: 50%;
-    z-index: 9999;
-    pointer-events: none;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    transform: translate(-50%, -50%);
-    color: var(--c-text);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-}
-.autoscroll-indicator svg {
-    width: 18px;
-    height: 18px;
-    fill: currentColor;
+body.autoscroll-active, 
+body.autoscroll-active * { 
+    /* Используем системный курсор прокрутки по вертикали */
+    cursor: ns-resize !important; 
 }

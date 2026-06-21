@@ -198,20 +198,8 @@ let asVelocityY = 0;
 let asFrameId = null;
 let asMoved = false;
 
-// Создаем наш красивый кастомный индикатор
-const asIndicator = document.createElement('div');
-asIndicator.className = 'autoscroll-indicator';
-asIndicator.innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 3l-4 5h8z"/><path d="M12 21l4-5H8z"/></svg>`;
-document.body.appendChild(asIndicator);
-
-// Добавляем стиль для скрытия системной мышки прямо через JS (чтобы не трогать CSS файл)
-const hideCursorStyle = document.createElement('style');
-hideCursorStyle.innerHTML = `body.autoscroll-active, body.autoscroll-active * { cursor: none !important; }`;
-document.head.appendChild(hideCursorStyle);
-
 function stopAutoScroll() {
     isAutoScrolling = false;
-    asIndicator.style.display = 'none';
     document.body.classList.remove('autoscroll-active'); // Возвращаем обычную мышку
     cancelAnimationFrame(asFrameId);
 }
@@ -251,12 +239,7 @@ mainClip.addEventListener('pointerdown', e => {
         asOriginY = e.clientY;
         asVelocityY = 0;
         
-        // Значок появляется на месте курсора
-        asIndicator.style.left = `${e.clientX}px`;
-        asIndicator.style.top = `${e.clientY}px`;
-        asIndicator.style.display = 'flex';
-        
-        // Скрываем обычную мышку
+        // Включаем системный курсор (ns-resize)
         document.body.classList.add('autoscroll-active');
         
         asFrameId = requestAnimationFrame(autoScrollLoop);
@@ -266,10 +249,6 @@ mainClip.addEventListener('pointerdown', e => {
 // 3. Отслеживание перемещения мыши
 window.addEventListener('pointermove', e => {
     if (!isAutoScrolling) return;
-    
-    // ТЕПЕРЬ НАШ ЗНАЧОК СЛЕДУЕТ ЗА МЫШКОЙ КАК КУРСОР!
-    asIndicator.style.left = `${e.clientX}px`;
-    asIndicator.style.top = `${e.clientY}px`;
 
     const dy = e.clientY - asOriginY;
     const dx = e.clientX - asOriginX;
