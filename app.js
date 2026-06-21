@@ -467,6 +467,47 @@ function drawConsoles() {
                         }
                     }
                 }
+                
+                else if (c.type === 'nut_pump') {
+                    // Ритм прыжка (от 0 до 1)
+                    let beat = Math.abs(Math.sin(t * 10)); 
+                    let scale = 1 + beat * 0.1; // Орех немного раздувается в такт
+                    let yBounce = beat * 0.15; // Подпрыгивание
+                    // Координаты с учетом анимации
+                    let pnx = nx / scale;
+                    let pny = (ny + 0.1 - yBounce) / scale;
+                    // 1. Форма ореха (овал, зауженный кверху)
+                    // Математика: x^2 + (y / (1 - y*0.2))^2 — делает "верхушку" острее
+                    let nutShape = Math.sqrt(pnx * pnx + Math.pow(pny / (1 - pny * 0.25), 2));
+                    
+                    if (nutShape < 0.55) {
+                        alpha = 0.5; // Тело ореха
+                        // 2. Глаза (два больших белых круга)
+                        let eyeL = Math.hypot(pnx + 0.22, pny + 0.1);
+                        let eyeR = Math.hypot(pnx - 0.22, pny + 0.1);
+                        
+                        if (eyeL < 0.18 || eyeR < 0.18) {
+                            alpha = 1.0; // Белки глаз
+                            let pupilX = Math.cos(t * 5) * 0.03;
+                            let pupilY = Math.sin(t * 5) * 0.03;
+                            let pupilL = Math.hypot(pnx + 0.22 + pupilX, pny + 0.1 + pupilY);
+                            let pupilR = Math.hypot(pnx - 0.22 + pupilX, pny + 0.1 + pupilY);
+                            
+                            if (pupilL < 0.07 || pupilR < 0.07) alpha = 0.1; // Зрачки
+                        }
+                        let mouthY = pny - (pnx * pnx * 0.8 - 0.15);
+                        if (Math.abs(mouthY) < 0.03 && pnx > -0.3 && pnx < 0.3 && pny < -0.05){
+                            alpha = 1.0;
+                        }
+                        // 4. Светлое пузико (нижняя часть)
+                        if (pny < -0.3 && nutShape < 0.55) alpha = 0.8;
+                    }
+                    
+                    let handX = pnx - 0.45;
+                    let handY = pny + 0.1;
+                    if (Math.hypot(handX, handY) < 0.12) alpha = 1.0;
+                    if (handX > -0.05 && handX < 0.1 && handY > 0 && handY < 0.25) alpha = 1.0;
+                }
 
                 ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; 
                 ctx.beginPath(); 
@@ -521,32 +562,20 @@ function initPatchnotesUI() {
         filtered.sort((a, b) => sortOrder === 'newest' ? b.timestamp - a.timestamp : a.timestamp - b.timestamp);
 
         if (filtered.length === 0) {
-            postsList.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px;">Ничего не найдено / Nothing found</div>`;
-        } else {
-            filtered.forEach(post => {
-                const card = document.createElement('div');
-                card.className = 'pn-card';
-                card.style.cssText = 'cursor: pointer; transition: border-color 0.1s ease;';
-                card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
-                card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
-                
-                const tagsHtml = post.tags.map(t => `<div class="tag">${t}</div>`).join('');
-                
-                card.innerHTML = `
-                    <div class="pn-card-title-wrap">
-                        <div class="pn-card-title" data-lang="en">${post.title.en}</div>
-                        <div class="pn-card-title" data-lang="ru">${post.title.ru}</div>
+            postsList.innerHTML = `
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 0;">
+                    <div class="loader-card">
+                        <div class="info-console" style="background: #000;">
+                            <canvas class="mini-console" data-type="nut_pump"></canvas>
+                        </div>
+                        <div class="pn-card-title" style="text-align: center; margin-top: 18px;">
+                            Ничего не нашёл, зато качает нормально!
+                        </div>
                     </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="tags-group">${tagsHtml}</div>
-                        <div class="tag">${post.date}</div>
-                    </div>
-                `;
-                
-                // ЭТИ ДВЕ СТРОКИ ОЧЕНЬ ВАЖНЫ (иначе карточки не появятся и не будут кликаться)
-                card.addEventListener('click', () => openPost(post));
-                postsList.appendChild(card);
-            });
+                </div>
+            `;
+
+            initCanvases();
         }
 
         // --- ЛОГИКА ПОДСВЕТКИ ---
