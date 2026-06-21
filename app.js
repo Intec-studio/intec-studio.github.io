@@ -468,42 +468,50 @@ function drawConsoles() {
                     }
                 }
                 
-                else if (c.type === 'nut_pump') {
-                    // Плавная анимация покачивания в такт
-                    let beat = Math.abs(Math.sin(t * 5)); 
-                    let scale = 1 + beat * 0.05; 
-                    let yBounce = Math.sin(t * 10) * 0.05; 
+                else if (c.type === 'nerd_ackchyually') {
+                    // Простое движение вверх-вниз всей конструкции (без растягивания)
+                    let yBounce = Math.abs(Math.sin(t * 4)) * 0.1; 
                     
-                    let pnx = nx / scale;
-                    let pny = (ny + 0.05 - yBounce) / scale;
+                    let pnx = nx;
+                    let pny = ny + 0.1 - yBounce; // Немного опустили изначально и прыгаем
                     
-                    // 1. Идеально круглое лицо смайлика
+                    // 1. Голова
                     let headDist = Math.hypot(pnx, pny);
                     
                     if (headDist < 0.55) {
-                        alpha = 0.4; // Базовый цвет лица (полупрозрачный)
+                        alpha = 0.3; // Полупрозрачное лицо
                         
-                        // Глаза (две четкие яркие точки)
-                        let distEyeL = Math.hypot(pnx + 0.2, pny + 0.1);
-                        let distEyeR = Math.hypot(pnx - 0.2, pny + 0.1);
-                        if (distEyeL < 0.08 || distEyeR < 0.08) {
-                            alpha = 1.0; // Яркие глаза
+                        // 2. Очки
+                        let distEyeL = Math.hypot(pnx + 0.22, pny + 0.0);
+                        let distEyeR = Math.hypot(pnx - 0.22, pny + 0.0);
+                        
+                        // Оправа (кольца очков)
+                        if ((distEyeL < 0.18 && distEyeL > 0.12) || (distEyeR < 0.18 && distEyeR > 0.12)) {
+                            alpha = 1.0; 
+                        }
+                        // Переносица (соединяет очки)
+                        if (Math.abs(pny) < 0.03 && pnx > -0.15 && pnx < 0.15) {
+                            alpha = 1.0;
+                        }
+                        // Зрачки (точки внутри)
+                        if (distEyeL < 0.05 || distEyeR < 0.05) {
+                            alpha = 1.0;
                         }
 
-                        // Рот (четкая яркая дуга улыбки)
-                        let smileCurve = 0.15 + (pnx * pnx * 1.5);
-                        if (pny > 0.0 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.25 && pnx < 0.25) {
-                            alpha = 1.0; // Яркая улыбка
+                        // 3. Легкая улыбочка
+                        let smileCurve = 0.25 + (pnx * pnx * 1.5);
+                        if (pny > 0.15 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.15 && pnx < 0.15) {
+                            alpha = 1.0;
                         }
                     }
                     
-                    // 2. Отодвинутая вправо рука с лайком (чтобы читался зазор)
-                    // Кулак (основание кисти)
-                    if (pnx > 0.7 && pnx < 0.95 && pny > 0.05 && pny < 0.3) {
+                    // 4. Рука с указательным пальцем ☝️
+                    // Кулак (основание)
+                    if (pnx > 0.6 && pnx < 0.85 && pny > 0.15 && pny < 0.4) {
                         alpha = 1.0;
                     }
-                    // Большой палец (торчит ровно вверх из левой части кулака)
-                    if (pnx > 0.65 && pnx < 0.78 && pny > -0.25 && pny <= 0.05) {
+                    // Тонкий указательный палец торчит строго вверх
+                    if (pnx > 0.65 && pnx < 0.75 && pny > -0.3 && pny <= 0.15) {
                         alpha = 1.0;
                     }
                 }
@@ -565,17 +573,17 @@ function initPatchnotesUI() {
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 0;">
                     <div class="loader-card">
                         <div class="info-console" style="background: #000;">
-                            <canvas class="mini-console" data-type="nut_pump"></canvas>
+                            <!-- Обрати внимание, поменял data-type -->
+                            <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
-                        <div class="pn-card-title" style="text-align: center; margin-top: 18px;">
-                            Ничего не нашёл, зато качает нормально!
+                        <div class="pn-card-title" style="text-align: center; margin-top: 18px; font-weight: 900; letter-spacing: 0.05em;">
+                            Ackchyually...
                         </div>
                     </div>
                 </div>
             `;
-
             initCanvases();
-        }else {
+        } else {
             filtered.forEach(post => {
                 const card = document.createElement('div');
                 card.className = 'pn-card';
