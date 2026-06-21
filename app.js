@@ -191,6 +191,98 @@ const mainGradTop = document.getElementById('mainGradTop');
 
 let panelOffset = 0;
 
+// === АВТОСКРОЛЛ КОЛЕСИКОМ МЫШИ (MIDDLE CLICK) ===
+let isAutoScrolling = false;
+let asOriginX = 0, asOriginY = 0;
+let asVelocityY = 0;
+let asFrameId = null;
+let asMoved = false;
+
+// Создаем наш красивый кастомный индикатор и кидаем его в body
+const asIndicator = document.createElement('div');
+asIndicator.className = 'autoscroll-indicator';
+// Рисуем SVG-иконку кружочка со стрелками (как в браузере)
+asIndicator.innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 3l-4 5h8z"/><path d="M12 21l4-5H8z"/></svg>`;
+document.body.appendChild(asIndicator);
+
+function stopAutoScroll() {
+    isAutoScrolling = false;
+    asIndicator.style.display = 'none';
+    cancelAnimationFrame(asFrameId);
+}
+
+function autoScrollLoop() {
+    if (!isAutoScrolling) return;
+    if (asVelocityY !== 0) {
+        setPanelOffset(panelOffset + asVelocityY);
+    }
+    asFrameId = requestAnimationFrame(autoScrollLoop);
+}
+
+// 1. Блокируем появление уродливого стандартного кружка браузера
+mainClip.addEventListener('mousedown', e => {
+    if (e.button === 1) e.preventDefault();
+});
+
+// 2. Обработка нажатий
+mainClip.addEventListener('pointerdown', e => {
+    // Если мы уже автоскроллим, и человек нажал левую/правую кнопку — отключаем
+    if (isAutoScrolling && e.button !== 1) {
+        stopAutoScroll();
+        return;
+    }
+
+    // Если нажато КОЛЕСИКО (кнопка 1)
+    if (e.button === 1) {
+        e.preventDefault();
+        // Если уже включено (повторный клик колесиком) - выключаем
+        if (isAutoScrolling) { 
+            stopAutoScroll(); 
+            return; 
+        } 
+        
+        isAutoScrolling = true;
+        asMoved = false;
+        asOriginX = e.clientX;
+        asOriginY = e.clientY;
+        asVelocityY = 0;
+        
+        // Показываем индикатор ровно там, где кликнули
+        asIndicator.style.left = `${e.clientX}px`;
+        asIndicator.style.top = `${e.clientY}px`;
+        asIndicator.style.display = 'flex';
+        
+        asFrameId = requestAnimationFrame(autoScrollLoop);
+    }
+});
+
+// 3. Отслеживание перемещения мыши для расчета скорости
+window.addEventListener('pointermove', e => {
+    if (!isAutoScrolling) return;
+    const dy = e.clientY - asOriginY;
+    const dx = e.clientX - asOriginX;
+    
+    // Мертвая зона (чтобы не дергалось от случайных микро-движений)
+    if (Math.abs(dy) > 10 || Math.abs(dx) > 10) asMoved = true;
+
+    if (Math.abs(dy) > 15) {
+        // Формула плавного ускорения: чем дальше отводим мышь, тем быстрее летим
+        asVelocityY = Math.sign(dy) * Math.pow(Math.abs(dy) - 15, 1.2) * 0.04;
+    } else {
+        asVelocityY = 0;
+    }
+});
+
+// 4. Логика отпускания кнопки
+window.addEventListener('pointerup', e => {
+    if (e.button === 1 && isAutoScrolling) {
+        // Если человек зажал колесико и потянул (сдвинул), а потом отпустил — автоскролл выключается.
+        // Если человек просто кликнул (без движения мыши) — автоскролл залипает (остается включенным).
+        // Это полностью повторяет логику Windows!
+        if (asMoved) stopAutoScroll();
+    }
+});
+
 function getPanelMaxOffset() { return Math.max(0, mainPanel.scrollHeight - mainClip.clientHeight); }
 
 function setPanelOffset(o) {
