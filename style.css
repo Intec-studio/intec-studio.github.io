@@ -311,8 +311,11 @@ a { text-decoration: none; color: inherit; }
 
 .article-header {
     background: #1F1F1F; border-left: 3px solid #E7E7E7; border-radius: 9px; 
-    padding: 9px 18px; color: #E7E7E7; font-size: 42px; font-weight: 500; 
+    padding: 9px 18px; color: #E7E7E7; 
+    font-size: 21px;    /* Вернули 21px */
+    font-weight: 900;   /* Сделали Black (900) */
     margin: 0 0 18px 0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.05em; /* Добавим небольшой межбуквенный интервал, чтобы жирный текст читался лучше */
 }
 
 /* Ссылки внутри статей */
@@ -428,7 +431,7 @@ a { text-decoration: none; color: inherit; }
     .h-track { height: 1.5px; border-radius: 1.5px; }
     .h-thumb { height: 1.5px; border-radius: 1.5px; }
     .h-thumb-extended { top: -7.5px; bottom: -7.5px; left: -7.5px; right: -7.5px; }
-    
+
     .article-player { gap: 9px; margin: 9px 0; }
     .player-left-group { gap: 1.5px; } /* Отступ 3px / 2 = 1.5px */
     .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
@@ -507,7 +510,13 @@ a { text-decoration: none; color: inherit; }
 
     /* --- АДАПТИВ СГЕНЕРИРОВАННЫХ СТАТЕЙ --- */
     .article-p { margin-bottom: 9px; }
-    .article-header { font-size: 21px; padding: 4.5px 9px; border-radius: 4.5px; border-left-width: 1.5px; margin-bottom: 9px; }
+    .article-header { 
+        font-size: 10px; /* По твоей математике: 21 / 2 = 10.5 -> 10px */
+        padding: 4.5px 9px; 
+        border-radius: 4.5px; 
+        border-left-width: 1.5px; 
+        margin-bottom: 9px; 
+    }
     .article-list-item { gap: 4.5px; margin-bottom: 4.5px; margin-left: 9px; }
     .article-list-item.sub { margin-left: 27px; }
     .article-pre { font-size: 7px; }
