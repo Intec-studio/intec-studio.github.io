@@ -198,16 +198,21 @@ let asVelocityY = 0;
 let asFrameId = null;
 let asMoved = false;
 
-// Создаем наш красивый кастомный индикатор и кидаем его в body
+// Создаем наш красивый кастомный индикатор
 const asIndicator = document.createElement('div');
 asIndicator.className = 'autoscroll-indicator';
-// Рисуем SVG-иконку кружочка со стрелками (как в браузере)
 asIndicator.innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 3l-4 5h8z"/><path d="M12 21l4-5H8z"/></svg>`;
 document.body.appendChild(asIndicator);
+
+// Добавляем стиль для скрытия системной мышки прямо через JS (чтобы не трогать CSS файл)
+const hideCursorStyle = document.createElement('style');
+hideCursorStyle.innerHTML = `body.autoscroll-active, body.autoscroll-active * { cursor: none !important; }`;
+document.head.appendChild(hideCursorStyle);
 
 function stopAutoScroll() {
     isAutoScrolling = false;
     asIndicator.style.display = 'none';
+    document.body.classList.remove('autoscroll-active'); // Возвращаем обычную мышку
     cancelAnimationFrame(asFrameId);
 }
 
@@ -219,7 +224,7 @@ function autoScrollLoop() {
     asFrameId = requestAnimationFrame(autoScrollLoop);
 }
 
-// 1. Блокируем появление уродливого стандартного кружка браузера
+// 1. Блокируем появление уродливого стандарта браузера
 mainClip.addEventListener('mousedown', e => {
     if (e.button === 1) e.preventDefault();
 });
@@ -235,7 +240,6 @@ mainClip.addEventListener('pointerdown', e => {
     // Если нажато КОЛЕСИКО (кнопка 1)
     if (e.button === 1) {
         e.preventDefault();
-        // Если уже включено (повторный клик колесиком) - выключаем
         if (isAutoScrolling) { 
             stopAutoScroll(); 
             return; 
@@ -247,26 +251,34 @@ mainClip.addEventListener('pointerdown', e => {
         asOriginY = e.clientY;
         asVelocityY = 0;
         
-        // Показываем индикатор ровно там, где кликнули
+        // Значок появляется на месте курсора
         asIndicator.style.left = `${e.clientX}px`;
         asIndicator.style.top = `${e.clientY}px`;
         asIndicator.style.display = 'flex';
+        
+        // Скрываем обычную мышку
+        document.body.classList.add('autoscroll-active');
         
         asFrameId = requestAnimationFrame(autoScrollLoop);
     }
 });
 
-// 3. Отслеживание перемещения мыши для расчета скорости
+// 3. Отслеживание перемещения мыши
 window.addEventListener('pointermove', e => {
     if (!isAutoScrolling) return;
+    
+    // ТЕПЕРЬ НАШ ЗНАЧОК СЛЕДУЕТ ЗА МЫШКОЙ КАК КУРСОР!
+    asIndicator.style.left = `${e.clientX}px`;
+    asIndicator.style.top = `${e.clientY}px`;
+
     const dy = e.clientY - asOriginY;
     const dx = e.clientX - asOriginX;
     
-    // Мертвая зона (чтобы не дергалось от случайных микро-движений)
+    // Мертвая зона
     if (Math.abs(dy) > 10 || Math.abs(dx) > 10) asMoved = true;
 
+    // Скорость скролла
     if (Math.abs(dy) > 15) {
-        // Формула плавного ускорения: чем дальше отводим мышь, тем быстрее летим
         asVelocityY = Math.sign(dy) * Math.pow(Math.abs(dy) - 15, 1.2) * 0.04;
     } else {
         asVelocityY = 0;
@@ -276,9 +288,6 @@ window.addEventListener('pointermove', e => {
 // 4. Логика отпускания кнопки
 window.addEventListener('pointerup', e => {
     if (e.button === 1 && isAutoScrolling) {
-        // Если человек зажал колесико и потянул (сдвинул), а потом отпустил — автоскролл выключается.
-        // Если человек просто кликнул (без движения мыши) — автоскролл залипает (остается включенным).
-        // Это полностью повторяет логику Windows!
         if (asMoved) stopAutoScroll();
     }
 });
