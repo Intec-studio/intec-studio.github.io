@@ -201,6 +201,11 @@ a { text-decoration: none; color: inherit; }
 .pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
 .pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
 
+/* Убираем двойной отступ снизу у любого последнего элемента в карточке */
+.pn-card-desc > *:last-child {
+    margin-bottom: 0 !important;
+}
+
 /* --- СТИЛИ ДЛЯ КАРТИНОК И ВИДЕО В СТАТЬЯХ (ПК) --- */
 .pn-card-desc img, 
 .pn-card-desc video {
