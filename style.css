@@ -342,7 +342,7 @@ a { text-decoration: none; color: inherit; }
     background: var(--c-bg); 
     border: 3px solid var(--c-border); 
     border-radius: 9px; 
-    margin: 18px 0; 
+    margin: 0 0 18px 0;
     position: relative; 
     overflow: hidden; 
     width: 100%; 
@@ -420,7 +420,7 @@ a { text-decoration: none; color: inherit; }
     .article-code-wrap {
         border-width: 1.5px;
         border-radius: 4.5px;
-        margin: 9px 0;
+        margin: 0 0 9px 0;
     }
     .article-code-inner {
         padding: 9px;
