@@ -824,7 +824,7 @@
                 h += `<line x1="${b.nx}" y1="${MAIN_Y+NODE_R}" x2="${b.nx}" y2="${b.by}" stroke="var(--c-text)" stroke-width="3" fill="none"/>`;
                 h += `<line x1="${b.nx}" y1="${b.by}" x2="${SVG_WIDTH}" y2="${b.by}" stroke="var(--c-bg)" stroke-width="9" fill="none"/>`;
                 h += `<line x1="${b.nx}" y1="${b.by}" x2="${SVG_WIDTH}" y2="${b.by}" stroke="var(--c-text)" stroke-width="3" fill="none"/>`;
-                h += `<text x="${b.nx+30}" y="${b.by-12}" class="svg-branch-label">${escHtml((tl.branches||[]).find(br=>br.id===b.id)?.label||'')}</text>`;
+                h += `<text x="${b.nx+15}" y="${b.by-15}" class="svg-branch-label">${escHtml((tl.branches||[]).find(br=>br.id===b.id)?.label||'')}</text>`;
             });
 
             function nodeHtml(e, y) {
