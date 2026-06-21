@@ -474,7 +474,7 @@ function drawConsoles() {
                     let pnx = nx; 
                     let pny = ny - yBounce; 
                     
-                    // Финальная матрица 40x26: только лицо, с твоими закругленными краями очков
+                    // Твой обновленный вариант 40x26
                     const grid = [
                         "..........####################..........", // 0
                         "........##YYYYYYYYYYYYYYYYYYYY##........", // 1
@@ -485,20 +485,20 @@ function drawConsoles() {
                         "..##YYYY####YYYYYYYYYYYYYYYY####YYYY##..", // 6
                         ".##YYYY####YYYYYYYYYYYYYYYYYY####YYYY##.", // 7
                         ".##YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY##.", // 8
-                        "##################YYYY##################", // 9 (Верх очков)
-                        "##YYYYY###WW###YY######YY###WW###YYYYY##", // 10 (Глаза)
-                        ".#YYYYY###WW###YY#YYYY#YY###WW###YYYYY#.", // 11 (Новые скругленные края)
-                        ".##YYYY########YY#YYYY#YY########YYYY##.", // 12
+                        "##################YYYY##################", // 9
+                        "##YYYYY###WW###YY######YY###WW###YYYYY##", // 10
+                        ".#YYYYY###WW###YY#YYYY#YY###WW###YYYYY#.", // 11 (Твоя правка: сужение до #)
+                        ".##YYYY########YY#YYYY#YY########YYYY##.", // 12 (Твоя правка: сужение до ##)
                         "..#YYYYY#####YYYY#YYYY#YYYY#####YYYYY#..", // 13
                         "..###YYYYYYYYYY###YYYY###YYYYYYYYYY###..", // 14
                         "..#YY###########YYYYYYYY###########YY#..", // 15
                         "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#..", // 16
                         "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#..", // 17
-                        "..#YYYYYYYYYY##############YYYYYYYYYY#..", // 18 (Верхняя губа)
-                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...", // 19 (Зубы W и глубина O)
-                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...", // 20
-                        "....#YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY#....", // 21
-                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##.....", // 22 (Открытый рот снизу)
+                        "..#YYYYYYYYYY##############YYYYYYYYYY#..", // 18
+                        "...##YYYYYYY#OOOWWWYYYYWWW#OO#YYYYYYY##.", // 19 (Зубы на месте ###)
+                        "...##YYYYYYY#OOOWWWYYYYWWW#OO#YYYYYYY##.", // 20
+                        "....#YYYYYYY#OOOWWWYYYYWWW#OO#YYYYYYY#..", // 21
+                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##.....", // 22
                         ".......###YYYYYYYYYYYYYYYYYYYY###.......", // 23
                         "........#####YYYYYYYYYYYYYY#####........", // 24
                         "............################............"  // 25
@@ -507,29 +507,29 @@ function drawConsoles() {
                     let gridWidth = 40;
                     let gridHeight = 26;
                     
-                    // Возвращаем идеальный масштаб для лица
+                    // Оптимальные пропорции для этого арта
                     let pixelSizeX = 0.045; 
                     let pixelSizeY = 0.058; 
                     
-                    // Центруем строго по середине лица
+                    // Центровка
                     let col = Math.floor((pnx / pixelSizeX) + 20);
                     let row = Math.floor((pny / pixelSizeY) + 13);
                     
-                    alpha = 0.0; // По умолчанию фон прозрачный
+                    alpha = 0.0; 
                     
                     if (col >= 0 && col < gridWidth && row >= 0 && row < gridHeight) {
                         let char = grid[row][col];
                         
                         if (char === '#') {
-                            alpha = 0.15; // Черный контур
+                            alpha = 0.15; // Контур
                         } else if (char === 'Y') {
                             alpha = 0.65; // Кожа
                         } else if (char === 'W') {
-                            alpha = 1.0;  // Глаза и зубы
+                            alpha = 1.0;  // Глаза и Зубы
                         } else if (char === 'O') {
-                            alpha = 0.3;  // Глубина рта
+                            alpha = 0.3;  // Полость рта
                         } else if (char === '.') {
-                            alpha = 0.0;  // Фон
+                            alpha = 0.0;  // Прозрачно
                         }
                     }
                 }
