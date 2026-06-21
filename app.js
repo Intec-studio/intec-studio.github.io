@@ -483,50 +483,53 @@ function drawConsoles() {
                         
                         let isFeature = false; 
                         
-                        // Параметры глаз (чуть раздвинули центры для больших очков)
-                        let eyX = 0.29; // Было 0.28
-                        let eyY = 0.18; 
+                        // Параметры глаз (раздвинуты для широкой оправы)
+                        let eyX = 0.28; 
+                        let eyY = 0.10; // Чуть подняли, чтобы влезла улыбка с зубами
                         let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
                         let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
                         
-                        // 2. Очки (сделаны больше, оправа толщиной в 1 точку)
-                        let glassesOuter = 0.28;  // Внешний радиус (было 0.23)
-                        let glassesInner = 0.235; // Внутренний радиус (Разница 0.045 = ровно 1 точка)
+                        // 2. Очки (Широкие, толщина оправы ровно 2 точки = 0.09)
+                        let glassesOuter = 0.32;  // Внешний радиус (широкие)
+                        let glassesInner = 0.23;  // Внутренний радиус (Разница 0.09 = 2 точки)
 
                         if (distEyeL < glassesOuter || distEyeR < glassesOuter) {
-                            isFeature = true; // Внутренняя часть линз (черная)
+                            isFeature = true; // Внутри очки черные (пустые)
                             
-                            // Оправа (белая рамка толщиной 1 точку)
-                            if (distEyeL < glassesOuter && distEyeL > glassesInner) isFeature = false;
-                            if (distEyeR < glassesOuter && distEyeR > glassesInner) isFeature = false;
+                            // Оправа (белая, 2 точки толщиной)
+                            if (distEyeL <= glassesOuter && distEyeL >= glassesInner) isFeature = false;
+                            if (distEyeR <= glassesOuter && distEyeR >= glassesInner) isFeature = false;
                             
-                            // Зрачки (белые точки, остались мелкими)
-                            if (distEyeL < 0.035 || distEyeR < 0.035) isFeature = false;
-                        }
-                        
-                        // Переносица (изолента)
-                        if (Math.abs(pny + eyY) < 0.025 && pnx > -eyX && pnx < eyX) {
-                            isFeature = true;
+                            // Зрачки (белые, размер 2х2 точки -> радиус 0.045)
+                            if (distEyeL <= 0.045 || distEyeR <= 0.045) isFeature = false;
                         }
 
-                        // 3. Улыбка
+                        // 3. Улыбка и зубы (Стиль нерда)
                         let smileCurve = 0.22 + (pnx * pnx * 2.0);
-                        if (pny > 0.12 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.15 && pnx < 0.15) {
-                            isFeature = true;
+                        if (Math.abs(pny - smileCurve) < 0.05 && pnx > -0.22 && pnx < 0.22) {
+                            isFeature = true; // Черный приоткрытый рот
+                            
+                            // Два белых зуба сверху
+                            if (pny > smileCurve - 0.05 && pny < smileCurve + 0.01 && pnx > -0.08 && pnx < 0.08) {
+                                // Черный зазор между зубами в 1 точку (ширина 0.04)
+                                if (Math.abs(pnx) > 0.02) {
+                                    isFeature = false; // Сами зубы белые
+                                }
+                            }
                         }
 
                         if (isFeature) alpha = 0.15; 
                     }
                     
                     // 4. Рука (Белая)
-                    // Край головы = -0.65. Отступ в 1 точку (0.045) означает, что рука начинается с -0.70
+                    // Край головы = -0.65. Пустая колонка 1 точка = 0.045. Рука начинается строго с -0.70.
                     
                     // Кулак
-                    if (pnx <= -0.70 && pnx > -0.90 && pny > 0.25 && pny < 0.5) {
+                    if (pnx <= -0.70 && pnx >= -0.90 && pny > 0.25 && pny < 0.5) {
                         alpha = 1.0;
                     }
-                    // Указательный палец (сохраняем толщину в 2 точки: 0.09)
-                    if (pnx <= -0.70 && pnx > -0.79 && pny > -0.1 && pny <= 0.25) {
+                    // Указательный палец (толщина ровно 2 точки: 0.09)
+                    if (pnx <= -0.70 && pnx >= -0.79 && pny > -0.1 && pny <= 0.25) {
                         alpha = 1.0;
                     }
                 }
