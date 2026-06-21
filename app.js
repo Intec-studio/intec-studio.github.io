@@ -469,44 +469,55 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nut_pump') {
-                    // Ритм прыжка (от 0 до 1)
-                    let beat = Math.abs(Math.sin(t * 10)); 
-                    let scale = 1 + beat * 0.1; // Орех немного раздувается в такт
-                    let yBounce = beat * 0.15; // Подпрыгивание
-                    // Координаты с учетом анимации
+                    // 1. Замедляем скорость в 2 раза (было t * 10, стало t * 5)
+                    let beat = Math.abs(Math.sin(t * 5)); 
+                    let scale = 1 + beat * 0.05; // Чуть меньше раздувается
+                    let yBounce = Math.sin(t * 10) * 0.05; // Плавные прыжки
+                    
                     let pnx = nx / scale;
-                    let pny = (ny + 0.1 - yBounce) / scale;
-                    // 1. Форма ореха (овал, зауженный кверху)
-                    // Математика: x^2 + (y / (1 - y*0.2))^2 — делает "верхушку" острее
-                    let nutShape = Math.sqrt(pnx * pnx + Math.pow(pny / (1 - pny * 0.25), 2));
+                    let pny = (ny + 0.05 - yBounce) / scale;
+                    
+                    // 2. Тело ореха (идеальный круг)
+                    let nutShape = Math.hypot(pnx, pny);
                     
                     if (nutShape < 0.55) {
-                        alpha = 0.5; // Тело ореха
-                        // 2. Глаза (два больших белых круга)
-                        let eyeL = Math.hypot(pnx + 0.22, pny + 0.1);
-                        let eyeR = Math.hypot(pnx - 0.22, pny + 0.1);
+                        alpha = 0.5; // Цвет тела
                         
-                        if (eyeL < 0.18 || eyeR < 0.18) {
+                        // Огромные глаза (чтобы читалось на сетке 32х32)
+                        let eyeL = Math.hypot(pnx + 0.22, pny - 0.05);
+                        let eyeR = Math.hypot(pnx - 0.22, pny - 0.05);
+                        
+                        if (eyeL < 0.2 || eyeR < 0.2) {
                             alpha = 1.0; // Белки глаз
-                            let pupilX = Math.cos(t * 5) * 0.03;
-                            let pupilY = Math.sin(t * 5) * 0.03;
-                            let pupilL = Math.hypot(pnx + 0.22 + pupilX, pny + 0.1 + pupilY);
-                            let pupilR = Math.hypot(pnx - 0.22 + pupilX, pny + 0.1 + pupilY);
                             
-                            if (pupilL < 0.07 || pupilR < 0.07) alpha = 0.1; // Зрачки
+                            // Зрачки (тоже замедлил: t * 3)
+                            let pupilX = Math.cos(t * 3) * 0.04;
+                            let pupilY = Math.sin(t * 3) * 0.04;
+                            if (Math.hypot(pnx + 0.22 + pupilX, pny - 0.05 + pupilY) < 0.08 || 
+                                Math.hypot(pnx - 0.22 + pupilX, pny - 0.05 + pupilY) < 0.08) {
+                                alpha = 0.1; // Черные зрачки
+                            }
                         }
-                        let mouthY = pny - (pnx * pnx * 0.8 - 0.15);
-                        if (Math.abs(mouthY) < 0.03 && pnx > -0.3 && pnx < 0.3 && pny < -0.05){
+
+                        // Рот (широкая четкая улыбка)
+                        let smileCurve = 0.15 + (pnx * pnx * 1.5);
+                        if (pny > 0.1 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.3 && pnx < 0.3) {
                             alpha = 1.0;
                         }
-                        // 4. Светлое пузико (нижняя часть)
-                        if (pny < -0.3 && nutShape < 0.55) alpha = 0.8;
+                        
+                        // Светлое пузико
+                        if (pny > 0.35) alpha = 0.8;
                     }
                     
-                    let handX = pnx - 0.45;
-                    let handY = pny + 0.1;
-                    if (Math.hypot(handX, handY) < 0.12) alpha = 1.0;
-                    if (handX > -0.05 && handX < 0.1 && handY > 0 && handY < 0.25) alpha = 1.0;
+                    // 3. Огромная рука с пальцем вверх (гипертрофированная для читаемости)
+                    // Кулак (квадрат справа)
+                    if (pnx > 0.45 && pnx < 0.75 && pny > 0.0 && pny < 0.3) {
+                        alpha = 1.0;
+                    }
+                    // Большой палец (прямоугольник торчащий вверх)
+                    if (pnx > 0.5 && pnx < 0.65 && pny > -0.3 && pny <= 0.0) {
+                        alpha = 1.0;
+                    }
                 }
 
                 ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; 
@@ -576,6 +587,29 @@ function initPatchnotesUI() {
             `;
 
             initCanvases();
+        }else {
+            filtered.forEach(post => {
+                const card = document.createElement('div');
+                card.className = 'pn-card';
+                card.style.cssText = 'cursor: pointer; transition: border-color 0.1s ease;';
+                card.onmouseenter = () => card.style.borderColor = 'var(--c-text)';
+                card.onmouseleave = () => card.style.borderColor = 'var(--c-border)';
+                
+                const tagsHtml = post.tags.map(t => `<div class="tag">${t}</div>`).join('');
+                
+                card.innerHTML = `
+                    <div class="pn-card-title-wrap">
+                        <div class="pn-card-title" data-lang="en">${post.title.en}</div>
+                        <div class="pn-card-title" data-lang="ru">${post.title.ru}</div>
+                    </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="tags-group">${tagsHtml}</div>
+                        <div class="tag">${post.date}</div>
+                    </div>
+                `;
+                card.addEventListener('click', () => openPost(post));
+                postsList.appendChild(card);
+            });
         }
 
         // --- ЛОГИКА ПОДСВЕТКИ ---
