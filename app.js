@@ -469,53 +469,58 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nerd_ackchyually') {
-                    // Прыжок всей конструкции вверх-вниз
-                    let yBounce = Math.abs(Math.sin(t * 4)) * 0.1; 
+                    // Чуть замедлили прыжок (было t * 4, стало t * 2.5)
+                    let yBounce = Math.abs(Math.sin(t * 2.5)) * 0.1; 
                     let pnx = nx;
                     let pny = ny + 0.1 - yBounce; 
                     
-                    // 1. Голова (теперь Белая)
+                    // 1. Белая Голова
                     let headDist = Math.hypot(pnx, pny);
                     
                     if (headDist < 0.55) {
-                        alpha = 1.0; // Базовый цвет головы - белый
+                        alpha = 1.0; // Базовый цвет головы
                         
-                        let isFeature = false; // Переменная для темных деталей
+                        let isFeature = false; 
                         
-                        let distEyeL = Math.hypot(pnx + 0.2, pny - 0.02);
-                        let distEyeR = Math.hypot(pnx - 0.2, pny - 0.02);
+                        // 2. Большие Очки
+                        let distEyeL = Math.hypot(pnx + 0.22, pny - 0.05);
+                        let distEyeR = Math.hypot(pnx - 0.22, pny - 0.05);
                         
-                        // Оправа очков (кольца)
-                        if ((distEyeL < 0.18 && distEyeL > 0.12) || (distEyeR < 0.18 && distEyeR > 0.12)) isFeature = true;
-                        // Дужка (переносица)
-                        if (Math.abs(pny + 0.02) < 0.03 && pnx > -0.15 && pnx < 0.15) isFeature = true;
+                        // Широкая оправа очков
+                        if ((distEyeL < 0.22 && distEyeL > 0.13) || (distEyeR < 0.22 && distEyeR > 0.13)) {
+                            isFeature = true;
+                        }
+                        // Переносица
+                        if (Math.abs(pny - 0.05) < 0.04 && pnx > -0.15 && pnx < 0.15) {
+                            isFeature = true;
+                        }
                         // Зрачки
-                        if (distEyeL < 0.05 || distEyeR < 0.05) isFeature = true;
+                        if (distEyeL < 0.06 || distEyeR < 0.06) {
+                            isFeature = true;
+                        }
 
-                        // U-образная улыбка . .
-                        //                  ...
-                        let smileCurve = 0.18 + (pnx * pnx * 2.5); // Формула плавной дуги
+                        // 3. Улыбочка
+                        let smileCurve = 0.2 + (pnx * pnx * 2.5);
                         if (pny > 0.1 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.2 && pnx < 0.2) {
                             isFeature = true;
                         }
 
-                        // Если точка попала на черты лица - делаем её серой
                         if (isFeature) {
-                            alpha = 0.15; 
+                            alpha = 0.15; // Черты лица (серые вырезы)
                         }
                     }
                     
-                    // 2. Рука с указательным пальцем (Белая)
-                    // Кулак (основание)
+                    // 4. Рука (Белая)
+                    // Кулак
                     if (pnx > 0.6 && pnx < 0.85 && pny > 0.15 && pny < 0.4) {
                         alpha = 1.0;
                     }
-                    // Тонкий и укороченный УКАЗАТЕЛЬНЫЙ палец ☝️ (растет с ЛЕВОГО края кулака)
-                    if (pnx > 0.6 && pnx < 0.7 && pny > -0.15 && pny <= 0.15) {
+                    // Указательный палец СПРАВА ☝️
+                    if (pnx > 0.75 && pnx < 0.85 && pny > -0.15 && pny <= 0.15) {
                         alpha = 1.0;
                     }
                 }
-
+                
                 ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; 
                 ctx.beginPath(); 
                 ctx.arc(x, y, alpha > 0.2 ? 2.0 : 1.0, 0, Math.PI * 2); 
