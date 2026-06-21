@@ -469,57 +469,58 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nerd_ackchyually') {
-                    // Прыжок
+                    // Медленный прыжок
                     let yBounce = Math.abs(Math.sin(t * 2.5)) * 0.1; 
-                    
-                    // Сдвигаем всё влево на 0.12, чтобы центрировать голову + руку
-                    let pnx = nx + 0.12;
+                    // Смещение всей группы вправо на 0.12 для идеальной центровки
+                    let pnx = nx - 0.12;
                     let pny = ny + 0.1 - yBounce; 
                     
-                    // 1. Большая Белая Голова
+                    // 1. Голова (Белая)
                     let headDist = Math.hypot(pnx, pny);
                     
-                    if (headDist < 0.7) {
+                    if (headDist < 0.65) {
                         alpha = 1.0; 
                         
                         let isFeature = false; 
                         
-                        // 2. Очки
-                        let eyX = 0.3;  
-                        let eyY = 0.15; 
+                        // Параметры глаз (разнесены шире и выше)
+                        let eyX = 0.28; 
+                        let eyY = 0.18; 
                         let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
                         let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
                         
-                        // Тонкая оправа (1 точка толщиной)
-                        if ((distEyeL < 0.25 && distEyeL > 0.19) || (distEyeR < 0.25 && distEyeR > 0.19)) {
+                        // 2. Очки (линзы стали выше, чтобы не слипаться при прыжке)
+                        // Внутренняя часть линз (черная)
+                        if (distEyeL < 0.22 || distEyeR < 0.22) {
                             isFeature = true;
+                            // Оправа (белая рамка внутри линз)
+                            if (distEyeL < 0.22 && distEyeL > 0.18) isFeature = false;
+                            if (distEyeR < 0.22 && distEyeR > 0.18) isFeature = false;
+                            // Зрачки (белые точки в центре)
+                            if (distEyeL < 0.05 || distEyeR < 0.05) isFeature = false;
                         }
-                        // Дужка
-                        if (Math.abs(pny + eyY) < 0.02 && pnx > -eyX && pnx < eyX) {
-                            isFeature = true;
-                        }
-                        // Зрачки
-                        if (distEyeL < 0.05 || distEyeR < 0.05) {
+                        
+                        // Переносица
+                        if (Math.abs(pny + eyY) < 0.03 && pnx > -eyX && pnx < eyX) {
                             isFeature = true;
                         }
 
                         // 3. Улыбка
-                        let smileCurve = 0.25 + (pnx * pnx * 1.5);
-                        if (pny > 0.15 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.2 && pnx < 0.2) {
+                        let smileCurve = 0.22 + (pnx * pnx * 2.0);
+                        if (pny > 0.12 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.15 && pnx < 0.15) {
                             isFeature = true;
                         }
 
                         if (isFeature) alpha = 0.15; 
                     }
                     
-                    // 4. Рука Правши (Слева от нас)
-                    // Кулак (основание)
-                    if (pnx < -0.72 && pnx > -0.95 && pny > 0.25 && pny < 0.5) {
+                    // 4. Рука (Белая)
+                    // Кулак
+                    if (pnx < -0.66 && pnx > -0.86 && pny > 0.25 && pny < 0.5) {
                         alpha = 1.0;
                     }
-                    // Указательный палец ТОЛЩИНОЙ В 2 ТОЧКИ
-                    // Диапазон 0.13 на сетке 32x32 гарантирует ровно 2 колонки точек
-                    if (pnx < -0.72 && pnx > -0.85 && pny > -0.1 && pny <= 0.25) {
+                    // Указательный палец шириной ровно в 2 точки (0.125 единиц)
+                    if (pnx < -0.66 && pnx > -0.785 && pny > -0.1 && pny <= 0.25) {
                         alpha = 1.0;
                     }
                 }
