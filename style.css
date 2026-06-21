@@ -154,7 +154,7 @@ a { text-decoration: none; color: inherit; }
 .tv-screen { width: 100%; aspect-ratio: 21 / 9; min-height: 200px; background: #000; border-radius: 9px; border: 3px solid var(--c-border); position: relative; overflow: hidden; box-shadow: inset 0 0 50px rgba(0,0,0,1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 #tvVideoPlayer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; z-index: 5; transition: opacity 0s; }
 .tv-bars { position: absolute; inset: 0; z-index: 1; background: repeating-linear-gradient(to right, #cccccc 0%, #cccccc 14.28%, #e4d924 14.28%, #e4d924 28.56%, #24e4d9 28.56%, #24e4d9 42.84%, #24e424 42.84%, #24e424 57.12%, #e424e4 57.12%, #e424e4 71.4%, #e42424 71.4%, #e42424 85.68%, #2424e4 85.68%, #2424e4 100%); }
-.tv-text-box { position: relative; z-index: 2; background: #050505; color: #E7E7E7; padding: 18px 36px; font-size: 48px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.9); }
+.tv-text-box { position: relative; z-index: 2; background: #050505; color: #E7E7E7; padding: 18px 36px; font-size: clamp(24px, 4vw, 48px); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.9); }
 .scanlines { position: absolute; inset: 0; z-index: 10; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; }
 .crt-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.4) 100%); mix-blend-mode: overlay; animation: crtFlicker 0.15s infinite; }
 .vhs-noise { position: absolute; inset: 0; z-index: 16; pointer-events: none; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="1"/%3E%3C/svg%3E'); opacity: 0.15; mix-blend-mode: screen; filter: contrast(3); animation: noiseJitter 0.3s steps(3) infinite; }
@@ -386,7 +386,7 @@ a { text-decoration: none; color: inherit; }
 
     .tv-screen { border-radius: 4.5px; border-width: 1.5px; }
     .tv-text-box { 
-        font-size: 24px; 
+        font-size: clamp(14px, 6vw, 24px);
         padding: 6px 16px; 
         border-width: 1px; 
         box-shadow: 0 0 10px rgba(0,0,0,0.9); 
