@@ -376,7 +376,7 @@ a { text-decoration: none; color: inherit; }
     position: absolute; top: -15px; bottom: -15px; left: -15px; right: -15px; user-select: none;
 }
 
-.article-list-item { display: flex; gap: 9px; margin-bottom: 9px; margin-left: 18px; }
+.article-list-item { display: flex; gap: 9px; margin-bottom: 18px; margin-left: 18px; }
 .article-list-item.sub { margin-left: 54px; }
 .list-bullet { color: var(--c-text); flex-shrink: 0; font-weight: 500; }
 .list-text { color: var(--c-text); }
@@ -517,7 +517,7 @@ a { text-decoration: none; color: inherit; }
         border-left-width: 1.5px; 
         margin-bottom: 9px; 
     }
-    .article-list-item { gap: 4.5px; margin-bottom: 4.5px; margin-left: 9px; }
+    .article-list-item { gap: 4.5px; margin-bottom: 9px; margin-left: 9px; }
     .article-list-item.sub { margin-left: 27px; }
     .article-pre { font-size: 10px; }
 }
