@@ -286,7 +286,14 @@ function setPanelOffset(o) {
 
 new ResizeObserver(() => { const max = getPanelMaxOffset(); if (panelOffset > max) panelOffset = max; setPanelOffset(panelOffset); }).observe(mainPanel);
 
-mainClip.addEventListener('wheel', e => { e.preventDefault(); setPanelOffset(panelOffset + e.deltaY); }, { passive: false });
+mainClip.addEventListener('wheel', e => { 
+    e.preventDefault(); 
+    if (isAutoScrolling) {
+        stopAutoScroll(); // Выключаем режим автоскролла
+        return; // Первое движение колесика только сбрасывает режим (не скроллит)
+    }
+    setPanelOffset(panelOffset + e.deltaY); 
+}, { passive: false });
 window.addEventListener('resize', () => setPanelOffset(panelOffset));
 
 window.addEventListener('keydown', e => {
