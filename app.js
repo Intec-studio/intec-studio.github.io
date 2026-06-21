@@ -474,44 +474,46 @@ function drawConsoles() {
                     let pnx = nx; 
                     let pny = ny - yBounce; 
                     
-                    // Усиленная матрица 34x23. 
-                    // Главное правило: ВСЕ линии минимум 2-3 символа толщиной!
-                    // Это гарантирует, что точки холста точно в них попадут.
+                    // Твоя новая идеальная матрица 40x26
                     const grid = [
-                        ".........##########...............", // 0 (Макушка)
-                        ".......##YYYYYYYYYY##.............", // 1
-                        ".....##YYYYYYYYYYYYYY##...........", // 2
-                        "....#YYYYYYYYYYYYYYYYYY#..........", // 3
-                        "...#YYYY##YYYYYYYY##YYYY#.........", // 4 (Брови)
-                        "...#YYYY##YYYYYYYY##YYYY#.........", // 5
-                        "..#YYYYYYYYYYYYYYYYYYYYYY#........", // 6
-                        "..########################........", // 7 (Очки - верхняя оправа)
-                        "..##YY################YY##........", // 8 (Черные линзы)
-                        "..##YY##WW########WW##YY##........", // 9 (Глаза - 2х2 белые точки)
-                        "..##YY##WW########WW##YY##........", // 10
-                        "..##YY################YY##........", // 11
-                        "..########################..####..", // 12 (Нижняя оправа и кончик пальца)
-                        "...#YYYYYYYYYYYYYYYYYYYY#...#YY#..", // 13 (Указательный палец)
-                        "...#YYYYYYYYYYYYYYYYYYYY#...#YY#..", // 14
-                        "....#YYYY##########YYYY#....#YY#..", // 15 (Верх рта)
-                        "....#YYYY#WWW##WWW#YYYY#....#YY#..", // 16 (ДВА БЕЛЫХ ЗУБА с зазором ##)
-                        ".....#YYY#WWW##WWW#YYY#.....#YY#..", // 17 (Высота зубов 2 символа)
-                        ".....#YYY#OOOOOOOO#YYY#...###YY#..", // 18 (Открытый рот и большой палец)
-                        "......#YY##########YY#....#YYYY#..", // 19 (Низ рта)
-                        "......#YYYYYYYYYYYYYY#....#YYYY#..", // 20
-                        ".......##YYYYYYYYYY##.....#YYYY#..", // 21
-                        ".........##########........####..."  // 22
+                        "..........####################..........", // 0
+                        "........##YYYYYYYYYYYYYYYYYYYY##........", // 1
+                        "......###YYYYYYYYYYYYYYYYYYYYYY###......", // 2
+                        ".....###YYYYYYYYYYYYYYYYYYYYYYYY###.....", // 3
+                        "....##YYYYYY####YYYYYYYY####YYYYYY##....", // 4
+                        "...##YYYY#####YYYYYYYYYYYY#####YYYY##...", // 5
+                        "..##YYYY####YYYYYYYYYYYYYYYY####YYYY##..", // 6
+                        ".##YYYY####YYYYYYYYYYYYYYYYYY####YYYY##.", // 7
+                        ".##YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY##.", // 8
+                        "##################YYYY##################", // 9 (Верх очков)
+                        "##YYYYY###WW###YY######YY###WW###YYYYY##", // 10 (Глаза)
+                        "##YYYYY###WW###YY#YYYY#YY###WW###YYYYY##", // 11
+                        "###YYYY########YY#YYYY#YY########YYYY###", // 12 (Низ очков)
+                        "..#YYYYY#####YYYY#YYYY#YYYY#####YYYYY#..", // 13
+                        "..###YYYYYYYYYY###YYYY###YYYYYYYYYY###..", // 14
+                        "..#YY###########YYYYYYYY###########YY#..", // 15
+                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#..", // 16
+                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#..", // 17
+                        "..#YYYYYYYYYY##############YYYYYYYYYY#..", // 18 (Верхняя губа)
+                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...", // 19 (Зубы W и глубина рта O)
+                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...", // 20
+                        "....#YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY#....", // 21
+                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##.....", // 22 (Открытый рот снизу)
+                        ".......###YYYYYYYYYYYYYYYYYYYY###.......", // 23
+                        "........#####YYYYYYYYYYYYYY#####........", // 24
+                        "............################............"  // 25
                     ];
 
-                    let gridWidth = 34;
-                    let gridHeight = 23;
+                    let gridWidth = 40;
+                    let gridHeight = 26;
                     
-                    // Масштаб подбираем так, чтобы лицо было крупным
-                    let pixelSize = 0.052; 
+                    // Чуть уменьшили пиксель, так как сетка стала шире (40 вместо 34), 
+                    // чтобы лицо полностью помещалось и не обрезалось.
+                    let pixelSize = 0.045; 
                     
-                    // Центр лица в этой матрице находится на координатах X=14, Y=11
-                    let col = Math.floor((pnx / pixelSize) + 14);
-                    let row = Math.floor((pny / pixelSize) + 11);
+                    // Центр лица теперь смещен на половину новой ширины (20) и высоты (13)
+                    let col = Math.floor((pnx / pixelSize) + 20);
+                    let row = Math.floor((pny / pixelSize) + 13);
                     
                     alpha = 0.0; // По умолчанию фон прозрачный
                     
@@ -520,7 +522,7 @@ function drawConsoles() {
                         let char = grid[row][col];
                         
                         if (char === '#') {
-                            alpha = 0.15; // Черный контур (Сделал чуть ярче, чтобы не пропадал)
+                            alpha = 0.15; // Черный контур (очки, рот, края)
                         } else if (char === 'Y') {
                             alpha = 0.65; // Кожа (светло-серая)
                         } else if (char === 'W') {
@@ -532,7 +534,7 @@ function drawConsoles() {
                         }
                     }
                 }
-                
+
                 ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; 
                 ctx.beginPath(); 
                 ctx.arc(x, y, alpha > 0.2 ? 2.0 : 1.0, 0, Math.PI * 2); 
