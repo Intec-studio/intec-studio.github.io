@@ -318,6 +318,20 @@ a { text-decoration: none; color: inherit; }
     .article-player .vol-box { border-radius: 4.5px; }
     .player-volume { width: 57px !important; }
     .vol-slider { width: 57px; height: 9px; border-radius: 2.25px; --thumb-r: 3px; }
+    /* ФИКС ДЛЯ МОБИЛЬНОГО ПОЛЗУНКА (Chrome, Safari, Edge) */
+    .vol-slider::-webkit-slider-thumb {
+        width: 6px;   /* Ширина белого блока (в 2 раза меньше чем на ПК) */
+        height: 9px;  /* Высота в точности как у желоба */
+        border-radius: 2.25px;
+    }
+
+    /* ФИКС ДЛЯ МОБИЛЬНОГО ПОЛЗУНКА (Firefox) */
+    .vol-slider::-moz-range-thumb {
+        width: 6px;
+        height: 9px;
+        border-radius: 2.25px;
+        border: none;
+    }
 
     /* --- АДАПТИВ ОСТАЛЬНОГО ДЛЯ ТЕЛЕФОНОВ --- */
     .pn-card-desc img, 
