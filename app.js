@@ -288,10 +288,7 @@ new ResizeObserver(() => { const max = getPanelMaxOffset(); if (panelOffset > ma
 
 mainClip.addEventListener('wheel', e => { 
     e.preventDefault(); 
-    if (isAutoScrolling) {
-        stopAutoScroll(); // Выключаем режим автоскролла
-        return; // Первое движение колесика только сбрасывает режим (не скроллит)
-    }
+    if (isAutoScrolling) return; // Блокируем скролл колесиком, если работает автоскролл
     setPanelOffset(panelOffset + e.deltaY); 
 }, { passive: false });
 window.addEventListener('resize', () => setPanelOffset(panelOffset));
