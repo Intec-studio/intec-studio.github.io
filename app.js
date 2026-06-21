@@ -483,20 +483,24 @@ function drawConsoles() {
                         
                         let isFeature = false; 
                         
-                        // Параметры глаз
-                        let eyX = 0.28; 
+                        // Параметры глаз (чуть раздвинули центры для больших очков)
+                        let eyX = 0.29; // Было 0.28
                         let eyY = 0.18; 
                         let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
                         let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
                         
-                        // 2. Очки (увеличены зазоры, чтобы избежать слипания при прыжке)
-                        // Внутренняя часть линз (черная)
-                        if (distEyeL < 0.23 || distEyeR < 0.23) {
-                            isFeature = true;
-                            // Оправа (белая рамка, сделана чуть толще: 0.17 - 0.23)
-                            if (distEyeL < 0.23 && distEyeL > 0.17) isFeature = false;
-                            if (distEyeR < 0.23 && distEyeR > 0.17) isFeature = false;
-                            // Зрачки (белые точки, сделаны точечными: < 0.035)
+                        // 2. Очки (сделаны больше, оправа толщиной в 1 точку)
+                        let glassesOuter = 0.28;  // Внешний радиус (было 0.23)
+                        let glassesInner = 0.235; // Внутренний радиус (Разница 0.045 = ровно 1 точка)
+
+                        if (distEyeL < glassesOuter || distEyeR < glassesOuter) {
+                            isFeature = true; // Внутренняя часть линз (черная)
+                            
+                            // Оправа (белая рамка толщиной 1 точку)
+                            if (distEyeL < glassesOuter && distEyeL > glassesInner) isFeature = false;
+                            if (distEyeR < glassesOuter && distEyeR > glassesInner) isFeature = false;
+                            
+                            // Зрачки (белые точки, остались мелкими)
                             if (distEyeL < 0.035 || distEyeR < 0.035) isFeature = false;
                         }
                         
@@ -515,12 +519,14 @@ function drawConsoles() {
                     }
                     
                     // 4. Рука (Белая)
+                    // Край головы = -0.65. Отступ в 1 точку (0.045) означает, что рука начинается с -0.70
+                    
                     // Кулак
-                    if (pnx < -0.66 && pnx > -0.86 && pny > 0.25 && pny < 0.5) {
+                    if (pnx <= -0.70 && pnx > -0.90 && pny > 0.25 && pny < 0.5) {
                         alpha = 1.0;
                     }
-                    // Указательный палец (сужен до 0.09 для толщины ровно в 2 точки)
-                    if (pnx < -0.66 && pnx > -0.75 && pny > -0.1 && pny <= 0.25) {
+                    // Указательный палец (сохраняем толщину в 2 точки: 0.09)
+                    if (pnx <= -0.70 && pnx > -0.79 && pny > -0.1 && pny <= 0.25) {
                         alpha = 1.0;
                     }
                 }
