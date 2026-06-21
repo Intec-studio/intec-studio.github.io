@@ -475,62 +475,60 @@ function drawConsoles() {
                     let pnx = nx - 0.16;
                     let pny = ny + 0.1 - yBounce; 
                     
-                    // 1. Голова (Белая)
-                    let headDist = Math.hypot(pnx, pny);
+                    // Размер одной точки (высчитан из предыдущего кода: 0.045)
+                    let dotSize = 0.045;
                     
-                    if (headDist < 0.65) {
-                        alpha = 1.0; 
+                    // Переводим координаты в индексы сетки 28x25
+                    let gx = Math.floor(pnx / dotSize) + 14;
+                    let gy = 12 - Math.floor(pny / dotSize);
+                    
+                    // Точная копия твоего пиксель-арта
+                    // . = пустота
+                    // # = черный контур / оправа (серые точки)
+                    // Y = лицо (светло-серые точки)
+                    // W = зубы / блики в глазах (ярко-белые точки)
+                    // O = рот внутри (темно-серые точки)
+                    let art = [
+                        "............................",
+                        "..........########..........",
+                        "........##YYYYYYYY##........",
+                        "......##YYYYYYYYYYYY##......",
+                        "....#YYYY##YYYYYY##YYYY#....",
+                        "...#YYYYYY##YYYY##YYYYYY#...",
+                        "...#YYYYYYYYYYYYYYYYYYYY#...",
+                        ".##########################.",
+                        ".##YYYYYYYY######YYYYYYYY##.",
+                        ".##YYYW#YYY######YYYW#YYY##.",
+                        ".##YYY##YYY######YYY##YYY##.",
+                        ".##YYYYYYYY######YYYYYYYY##.",
+                        ".##########################.",
+                        "...#YYYYYYYYYYYYYYYYYYYY#...",
+                        "....#YYYYYYYYYYYYYYYYYY#....",
+                        ".....##YYYY######YYYY##.##..",
+                        "......#YYYY#WW#WW#YYY#.#YY#.",
+                        "......#YYYY#WW#WW#YYY#.#YY#.",
+                        ".......#YYY#OOOOO#YYY#.#YY#.",
+                        "........##YYYYYYYYYY##.####.",
+                        "..........########....#YYY#.",
+                        "......................#YYY##",
+                        "......................#YYYY#",
+                        "......................#YYYY#",
+                        ".......................####."
+                    ];
+                    
+                    // Отрисовка
+                    if (gy >= 0 && gy < 25 && gx >= 0 && gx < 28) {
+                        let pixel = art[gy][gx];
                         
-                        let isFeature = false; 
-                        
-                        // Параметры глаз (раздвинуты для широкой оправы)
-                        let eyX = 0.28; 
-                        let eyY = 0.10; // Чуть подняли, чтобы влезла улыбка с зубами
-                        let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
-                        let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
-                        
-                        // 2. Очки (Широкие, толщина оправы ровно 2 точки = 0.09)
-                        let glassesOuter = 0.32;  // Внешний радиус (широкие)
-                        let glassesInner = 0.23;  // Внутренний радиус (Разница 0.09 = 2 точки)
-
-                        if (distEyeL < glassesOuter || distEyeR < glassesOuter) {
-                            isFeature = true; // Внутри очки черные (пустые)
-                            
-                            // Оправа (белая, 2 точки толщиной)
-                            if (distEyeL <= glassesOuter && distEyeL >= glassesInner) isFeature = false;
-                            if (distEyeR <= glassesOuter && distEyeR >= glassesInner) isFeature = false;
-                            
-                            // Зрачки (белые, размер 2х2 точки -> радиус 0.045)
-                            if (distEyeL <= 0.045 || distEyeR <= 0.045) isFeature = false;
+                        if (pixel === '#') {
+                            alpha = 0.15; // Черный цвет в арте -> серые точки
+                        } else if (pixel === 'Y') {
+                            alpha = 0.8;  // Желтый (лицо/рука) -> светло-серый
+                        } else if (pixel === 'W') {
+                            alpha = 1.0;  // Белый (зубы/глаза) -> самый яркий белый
+                        } else if (pixel === 'O') {
+                            alpha = 0.4;  // Оранжевый (рот) -> темно-серый
                         }
-
-                        // 3. Улыбка и зубы (Стиль нерда)
-                        let smileCurve = 0.22 + (pnx * pnx * 2.0);
-                        if (Math.abs(pny - smileCurve) < 0.05 && pnx > -0.22 && pnx < 0.22) {
-                            isFeature = true; // Черный приоткрытый рот
-                            
-                            // Два белых зуба сверху
-                            if (pny > smileCurve - 0.05 && pny < smileCurve + 0.01 && pnx > -0.08 && pnx < 0.08) {
-                                // Черный зазор между зубами в 1 точку (ширина 0.04)
-                                if (Math.abs(pnx) > 0.02) {
-                                    isFeature = false; // Сами зубы белые
-                                }
-                            }
-                        }
-
-                        if (isFeature) alpha = 0.15; 
-                    }
-                    
-                    // 4. Рука (Белая)
-                    // Край головы = -0.65. Пустая колонка 1 точка = 0.045. Рука начинается строго с -0.70.
-                    
-                    // Кулак
-                    if (pnx <= -0.70 && pnx >= -0.90 && pny > 0.25 && pny < 0.5) {
-                        alpha = 1.0;
-                    }
-                    // Указательный палец (толщина ровно 2 точки: 0.09)
-                    if (pnx <= -0.70 && pnx >= -0.79 && pny > -0.1 && pny <= 0.25) {
-                        alpha = 1.0;
                     }
                 }
 
