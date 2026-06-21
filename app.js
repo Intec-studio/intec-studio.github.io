@@ -524,6 +524,12 @@ function initPatchnotesUI() {
     }
 
     async function openPost(post) {
+        try {
+            // ВРЕМЕННАЯ ЗАДЕРЖКА НА 2 СЕКУНДЫ (только чтобы посмотреть анимацию)
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Подгружаем внешний файл статьи
+            const response = await fetch(post.contentFile);
         // --- 1. ДОБАВЛЕННЫЙ КОД ДЛЯ ИСТОРИИ ---
         if (window.location.hash !== '#article') {
             window.location.hash = 'article';
