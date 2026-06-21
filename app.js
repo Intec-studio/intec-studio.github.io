@@ -469,54 +469,56 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nerd_ackchyually') {
-                    // Анимация спокойного покачивания
+                    // Анимация покачивания
                     let yBounce = Math.abs(Math.sin(t * 2.5)) * 0.1; 
                     let pnx = nx;
                     let pny = ny + 0.1 - yBounce; 
                     
-                    // 1. Голова (Белая)
+                    // 1. Увеличенная Голова (радиус увеличен до 0.7)
                     let headDist = Math.hypot(pnx, pny);
                     
-                    if (headDist < 0.55) {
+                    if (headDist < 0.7) {
                         alpha = 1.0; 
                         
                         let isFeature = false; 
                         
-                        // 2. Очки (подняты вверх, pny + 0.12)
-                        let distEyeL = Math.hypot(pnx + 0.2, pny + 0.12);
-                        let distEyeR = Math.hypot(pnx - 0.2, pny + 0.12);
+                        // 2. Увеличенные Очки (центры раздвинуты и подняты)
+                        let eyX = 0.3;  // Смещение глаз от центра
+                        let eyY = 0.15; // Высота глаз
+                        let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
+                        let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
                         
-                        // Тонкая оправа очков (строго между 0.13 и 0.17 = толщина 1 точка)
-                        if ((distEyeL < 0.17 && distEyeL > 0.13) || (distEyeR < 0.17 && distEyeR > 0.13)) {
+                        // Тонкая оправа очков (линзы стали заметно больше)
+                        if ((distEyeL < 0.26 && distEyeL > 0.20) || (distEyeR < 0.26 && distEyeR > 0.20)) {
                             isFeature = true;
                         }
-                        // Переносица (тонкая линия)
-                        if (Math.abs(pny + 0.12) < 0.02 && pnx > -0.15 && pnx < 0.15) {
+                        // Дужка очков (переносица)
+                        if (Math.abs(pny + eyY) < 0.02 && pnx > -eyX && pnx < eyX) {
                             isFeature = true;
                         }
-                        // Зрачки-точки
-                        if (distEyeL < 0.04 || distEyeR < 0.04) {
+                        // Зрачки
+                        if (distEyeL < 0.05 || distEyeR < 0.05) {
                             isFeature = true;
                         }
 
-                        // 3. Улыбочка
-                        let smileCurve = 0.15 + (pnx * pnx * 2.5);
-                        if (pny > 0.05 && Math.abs(pny - smileCurve) < 0.03 && pnx > -0.18 && pnx < 0.18) {
+                        // 3. Улыбка (подстроена под масштаб лица)
+                        let smileCurve = 0.25 + (pnx * pnx * 1.5);
+                        if (pny > 0.15 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.2 && pnx < 0.2) {
                             isFeature = true;
                         }
 
                         if (isFeature) {
-                            alpha = 0.15; // Темно-серый цвет для черт лица
+                            alpha = 0.15; 
                         }
                     }
                     
-                    // 4. Рука СЛЕВА (Правша)
+                    // 4. Рука Правши (сдвинута чуть левее, чтобы не касаться большой головы)
                     // Кулак
-                    if (pnx < -0.6 && pnx > -0.85 && pny > 0.15 && pny < 0.4) {
+                    if (pnx < -0.75 && pnx > -0.95 && pny > 0.25 && pny < 0.5) {
                         alpha = 1.0;
                     }
-                    // Тонкий указательный палец ☝️ (шириной ровно 2 точки: от -0.6 до -0.72)
-                    if (pnx < -0.6 && pnx > -0.72 && pny > -0.2 && pny <= 0.15) {
+                    // Указательный палец (теперь ровно 2 точки в ширину)
+                    if (pnx < -0.75 && pnx > -0.85 && pny > -0.1 && pny <= 0.25) {
                         alpha = 1.0;
                     }
                 }
