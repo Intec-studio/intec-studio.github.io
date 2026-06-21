@@ -534,8 +534,13 @@ function initPatchnotesUI() {
         postsList.style.display = 'none';
         singlePostView.style.display = 'flex';
         
-        // Показываем загрузку, пока файл скачивается
-        singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px;"><span data-lang="en">Loading...</span><span data-lang="ru">Загрузка...</span></div>`;
+        // Показываем крутую канвас-загрузку из точек по центру
+        singlePostContent.innerHTML = `
+            <div style="display: flex; justify-content: center; align-items: center; width: 100%; min-height: 40vh; margin-top: 18px;">
+                <div class="info-console" style="border-radius: 18px;"><canvas class="mini-console" data-type="rltv_upload"></canvas></div>
+            </div>
+        `;
+        initCanvases(); // <--- Запускаем движок анимаций для этого квадратика!
         
         // Меняем хлебные крошки
         if(bcPageNameEn) bcPageNameEn.innerHTML = `Articles <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.en}`;
@@ -551,6 +556,9 @@ function initPatchnotesUI() {
             
             // Вставляем скачанный HTML
             singlePostContent.innerHTML = htmlData.en + htmlData.ru;
+            
+            // Убираем старую анимацию загрузки из памяти, чтобы не было утечек!
+            initCanvases();
             
             // =========================================================
             // --- ЛОГИКА КАСТОМНЫХ ПЛЕЕРОВ ---
@@ -677,6 +685,7 @@ function initPatchnotesUI() {
 
         } catch (error) {
             singlePostContent.innerHTML = `<div class="pn-card-desc" style="text-align: center; margin-top: 36px; color: var(--c-sub);">Error loading content / Ошибка загрузки контента</div>`;
+            initCanvases(); // Очищаем память даже если произошла ошибка
         }
     }
 
