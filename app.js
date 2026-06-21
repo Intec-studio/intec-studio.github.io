@@ -457,7 +457,7 @@ function drawConsoles() {
                 }
                 // ТВОЙ НОВЫЙ БЛОК:
                 else if (c.type === 'article_loader') {
-                    let angle = Math.atan2(ny, nx) + t * 3; 
+                    let angle = Math.atan2(ny, nx) + t * 2.5; 
                     angle = ((angle % (Math.PI * 2)) + (Math.PI * 2)) % (Math.PI * 2);
                     if (dist > 0.55 && dist < 0.7) {
                         if (angle < Math.PI) {
