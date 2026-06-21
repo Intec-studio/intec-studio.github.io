@@ -474,48 +474,46 @@ function drawConsoles() {
                     let pnx = nx; 
                     let pny = ny - yBounce; 
                     
-                    // Палец придвинут чуть ближе к щеке
+                    // Финальная матрица 40x26: только лицо, с твоими закругленными краями очков
                     const grid = [
-                        "..........####################....................", // 0
-                        "........##YYYYYYYYYYYYYYYYYYYY##..................", // 1
-                        "......###YYYYYYYYYYYYYYYYYYYYYY###................", // 2
-                        ".....###YYYYYYYYYYYYYYYYYYYYYYYY###...............", // 3
-                        "....##YYYYYY####YYYYYYYY####YYYYYY##..............", // 4
-                        "...##YYYY#####YYYYYYYYYYYY#####YYYY##.............", // 5
-                        "..##YYYY####YYYYYYYYYYYYYYYY####YYYY##............", // 6
-                        ".##YYYY####YYYYYYYYYYYYYYYYYY####YYYY##...........", // 7
-                        ".##YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY##...........", // 8
-                        "##################YYYY##################..........", // 9
-                        "##YYYYY###WW###YY######YY###WW###YYYYY##..........", // 10
-                        ".#YYYYY###WW###YY#YYYY#YY###WW###YYYYY#...........", // 11
-                        ".##YYYY########YY#YYYY#YY########YYYY##...........", // 12
-                        "..#YYYYY#####YYYY#YYYY#YYYY#####YYYYY#...######...", // 13 (Палец ближе)
-                        "..###YYYYYYYYYY###YYYY###YYYYYYYYYY###...#YYYY#...", // 14
-                        "..#YY###########YYYYYYYY###########YY#...#YYYY#...", // 15
-                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#...#YYYY#...", // 16
-                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#...#YYYY#...", // 17
-                        "..#YYYYYYYYYY##############YYYYYYYYYY#...#YYYY#...", // 18
-                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##....#YYYY#...", // 19
-                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...##YYYY#...", // 20
-                        "....#YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY#...##YYYYY#...", // 21
-                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##...#YYYYYYY#...", // 22
-                        ".......###YYYYYYYYYYYYYYYYYYYY###.....#YYY##YY#...", // 23
-                        "........#####YYYYYYYYYYYYYY#####......#YYY##YY#...", // 24
-                        "............################...........#######....", // 25
-                        "..................................................", // 26
-                        ".................................................."  // 27
+                        "..........####################..........", // 0
+                        "........##YYYYYYYYYYYYYYYYYYYY##........", // 1
+                        "......###YYYYYYYYYYYYYYYYYYYYYY###......", // 2
+                        ".....###YYYYYYYYYYYYYYYYYYYYYYYY###.....", // 3
+                        "....##YYYYYY####YYYYYYYY####YYYYYY##....", // 4
+                        "...##YYYY#####YYYYYYYYYYYY#####YYYY##...", // 5
+                        "..##YYYY####YYYYYYYYYYYYYYYY####YYYY##..", // 6
+                        ".##YYYY####YYYYYYYYYYYYYYYYYY####YYYY##.", // 7
+                        ".##YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY##.", // 8
+                        "##################YYYY##################", // 9 (Верх очков)
+                        "##YYYYY###WW###YY######YY###WW###YYYYY##", // 10 (Глаза)
+                        ".#YYYYY###WW###YY#YYYY#YY###WW###YYYYY#.", // 11 (Новые скругленные края)
+                        ".##YYYY########YY#YYYY#YY########YYYY##.", // 12
+                        "..#YYYYY#####YYYY#YYYY#YYYY#####YYYYY#..", // 13
+                        "..###YYYYYYYYYY###YYYY###YYYYYYYYYY###..", // 14
+                        "..#YY###########YYYYYYYY###########YY#..", // 15
+                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#..", // 16
+                        "..#YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY#..", // 17
+                        "..#YYYYYYYYYY##############YYYYYYYYYY#..", // 18 (Верхняя губа)
+                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...", // 19 (Зубы W и глубина O)
+                        "...##YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY##...", // 20
+                        "....#YYYYYYY#OOWWWOOOOWWWOO#YYYYYYY#....", // 21
+                        ".....##YYYYYY##OOOOOOOOOO##YYYYYY##.....", // 22 (Открытый рот снизу)
+                        ".......###YYYYYYYYYYYYYYYYYYYY###.......", // 23
+                        "........#####YYYYYYYYYYYYYY#####........", // 24
+                        "............################............"  // 25
                     ];
 
-                    let gridWidth = 50;
-                    let gridHeight = 28;
+                    let gridWidth = 40;
+                    let gridHeight = 26;
                     
-                    // УВЕЛИЧИЛИ pixelSize, чтобы ОТДАЛИТЬ рисунок (теперь он поместится целиком)
-                    let pixelSizeX = 0.052; 
-                    let pixelSizeY = 0.067; // Пропорции лица строго сохранены
+                    // Возвращаем идеальный масштаб для лица
+                    let pixelSizeX = 0.045; 
+                    let pixelSizeY = 0.058; 
                     
-                    // ЦЕНТР СДВИНУТ: теперь мы центруем не лицо (20), а всю композицию вместе с пальцем (24)
-                    let col = Math.floor((pnx / pixelSizeX) + 24);
-                    let row = Math.floor((pny / pixelSizeY) + 14);
+                    // Центруем строго по середине лица
+                    let col = Math.floor((pnx / pixelSizeX) + 20);
+                    let row = Math.floor((pny / pixelSizeY) + 13);
                     
                     alpha = 0.0; // По умолчанию фон прозрачный
                     
