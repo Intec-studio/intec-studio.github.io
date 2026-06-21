@@ -507,13 +507,13 @@ function drawConsoles() {
                     let gridWidth = 40;
                     let gridHeight = 26;
                     
-                    // Чуть уменьшили пиксель, так как сетка стала шире (40 вместо 34), 
-                    // чтобы лицо полностью помещалось и не обрезалось.
-                    let pixelSize = 0.045; 
+                    // Делаем пиксель по Y больше, чем по X, чтобы "вытянуть" лицо обратно
+                    let pixelSizeX = 0.045; 
+                    let pixelSizeY = 0.075; // Коэффициент ~1.6 к ширине (как у обычного шрифта)
                     
-                    // Центр лица теперь смещен на половину новой ширины (20) и высоты (13)
-                    let col = Math.floor((pnx / pixelSize) + 20);
-                    let row = Math.floor((pny / pixelSize) + 13);
+                    // Используем отдельные размеры для X и Y
+                    let col = Math.floor((pnx / pixelSizeX) + 20);
+                    let row = Math.floor((pny / pixelSizeY) + 13);
                     
                     alpha = 0.0; // По умолчанию фон прозрачный
                     
