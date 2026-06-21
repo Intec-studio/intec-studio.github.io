@@ -387,3 +387,33 @@ body.autoscroll-active * {
     /* Используем системный курсор прокрутки по вертикали */
     cursor: ns-resize !important; 
 }
+
+/* Специальный адаптивный блок для загрузки */
+.loader-card {
+    background: #111111; 
+    border: 3px solid #1F1F1F; 
+    border-radius: 18px; 
+    padding: 18px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 18px; 
+    width: fit-content;
+}
+
+/* Настройки для телефонов */
+@media (max-width: 900px) {
+    .loader-card {
+        padding: 9px;
+        gap: 9px;
+        border-radius: 9px;
+        border-width: 1.5px;
+    }
+    /* Добавь это, чтобы рамка у квадрата с точками тоже стала тоньше */
+    .loader-card .info-console {
+        border-width: 1.5px;
+        border-radius: 4.5px;
+        width: 90px; /* Размер как у других консолей на мобилке */
+        height: 90px;
+    }
+}

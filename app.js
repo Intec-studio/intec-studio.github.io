@@ -578,11 +578,11 @@ function initPatchnotesUI() {
         // ОБНОВЛЕННЫЙ БЛОК ЗАГРУЗКИ
         singlePostContent.innerHTML = `
         <div style="display: flex; flex: 1; align-items: center; justify-content: center; min-height: calc(100vh - 200px); width: 100%;">
-            <div style="background: #111111; border: 3px solid #1F1F1F; border-radius: 18px; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 18px; width: fit-content;">
-                <div class="info-console" style="border: 3px solid #1F1F1F; background: #000; border-radius: 9px;">
+            <div class="loader-card">
+                <div class="info-console" style="background: #000;">
                     <canvas class="mini-console" data-type="article_loader"></canvas>
                 </div>
-                <div style="color: #E7E7E7; font-size: 21px; font-weight: 900; letter-spacing: 0.05em; user-select: none;">Loading...</div>
+                <div class="pn-card-title" style="user-select: none;">Loading...</div>
             </div>
         </div>
         `;
