@@ -55,6 +55,7 @@
         body, html {
             width: 100vw; height: 100vh; height: 100dvh;
             background: var(--c-bg); font-family: 'Noto Sans', sans-serif;
+            font-weight: 500;
             overflow: hidden; user-select: none;
             display: flex; justify-content: center; align-items: center;
             touch-action: none; /* ЖЕСТКО блокируем системные жесты (зум, свайпы браузера) */
@@ -145,7 +146,7 @@
         .gate-btn {
             flex: 1; height: 100%; background: var(--c-border); border: 2px solid transparent;
             color: var(--c-text); font-size: 15px; font-family: 'Noto Sans', sans-serif;
-            font-weight: 900; display: flex; align-items: center; justify-content: center;
+            font-weight: 500; display: flex; align-items: center; justify-content: center;
             cursor: pointer; outline: none; letter-spacing: 0.05em;
         }
 
@@ -169,7 +170,7 @@
             .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
             
             .lang-gate { width: 130px; height: 18px; gap: 1.5px; }
-            .gate-btn { font-size: 9px; border-width: 1px; }
+            .gate-btn { font-size: 7px; border-width: 1px; }
             .lang-gate > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
             .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
         }
