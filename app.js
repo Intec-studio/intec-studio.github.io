@@ -469,58 +469,58 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nerd_ackchyually') {
-                    // Чуть замедлили прыжок (было t * 4, стало t * 2.5)
+                    // Анимация спокойного покачивания
                     let yBounce = Math.abs(Math.sin(t * 2.5)) * 0.1; 
                     let pnx = nx;
                     let pny = ny + 0.1 - yBounce; 
                     
-                    // 1. Белая Голова
+                    // 1. Голова (Белая)
                     let headDist = Math.hypot(pnx, pny);
                     
                     if (headDist < 0.55) {
-                        alpha = 1.0; // Базовый цвет головы
+                        alpha = 1.0; 
                         
                         let isFeature = false; 
                         
-                        // 2. Большие Очки
-                        let distEyeL = Math.hypot(pnx + 0.22, pny - 0.05);
-                        let distEyeR = Math.hypot(pnx - 0.22, pny - 0.05);
+                        // 2. Очки (подняты вверх, pny + 0.12)
+                        let distEyeL = Math.hypot(pnx + 0.2, pny + 0.12);
+                        let distEyeR = Math.hypot(pnx - 0.2, pny + 0.12);
                         
-                        // Широкая оправа очков
-                        if ((distEyeL < 0.22 && distEyeL > 0.13) || (distEyeR < 0.22 && distEyeR > 0.13)) {
+                        // Тонкая оправа очков (строго между 0.13 и 0.17 = толщина 1 точка)
+                        if ((distEyeL < 0.17 && distEyeL > 0.13) || (distEyeR < 0.17 && distEyeR > 0.13)) {
                             isFeature = true;
                         }
-                        // Переносица
-                        if (Math.abs(pny - 0.05) < 0.04 && pnx > -0.15 && pnx < 0.15) {
+                        // Переносица (тонкая линия)
+                        if (Math.abs(pny + 0.12) < 0.02 && pnx > -0.15 && pnx < 0.15) {
                             isFeature = true;
                         }
-                        // Зрачки
-                        if (distEyeL < 0.06 || distEyeR < 0.06) {
+                        // Зрачки-точки
+                        if (distEyeL < 0.04 || distEyeR < 0.04) {
                             isFeature = true;
                         }
 
                         // 3. Улыбочка
-                        let smileCurve = 0.2 + (pnx * pnx * 2.5);
-                        if (pny > 0.1 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.2 && pnx < 0.2) {
+                        let smileCurve = 0.15 + (pnx * pnx * 2.5);
+                        if (pny > 0.05 && Math.abs(pny - smileCurve) < 0.03 && pnx > -0.18 && pnx < 0.18) {
                             isFeature = true;
                         }
 
                         if (isFeature) {
-                            alpha = 0.15; // Черты лица (серые вырезы)
+                            alpha = 0.15; // Темно-серый цвет для черт лица
                         }
                     }
                     
-                    // 4. Рука (Белая)
+                    // 4. Рука СЛЕВА (Правша)
                     // Кулак
-                    if (pnx > 0.6 && pnx < 0.85 && pny > 0.15 && pny < 0.4) {
+                    if (pnx < -0.6 && pnx > -0.85 && pny > 0.15 && pny < 0.4) {
                         alpha = 1.0;
                     }
-                    // Указательный палец СПРАВА ☝️
-                    if (pnx > 0.75 && pnx < 0.85 && pny > -0.15 && pny <= 0.15) {
+                    // Тонкий указательный палец ☝️ (шириной ровно 2 точки: от -0.6 до -0.72)
+                    if (pnx < -0.6 && pnx > -0.72 && pny > -0.2 && pny <= 0.15) {
                         alpha = 1.0;
                     }
                 }
-                
+
                 ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`; 
                 ctx.beginPath(); 
                 ctx.arc(x, y, alpha > 0.2 ? 2.0 : 1.0, 0, Math.PI * 2); 
