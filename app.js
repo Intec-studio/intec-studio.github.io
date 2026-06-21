@@ -469,53 +469,41 @@ function drawConsoles() {
                 }
                 
                 else if (c.type === 'nut_pump') {
-                    // 1. Замедляем скорость в 2 раза (было t * 10, стало t * 5)
+                    // Плавная анимация покачивания в такт
                     let beat = Math.abs(Math.sin(t * 5)); 
-                    let scale = 1 + beat * 0.05; // Чуть меньше раздувается
-                    let yBounce = Math.sin(t * 10) * 0.05; // Плавные прыжки
+                    let scale = 1 + beat * 0.05; 
+                    let yBounce = Math.sin(t * 10) * 0.05; 
                     
                     let pnx = nx / scale;
                     let pny = (ny + 0.05 - yBounce) / scale;
                     
-                    // 2. Тело ореха (идеальный круг)
-                    let nutShape = Math.hypot(pnx, pny);
+                    // 1. Идеально круглое лицо смайлика
+                    let headDist = Math.hypot(pnx, pny);
                     
-                    if (nutShape < 0.55) {
-                        alpha = 0.5; // Цвет тела
+                    if (headDist < 0.55) {
+                        alpha = 0.4; // Базовый цвет лица (полупрозрачный)
                         
-                        // Огромные глаза (чтобы читалось на сетке 32х32)
-                        let eyeL = Math.hypot(pnx + 0.22, pny - 0.05);
-                        let eyeR = Math.hypot(pnx - 0.22, pny - 0.05);
-                        
-                        if (eyeL < 0.2 || eyeR < 0.2) {
-                            alpha = 1.0; // Белки глаз
-                            
-                            // Зрачки (тоже замедлил: t * 3)
-                            let pupilX = Math.cos(t * 3) * 0.04;
-                            let pupilY = Math.sin(t * 3) * 0.04;
-                            if (Math.hypot(pnx + 0.22 + pupilX, pny - 0.05 + pupilY) < 0.08 || 
-                                Math.hypot(pnx - 0.22 + pupilX, pny - 0.05 + pupilY) < 0.08) {
-                                alpha = 0.1; // Черные зрачки
-                            }
+                        // Глаза (две четкие яркие точки)
+                        let distEyeL = Math.hypot(pnx + 0.2, pny + 0.1);
+                        let distEyeR = Math.hypot(pnx - 0.2, pny + 0.1);
+                        if (distEyeL < 0.08 || distEyeR < 0.08) {
+                            alpha = 1.0; // Яркие глаза
                         }
 
-                        // Рот (широкая четкая улыбка)
+                        // Рот (четкая яркая дуга улыбки)
                         let smileCurve = 0.15 + (pnx * pnx * 1.5);
-                        if (pny > 0.1 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.3 && pnx < 0.3) {
-                            alpha = 1.0;
+                        if (pny > 0.0 && Math.abs(pny - smileCurve) < 0.04 && pnx > -0.25 && pnx < 0.25) {
+                            alpha = 1.0; // Яркая улыбка
                         }
-                        
-                        // Светлое пузико
-                        if (pny > 0.35) alpha = 0.8;
                     }
                     
-                    // 3. Огромная рука с пальцем вверх (гипертрофированная для читаемости)
-                    // Кулак (квадрат справа)
-                    if (pnx > 0.45 && pnx < 0.75 && pny > 0.0 && pny < 0.3) {
+                    // 2. Отодвинутая вправо рука с лайком (чтобы читался зазор)
+                    // Кулак (основание кисти)
+                    if (pnx > 0.7 && pnx < 0.95 && pny > 0.05 && pny < 0.3) {
                         alpha = 1.0;
                     }
-                    // Большой палец (прямоугольник торчащий вверх)
-                    if (pnx > 0.5 && pnx < 0.65 && pny > -0.3 && pny <= 0.0) {
+                    // Большой палец (торчит ровно вверх из левой части кулака)
+                    if (pnx > 0.65 && pnx < 0.78 && pny > -0.25 && pny <= 0.05) {
                         alpha = 1.0;
                     }
                 }
