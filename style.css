@@ -136,7 +136,8 @@ a { text-decoration: none; color: inherit; }
 .info-console canvas { display: block; width: 100%; height: 100%; }
 
 /* БЛОК TV (Из RLTV) */
-.tv-combined-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 18px; }
+.tv-combined-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 0 18px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+.pn-card { padding: 0 18px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
 .tv-screen { width: 100%; aspect-ratio: 21 / 9; min-height: 200px; background: #000; border-radius: 9px; border: 3px solid var(--c-border); position: relative; overflow: hidden; box-shadow: inset 0 0 50px rgba(0,0,0,1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 #tvVideoPlayer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; z-index: 5; transition: opacity 0s; }
 .tv-bars { position: absolute; inset: 0; z-index: 1; background: repeating-linear-gradient(to right, #cccccc 0%, #cccccc 14.28%, #e4d924 14.28%, #e4d924 28.56%, #24e4d9 28.56%, #24e4d9 42.84%, #24e424 42.84%, #24e424 57.12%, #e424e4 57.12%, #e424e4 71.4%, #e42424 71.4%, #e42424 85.68%, #2424e4 85.68%, #2424e4 100%); }
@@ -191,21 +192,25 @@ a { text-decoration: none; color: inherit; }
 .pn-select-wrap:active .pn-select, .pn-select-wrap.active-state .pn-select { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
 .pn-select-wrap:active::after, .pn-select-wrap.active-state::after { background-color: var(--c-panel); }
 
-.pn-card { padding: 18px; display: flex; flex-direction: column; gap: 18px; }
+.tv-combined-card > *:first-child, 
+.pn-card > *:first-child { 
+    margin-top: 18px !important; 
+}
 .pn-card-title { color: var(--c-text); font-size: 21px; font-weight: 900; letter-spacing: 0.05em; line-height: 1.1; }
 .pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
 .pn-card-desc a { color: #809571; text-decoration: none; font-weight: 900; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
 .pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
 
-/* --- СТИЛИ ДЛЯ КАРТИНОК В СТАТЬЯХ (ПК) --- */
-.pn-card-desc img {
-    max-width: 100%;   
-    max-height: 70vh;  
-    width: auto;       
-    border-radius: 9px;
-    border: 3px solid var(--c-border);
-    margin: 0 auto; 
-    display: block;
+/* --- СТИЛИ ДЛЯ КАРТИНОК И ВИДЕО В СТАТЬЯХ (ПК) --- */
+.pn-card-desc img, 
+.pn-card-desc video {
+    max-width: 100% !important;   
+    max-height: 80vh !important;  /* Увеличили размер до 80% от высоты экрана */
+    width: auto !important;       
+    border-radius: 9px !important;
+    border: 3px solid var(--c-border) !important;
+    margin: 18px auto !important; /* Строгие 18px сверху и снизу для идеальных зазоров */
+    display: block !important;
 }
 /* ============================================================
    МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ
@@ -288,10 +293,12 @@ a { text-decoration: none; color: inherit; }
     .vol-slider { width: 57px; height: 9px; border-radius: 2.25px; --thumb-r: 3px; }
 
     /* --- АДАПТИВ ОСТАЛЬНОГО ДЛЯ ТЕЛЕФОНОВ --- */
-    .pn-card-desc img { 
-    border-radius: 4.5px; 
-    border-width: 1.5px; 
-    margin: 0 auto;  }
+    .pn-card-desc img, 
+    .pn-card-desc video { 
+        border-radius: 4.5px !important; 
+        border-width: 1.5px !important; 
+        margin: 9px auto !important; /* Строгие 9px между элементами на мобильных */
+    }
     .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; } .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
     .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .settings-group { gap: 9px; margin-right: 19.5px; } .toggle-block { gap: 1.5px; }
     .toggle-btn { width: 18px; height: 18px; border-width: 1px; } .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .toggle-btn.text-btn { font-size: 7px; }
@@ -308,7 +315,9 @@ a { text-decoration: none; color: inherit; }
     .hero-banner { height: 160px; } .hero-title { font-size: clamp(24px, 7.5vw, 42px); } .hero-footer { height: 37.5px; border-top-width: 1.5px; padding: 0 9px; }
     .tags-group { gap: 1.5px; } .tag { height: 18px; padding: 0 4.5px; font-size: 7px; border-radius: 4.5px; } .tag svg { width: 8px; height: 8px; margin-right: 4px; stroke-width: 1px; }
     
-    .content-card, .tv-combined-card, .pn-card { padding: 9px; gap: 9px; }
+    .content-card { padding: 9px; gap: 9px; }
+    .tv-combined-card, .pn-card { padding: 0 9px 9px 9px; gap: 9px; }
+    .tv-combined-card > *:first-child, .pn-card > *:first-child { margin-top: 9px !important; }
     .info-text { font-size: 9px; } .info-text h2 { font-size: 14px; margin-bottom: 6px; line-height: 1.2; }
     .info-console { width: 90px; height: 90px; border-width: 1px; border-radius: 4.5px; }
 
