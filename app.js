@@ -471,8 +471,8 @@ function drawConsoles() {
                 else if (c.type === 'nerd_ackchyually') {
                     // Медленный прыжок
                     let yBounce = Math.abs(Math.sin(t * 2.5)) * 0.1; 
-                    // Смещение всей группы вправо на 0.12 для идеальной центровки
-                    let pnx = nx - 0.12;
+                    // Смещение всей группы вправо на 0.16 для идеальной центровки
+                    let pnx = nx - 0.16;
                     let pny = ny + 0.1 - yBounce; 
                     
                     // 1. Голова (Белая)
@@ -483,25 +483,25 @@ function drawConsoles() {
                         
                         let isFeature = false; 
                         
-                        // Параметры глаз (разнесены шире и выше)
+                        // Параметры глаз
                         let eyX = 0.28; 
                         let eyY = 0.18; 
                         let distEyeL = Math.hypot(pnx + eyX, pny + eyY);
                         let distEyeR = Math.hypot(pnx - eyX, pny + eyY);
                         
-                        // 2. Очки (линзы стали выше, чтобы не слипаться при прыжке)
+                        // 2. Очки (увеличены зазоры, чтобы избежать слипания при прыжке)
                         // Внутренняя часть линз (черная)
-                        if (distEyeL < 0.22 || distEyeR < 0.22) {
+                        if (distEyeL < 0.23 || distEyeR < 0.23) {
                             isFeature = true;
-                            // Оправа (белая рамка внутри линз)
-                            if (distEyeL < 0.22 && distEyeL > 0.18) isFeature = false;
-                            if (distEyeR < 0.22 && distEyeR > 0.18) isFeature = false;
-                            // Зрачки (белые точки в центре)
-                            if (distEyeL < 0.05 || distEyeR < 0.05) isFeature = false;
+                            // Оправа (белая рамка, сделана чуть толще: 0.17 - 0.23)
+                            if (distEyeL < 0.23 && distEyeL > 0.17) isFeature = false;
+                            if (distEyeR < 0.23 && distEyeR > 0.17) isFeature = false;
+                            // Зрачки (белые точки, сделаны точечными: < 0.035)
+                            if (distEyeL < 0.035 || distEyeR < 0.035) isFeature = false;
                         }
                         
-                        // Переносица
-                        if (Math.abs(pny + eyY) < 0.03 && pnx > -eyX && pnx < eyX) {
+                        // Переносица (изолента)
+                        if (Math.abs(pny + eyY) < 0.025 && pnx > -eyX && pnx < eyX) {
                             isFeature = true;
                         }
 
@@ -519,8 +519,8 @@ function drawConsoles() {
                     if (pnx < -0.66 && pnx > -0.86 && pny > 0.25 && pny < 0.5) {
                         alpha = 1.0;
                     }
-                    // Указательный палец шириной ровно в 2 точки (0.125 единиц)
-                    if (pnx < -0.66 && pnx > -0.785 && pny > -0.1 && pny <= 0.25) {
+                    // Указательный палец (сужен до 0.09 для толщины ровно в 2 точки)
+                    if (pnx < -0.66 && pnx > -0.75 && pny > -0.1 && pny <= 0.25) {
                         alpha = 1.0;
                     }
                 }
