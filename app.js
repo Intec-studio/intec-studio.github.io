@@ -603,8 +603,22 @@ function initPatchnotesUI() {
 
         if (filtered.length === 0) {
             postsList.innerHTML = `
+                <style>
+                    .loader-dynamic {
+                        display: flex; 
+                        flex-direction: column; 
+                        padding: 18px; 
+                        gap: 18px;
+                    }
+                    @media (max-width: 768px) {
+                        .loader-dynamic {
+                            padding: 9px; 
+                            gap: 9px;
+                        }
+                    }
+                </style>
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 0;">
-                    <div class="loader-card" style="display: flex; flex-direction: column; padding: 18px; gap: 18px;">
+                    <div class="loader-card loader-dynamic">
                         <div class="info-console" style="background: #000; margin: 0;">
                             <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
@@ -668,8 +682,22 @@ function initPatchnotesUI() {
         
         // ОБНОВЛЕННЫЙ БЛОК ЗАГРУЗКИ
         singlePostContent.innerHTML = `
+        <style>
+            .loader-dynamic {
+                display: flex; 
+                flex-direction: column; 
+                padding: 18px; 
+                gap: 18px;
+            }
+            @media (max-width: 768px) {
+                .loader-dynamic {
+                    padding: 9px; 
+                    gap: 9px;
+                }
+            }
+        </style>
         <div style="display: flex; flex: 1; align-items: center; justify-content: center; min-height: calc(100vh - 200px); width: 100%;">
-            <div class="loader-card" style="display: flex; flex-direction: column; padding: 18px; gap: 18px;">
+            <div class="loader-card loader-dynamic">
                 <div class="info-console" style="background: #000; margin: 0;">
                     <canvas class="mini-console" data-type="article_loader"></canvas>
                 </div>
