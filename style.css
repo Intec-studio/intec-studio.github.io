@@ -548,8 +548,8 @@ body.autoscroll-active * {
 
 /* Специальный адаптивный блок для загрузки */
 .loader-card {
-    background: #111111; 
-    border: 3px solid #1F1F1F; 
+    background: var(--c-panel); /* <-- ИЗМЕНЕНО ДЛЯ СВЕТЛОЙ ТЕМЫ */
+    border: 3px solid var(--c-border); /* <-- ИЗМЕНЕНО ДЛЯ СВЕТЛОЙ ТЕМЫ */
     border-radius: 18px; 
     padding: 18px; 
     display: flex; 
