@@ -609,7 +609,7 @@ function initPatchnotesUI() {
                             <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
                         <div class="pn-card-title" style="text-align: center; margin: 0; font-weight: 900; letter-spacing: 0.05em;">
-                            Um Actually.
+                            Um Actually...
                         </div>
                     </div>
                 </div>
