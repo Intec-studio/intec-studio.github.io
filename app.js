@@ -608,7 +608,7 @@ function initPatchnotesUI() {
                         <div class="info-console" style="margin: 0; background: #000;">
                             <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
-                        <div class="pn-card-title" style="text-align: center; margin: 0; font-weight: 900; letter-spacing: 0.05em;">
+                        <div class="pn-card-title" style="text-align: center; margin: 0;">
                             Um Actually...
                         </div>
                     </div>
