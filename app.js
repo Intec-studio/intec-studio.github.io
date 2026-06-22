@@ -603,12 +603,12 @@ function initPatchnotesUI() {
 
         if (filtered.length === 0) {
             postsList.innerHTML = `
-                <div style="display: flex; flex: 1; align-items: center; justify-content: center; min-height: calc(100vh - 200px); width: 100%; margin-top: -50px;">
+                <div class="empty-state-wrap">
                     <div class="loader-card">
                         <div class="info-console" style="margin: 0; background: #000;">
                             <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
-                        <div class="pn-card-title" style="text-align: center; margin: 0;">
+                        <div class="pn-card-title" style="text-align: center; margin: 0; user-select: none;">
                             Um Actually...
                         </div>
                     </div>
@@ -668,7 +668,7 @@ function initPatchnotesUI() {
         
         // ОБНОВЛЕННЫЙ БЛОК ЗАГРУЗКИ
         singlePostContent.innerHTML = `
-        <div style="display: flex; flex: 1; align-items: center; justify-content: center; min-height: calc(100vh - 200px); width: 100%;">
+        <div class="loader-wrap">
             <div class="loader-card">
                 <div class="info-console" style="margin: 0; background: #000;">
                     <canvas class="mini-console" data-type="article_loader"></canvas>
@@ -679,7 +679,7 @@ function initPatchnotesUI() {
             </div>
         </div>
         `;
-        initCanvases(); // <--- Запускаем движок анимаций для этого квадратика!
+        initCanvases();
         
         // Дальше идет твой существующий код (хлебные крошки, fetch и т.д.)
         if(bcPageNameEn) bcPageNameEn.innerHTML = `Articles <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15" stroke="currentColor" fill="none" stroke-width="1.5"/></svg> ${post.title.en}`;
