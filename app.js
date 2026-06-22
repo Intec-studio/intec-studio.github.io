@@ -474,7 +474,7 @@ function drawConsoles() {
                     let pnx = nx; 
                     let pny = ny - yBounce; // Никакого обрезания шагов, чистое скольжение!
                     
-                    // Обновленная усиленная матрица 40x27 с идеальным куполом головы
+                    // Обновленная усиленная матрица 40x26 с идеальным куполом головы
                     const grid = [
                         "             ##############             ", // 0
                         "          ####------------####          ", // 1
@@ -505,7 +505,7 @@ function drawConsoles() {
                     ];
 
                     let gridWidth = 40;
-                    let gridHeight = 26;
+                    let gridHeight = 26; // Исправлено: 26 строк вместо 27
                     
                     let pixelSizeX = 0.045; 
                     let pixelSizeY = 0.058; 
@@ -516,12 +516,13 @@ function drawConsoles() {
                     
                     alpha = 0.0; // Пустота
                     
-                    if (col >= 0 && col < gridWidth && row >= 0 && row < gridHeight) {
+                    // Добавлена проверка grid[row], чтобы исключить краш
+                    if (col >= 0 && col < gridWidth && row >= 0 && row < gridHeight && grid[row]) {
                         let char = grid[row][col];
                         
                         if (char === ' ') {
-                            // Блики
-                            let isGlare = (row === 11 || row === 12) && ((col >= 10 && col <= 11) || (col >= 28 && col <= 29));
+                            // Блики (Исправлены строки на 10 и 11)
+                            let isGlare = (row === 10 || row === 11) && ((col >= 10 && col <= 11) || (col >= 28 && col <= 29));
                             if (isGlare) {
                                 alpha = 1.0; 
                             }
