@@ -409,8 +409,30 @@ a { text-decoration: none; color: inherit; }
     -webkit-user-select: none;
 }
 
+/* ============================================================
+   ЛОАДЕРЫ И ПУСТЫЕ СОСТОЯНИЯ (ЦЕНТРИРОВАНИЕ)
+============================================================ */
+.loader-wrap {
+    display: flex; flex: 1; align-items: center; justify-content: center; 
+    min-height: calc(100vh - 200px); width: 100%;
+}
+
+.empty-state-wrap {
+    display: flex; flex: 1; align-items: center; justify-content: center; 
+    min-height: calc(100vh - 200px); width: 100%; 
+    margin-top: -96px; /* Компенсируем: блок поиска (78px) + gap (18px) */
+    pointer-events: none; /* Пропускаем клики насквозь, чтобы поиск работал! */
+}
+.empty-state-wrap > * {
+    pointer-events: auto; /* Включаем клики обратно для самой карточки */
+}
+
 /* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
 @media (max-width: 900px) {
+    /* Компенсируем мобильный блок поиска (39px) + gap (9px) */
+    .empty-state-wrap {
+        margin-top: -48px;
+    }
     /* Мобильный адаптив для новых элементов (делим всё на 2) */
     .article-code {
         padding: 1.5px 4.5px;
@@ -523,6 +545,10 @@ a { text-decoration: none; color: inherit; }
 }
 
 @media (max-width: 900px) and (orientation: portrait) {
+    /* Компенсируем поиск-колонку: элементы(54) + gap(18) + padding(18) + border(3) + gap_ниже(9) */
+    .empty-state-wrap {
+        margin-top: -102px; 
+    }
     .back-btn { margin-right: 19.5px; } .settings-group { gap: 9px; margin-right: 9px; } .sidebar { width: auto; }
     .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
     .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100% !important; }
