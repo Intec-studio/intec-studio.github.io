@@ -604,12 +604,11 @@ function initPatchnotesUI() {
         if (filtered.length === 0) {
             postsList.innerHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 0;">
-                    <div class="loader-card" style="padding: 18px;">
-                        <div class="info-console" style="background: #000;">
-                            <!-- Обрати внимание, поменял data-type -->
+                    <div class="loader-card" style="display: flex; flex-direction: column; padding: 18px; gap: 18px;">
+                        <div class="info-console" style="background: #000; margin: 0;">
                             <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
-                        <div class="pn-card-title" style="text-align: center; margin-top: 18px; font-weight: 900; letter-spacing: 0.05em;">
+                        <div class="pn-card-title" style="text-align: center; margin: 0; font-weight: 900; letter-spacing: 0.05em;">
                             Um Actually.
                         </div>
                     </div>
@@ -670,11 +669,13 @@ function initPatchnotesUI() {
         // ОБНОВЛЕННЫЙ БЛОК ЗАГРУЗКИ
         singlePostContent.innerHTML = `
         <div style="display: flex; flex: 1; align-items: center; justify-content: center; min-height: calc(100vh - 200px); width: 100%;">
-            <div class="loader-card" style="padding: 18px;">
-                <div class="info-console" style="background: #000;">
+            <div class="loader-card" style="display: flex; flex-direction: column; padding: 18px; gap: 18px;">
+                <div class="info-console" style="background: #000; margin: 0;">
                     <canvas class="mini-console" data-type="article_loader"></canvas>
                 </div>
-                <div class="pn-card-title" style="user-select: none; margin-top: 18px; text-align: center;">Loading...</div>
+                <div class="pn-card-title" style="text-align: center; margin: 0; user-select: none;">
+                    Loading...
+                </div>
             </div>
         </div>
         `;
