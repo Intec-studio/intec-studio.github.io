@@ -505,7 +505,7 @@ function drawConsoles() {
                     ];
 
                     let gridWidth = 40;
-                    let gridHeight = 27;
+                    let gridHeight = 26;
                     
                     let pixelSizeX = 0.045; 
                     let pixelSizeY = 0.058; 
