@@ -218,8 +218,35 @@ a { text-decoration: none; color: inherit; }
     line-height: 1.1; 
 }
 .pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
-.pn-card-desc a { color: #809571; text-decoration: none; font-weight: 500; transition: color 0.1s ease, filter 0.1s ease; position: relative; z-index: 5; pointer-events: auto; }
-.pn-card-desc a:hover { text-decoration: underline; filter: brightness(1.2); }
+/* Ссылки внутри статей (в виде кнопок) */
+.pn-card-desc a, .article-link { 
+    display: inline-block;
+    background: var(--c-border); 
+    color: var(--c-text); 
+    text-decoration: none; 
+    font-weight: 500; 
+    padding: 2px 9px; 
+    border: 2px solid transparent; 
+    border-radius: 9px; 
+    margin: 0 4px; /* Небольшой отступ от текста по бокам */
+    white-space: nowrap; /* Защита от разрыва кнопки на две строки */
+    transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease; 
+    position: relative; 
+    z-index: 5; 
+    pointer-events: auto; 
+}
+
+@media (hover: hover) { 
+    .pn-card-desc a:hover, .article-link:hover { 
+        border-color: var(--c-text); 
+    } 
+}
+
+.pn-card-desc a:active, .article-link:active { 
+    background: var(--c-text); 
+    color: var(--c-panel); 
+    border-color: var(--c-text); 
+}
 
 /* Убираем двойной отступ снизу у любого последнего элемента в карточке */
 .pn-card-desc > *:last-child {
@@ -317,15 +344,6 @@ a { text-decoration: none; color: inherit; }
     margin: 0 0 18px 0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     letter-spacing: 0.05em; /* Добавим небольшой межбуквенный интервал, чтобы жирный текст читался лучше */
 }
-
-/* Ссылки внутри статей */
-.article-link {
-    color: var(--c-text);
-    text-decoration: underline;
-    font-weight: 500;
-    transition: color 0.1s ease, filter 0.1s ease;
-}
-@media (hover: hover) { .article-link:hover { filter: brightness(1.2); } }
 
 /* Инлайн-код (текст на сером фоне) */
 .article-code {
@@ -449,6 +467,14 @@ a { text-decoration: none; color: inherit; }
     }
     .article-code-inner {
         padding: 9px;
+    }
+
+    /* Адаптив ссылок-кнопок (Без обводки) */
+    .pn-card-desc a, .article-link {
+        padding: 2.5px 6px; /* Чуть увеличили отступ, чтобы компенсировать удаленную рамку */
+        border: none; /* Полностью выключаем обводку для телефонов */
+        border-radius: 4.5px;
+        margin: 0 2px;
     }
     
     /* Адаптив горизонтального ползунка */
