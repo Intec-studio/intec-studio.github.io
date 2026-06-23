@@ -412,27 +412,22 @@ a { text-decoration: none; color: inherit; }
 /* ============================================================
    ЛОАДЕРЫ И ПУСТЫЕ СОСТОЯНИЯ (ЦЕНТРИРОВАНИЕ)
 ============================================================ */
-.loader-wrap {
-    display: flex; flex: 1; align-items: center; justify-content: center; 
-    min-height: calc(100vh - 200px); width: 100%;
-}
-
+.loader-wrap,
 .empty-state-wrap {
     display: flex; flex: 1; align-items: center; justify-content: center; 
-    min-height: calc(100vh - 200px); width: 100%; 
-    margin-top: -96px; /* Компенсируем: блок поиска (78px) + gap (18px) */
+    width: 100%; 
+    /* Используем фиксированную мин. высоту вместо 100vh, чтобы блок не сплющивало клавиатурой */
+    min-height: 350px; 
+    padding: 36px 0;
     pointer-events: none; /* Пропускаем клики насквозь, чтобы поиск работал! */
 }
+.loader-wrap > *,
 .empty-state-wrap > * {
     pointer-events: auto; /* Включаем клики обратно для самой карточки */
 }
 
 /* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
 @media (max-width: 900px) {
-    /* Компенсируем мобильный блок поиска (39px) + gap (9px) */
-    .empty-state-wrap {
-        margin-top: -48px;
-    }
     /* Мобильный адаптив для новых элементов (делим всё на 2) */
     .article-code {
         padding: 1.5px 4.5px;
@@ -544,11 +539,10 @@ a { text-decoration: none; color: inherit; }
     .article-pre { font-size: 10px; }
 }
 
-@media (max-width: 900px) and (orientation: portrait) {
-    /* Компенсируем поиск-колонку: элементы(54) + gap(18) + padding(18) + border(3) + gap_ниже(9) */
-    .empty-state-wrap {
-        margin-top: -102px; 
-    }
+/* Используем max-width: 650px вместо orientation: portrait.
+   Ширина телефона при открытии клавиатуры не меняется, 
+   поэтому сайдбар больше не будет прыгать! */
+@media (max-width: 650px) {
     .back-btn { margin-right: 19.5px; } .settings-group { gap: 9px; margin-right: 9px; } .sidebar { width: auto; }
     .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
     .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100% !important; }
