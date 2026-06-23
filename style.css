@@ -426,8 +426,16 @@ a { text-decoration: none; color: inherit; }
     pointer-events: auto; /* Включаем клики обратно для самой карточки */
 }
 
+/* Компенсируем скрытый поиск, чтобы Лоадер был на одной высоте с Нердом */
+.loader-wrap {
+    margin-top: 96px; 
+}
+
 /* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
 @media (max-width: 900px) {
+    .loader-wrap {
+        margin-top: 48px;
+    }
     /* Мобильный адаптив для новых элементов (делим всё на 2) */
     .article-code {
         padding: 1.5px 4.5px;
@@ -546,6 +554,9 @@ a { text-decoration: none; color: inherit; }
     .back-btn { margin-right: 19.5px; } .settings-group { gap: 9px; margin-right: 9px; } .sidebar { width: auto; }
     .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
     .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100% !important; }
+    
+    /* Добавленная строчка для лоадера: */
+    .loader-wrap { margin-top: 99px; } 
 }
 
 /* ============================================================
