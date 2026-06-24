@@ -225,7 +225,7 @@ a { text-decoration: none; color: inherit; }
     color: var(--c-text); 
     text-decoration: none; 
     font-weight: 500; 
-    padding: 2px 9px; 
+    padding: 1px 7px; 
     border: 2px solid transparent; 
     border-radius: 9px; 
     margin: 0 4px; /* Небольшой отступ от текста по бокам */
@@ -454,6 +454,13 @@ a { text-decoration: none; color: inherit; }
     .loader-wrap {
         margin-top: 48px;
     }
+    /* Адаптив ссылок-кнопок (Без обводки, размер как у кода) */
+    .pn-card-desc a, .article-link {
+        padding: 1.5px 4.5px; /* Идеально совпадает с .article-code */
+        border: none;
+        border-radius: 4.5px;
+        margin: 0 2px;
+    }
     /* Мобильный адаптив для новых элементов (делим всё на 2) */
     .article-code {
         padding: 1.5px 4.5px;
@@ -467,14 +474,6 @@ a { text-decoration: none; color: inherit; }
     }
     .article-code-inner {
         padding: 9px;
-    }
-
-    /* Адаптив ссылок-кнопок (Без обводки) */
-    .pn-card-desc a, .article-link {
-        padding: 2.5px 6px; /* Чуть увеличили отступ, чтобы компенсировать удаленную рамку */
-        border: none; /* Полностью выключаем обводку для телефонов */
-        border-radius: 4.5px;
-        margin: 0 2px;
     }
     
     /* Адаптив горизонтального ползунка */
