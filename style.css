@@ -225,17 +225,15 @@ a { text-decoration: none; color: inherit; }
     color: var(--c-text); 
     text-decoration: none; 
     font-weight: 500; 
-    padding: 3px 9px; 
+    padding: 2px 9px; 
     border: 2px solid transparent; 
     border-radius: 9px; 
     margin: 0 4px; /* Небольшой отступ от текста по бокам */
-    white-space: nowrap; 
+    white-space: nowrap; /* Защита от разрыва кнопки на две строки */
     transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease; 
     position: relative; 
     z-index: 5; 
     pointer-events: auto; 
-    line-height: 1.2; /* Жестко фиксируем высоту */
-    vertical-align: baseline;
 }
 
 @media (hover: hover) { 
@@ -255,20 +253,16 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 0 !important;
 }
 
-/* Инлайн-код (текст на сером фоне) */
-.article-code {
-    display: inline-block;
-    background: var(--c-border); 
-    color: var(--c-text); 
-    padding: 3px 9px; 
-    border: 2px solid transparent; /* Добавили невидимую рамку, чтобы размер совпал со ссылкой */
-    border-radius: 9px; 
-    font-family: Consolas, monospace; 
-    font-size: 21px;
-    margin: 0 4px; 
-    white-space: nowrap;
-    line-height: 1.2; /* Жестко фиксируем высоту */
-    vertical-align: baseline;
+/* --- СТИЛИ ДЛЯ КАРТИНОК И ВИДЕО В СТАТЬЯХ (ПК) --- */
+.pn-card-desc img, 
+.pn-card-desc video {
+    max-width: 100% !important;   
+    max-height: 80vh !important;  /* Увеличили размер до 80% от высоты экрана */
+    width: auto !important;       
+    border-radius: 9px !important;
+    border: 3px solid var(--c-border) !important;
+    margin: 18px auto !important; /* Строгие 18px сверху и снизу для идеальных зазоров */
+    display: block !important;
 }
 /* ============================================================
    МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ
@@ -353,18 +347,12 @@ a { text-decoration: none; color: inherit; }
 
 /* Инлайн-код (текст на сером фоне) */
 .article-code {
-    display: inline-block;
     background: var(--c-border); 
     color: var(--c-text); 
     padding: 3px 9px; 
-    border: 2px solid transparent; /* Добавили невидимую рамку, чтобы размер совпал со ссылкой */
     border-radius: 9px; 
     font-family: Consolas, monospace; 
     font-size: 21px;
-    margin: 0 4px; 
-    white-space: nowrap;
-    line-height: 1.2; /* Жестко фиксируем высоту */
-    vertical-align: baseline;
 }
 
 /* Блоки с горизонтальным скроллом (для длинного кода или путей) */
@@ -466,24 +454,11 @@ a { text-decoration: none; color: inherit; }
     .loader-wrap {
         margin-top: 48px;
     }
-    /* Адаптив ссылок-кнопок */
-    .pn-card-desc a, .article-link {
-        padding: 2px 5px; 
-        border: none;
-        border-radius: 4.5px;
-        margin: 0 2px;
-        line-height: 1.2;
-    }
-    
-    /* Адаптив инлайн-кода (теперь 1в1 как ссылка) */
+    /* Мобильный адаптив для новых элементов (делим всё на 2) */
     .article-code {
-        display: inline-block;
-        padding: 2px 5px;
-        border: none;
+        padding: 1.5px 4.5px;
         border-radius: 4.5px;
         font-size: 10px;
-        margin: 0 2px;
-        line-height: 1.2;
     }
     .article-code-wrap {
         border-width: 1.5px;
@@ -492,6 +467,14 @@ a { text-decoration: none; color: inherit; }
     }
     .article-code-inner {
         padding: 9px;
+    }
+
+    /* Адаптив ссылок-кнопок (Без обводки) */
+    .pn-card-desc a, .article-link {
+        padding: 2.5px 6px; /* Чуть увеличили отступ, чтобы компенсировать удаленную рамку */
+        border: none; /* Полностью выключаем обводку для телефонов */
+        border-radius: 4.5px;
+        margin: 0 2px;
     }
     
     /* Адаптив горизонтального ползунка */
