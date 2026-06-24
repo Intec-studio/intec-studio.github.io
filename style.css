@@ -218,34 +218,31 @@ a { text-decoration: none; color: inherit; }
     line-height: 1.1; 
 }
 .pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
-/* Ссылки внутри статей (в виде кнопок) */
+/* Ссылки внутри статей (стилизованы под 'текст' - article-code) */
 .pn-card-desc a, .article-link { 
-    display: inline-block;
     background: var(--c-border); 
     color: var(--c-text); 
     text-decoration: none; 
     font-weight: 500; 
-    padding: 2px 9px; 
-    border: 2px solid transparent; 
+    padding: 3px 9px; 
     border-radius: 9px; 
-    margin: 0 4px; /* Небольшой отступ от текста по бокам */
-    white-space: nowrap; /* Защита от разрыва кнопки на две строки */
-    transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease; 
+    transition: background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease; 
     position: relative; 
     z-index: 5; 
-    pointer-events: auto; 
+    pointer-events: auto;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone; /* Красивый перенос, если ссылка очень длинная */
 }
 
 @media (hover: hover) { 
     .pn-card-desc a:hover, .article-link:hover { 
-        border-color: var(--c-text); 
+        box-shadow: inset 0 0 0 2px var(--c-text); /* Обводка внутрь, не ломает отступы */
     } 
 }
 
 .pn-card-desc a:active, .article-link:active { 
     background: var(--c-text); 
     color: var(--c-panel); 
-    border-color: var(--c-text); 
 }
 
 /* Убираем двойной отступ снизу у любого последнего элемента в карточке */
@@ -469,12 +466,10 @@ a { text-decoration: none; color: inherit; }
         padding: 9px;
     }
 
-    /* Адаптив ссылок-кнопок (Без обводки) */
+    /* Адаптив ссылок-кнопок (как у article-code) */
     .pn-card-desc a, .article-link {
-        padding: 2.5px 6px; /* Чуть увеличили отступ, чтобы компенсировать удаленную рамку */
-        border: none; /* Полностью выключаем обводку для телефонов */
+        padding: 1.5px 4.5px;
         border-radius: 4.5px;
-        margin: 0 2px;
     }
     
     /* Адаптив горизонтального ползунка */
