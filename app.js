@@ -605,7 +605,7 @@ function initPatchnotesUI() {
             postsList.innerHTML = `
                 <div class="empty-state-wrap">
                     <div class="loader-card">
-                        <div class="info-console" style="margin: 0; background: #000;">
+                        <div class="info-console" style="margin: 0;">
                             <canvas class="mini-console" data-type="nerd_ackchyually"></canvas>
                         </div>
                         <div class="pn-card-title" style="text-align: center; margin: 0; user-select: none;">
@@ -670,7 +670,7 @@ function initPatchnotesUI() {
         singlePostContent.innerHTML = `
         <div class="loader-wrap">
             <div class="loader-card">
-                <div class="info-console" style="margin: 0; background: #000;">
+                <div class="info-console" style="margin: 0;">
                     <canvas class="mini-console" data-type="article_loader"></canvas>
                 </div>
                 <div class="pn-card-title" style="text-align: center; margin: 0; user-select: none;">
