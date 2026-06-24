@@ -224,6 +224,7 @@ a { text-decoration: none; color: inherit; }
     color: var(--c-text); 
     text-decoration: none; 
     font-weight: 500; 
+    font-family: Consolas, monospace; /* Шрифт как у инлайн-кода */
     padding: 3px 9px; 
     border-radius: 9px; 
     transition: background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease; 
