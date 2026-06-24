@@ -353,12 +353,18 @@ a { text-decoration: none; color: inherit; }
 
 /* Инлайн-код (текст на сером фоне) */
 .article-code {
+    display: inline-block;
     background: var(--c-border); 
     color: var(--c-text); 
     padding: 3px 9px; 
+    border: 2px solid transparent; /* Добавили невидимую рамку, чтобы размер совпал со ссылкой */
     border-radius: 9px; 
     font-family: Consolas, monospace; 
     font-size: 21px;
+    margin: 0 4px; 
+    white-space: nowrap;
+    line-height: 1.2; /* Жестко фиксируем высоту */
+    vertical-align: baseline;
 }
 
 /* Блоки с горизонтальным скроллом (для длинного кода или путей) */
