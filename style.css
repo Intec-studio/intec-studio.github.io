@@ -335,8 +335,8 @@ a { text-decoration: none; color: inherit; }
 .article-p { margin: 0 0 18px 0; color: var(--c-sub); }
 
 .article-header {
-    background: #1F1F1F; border-left: 3px solid #E7E7E7; border-radius: 9px; 
-    padding: 9px 18px; color: #E7E7E7; 
+    background: var(--c-border); border-left: 3px solid var(--c-text); border-radius: 9px; 
+    padding: 9px 18px; color: var(--c-text); 
     font-size: 21px;    /* Вернули 21px */
     font-weight: 900;   /* Сделали Black (900) */
     margin: 0 0 18px 0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
