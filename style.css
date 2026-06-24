@@ -225,15 +225,17 @@ a { text-decoration: none; color: inherit; }
     color: var(--c-text); 
     text-decoration: none; 
     font-weight: 500; 
-    padding: 1px 7px; 
+    padding: 3px 9px; 
     border: 2px solid transparent; 
     border-radius: 9px; 
     margin: 0 4px; /* Небольшой отступ от текста по бокам */
-    white-space: nowrap; /* Защита от разрыва кнопки на две строки */
+    white-space: nowrap; 
     transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease; 
     position: relative; 
     z-index: 5; 
     pointer-events: auto; 
+    line-height: 1.2; /* Жестко фиксируем высоту */
+    vertical-align: baseline;
 }
 
 @media (hover: hover) { 
@@ -253,16 +255,20 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 0 !important;
 }
 
-/* --- СТИЛИ ДЛЯ КАРТИНОК И ВИДЕО В СТАТЬЯХ (ПК) --- */
-.pn-card-desc img, 
-.pn-card-desc video {
-    max-width: 100% !important;   
-    max-height: 80vh !important;  /* Увеличили размер до 80% от высоты экрана */
-    width: auto !important;       
-    border-radius: 9px !important;
-    border: 3px solid var(--c-border) !important;
-    margin: 18px auto !important; /* Строгие 18px сверху и снизу для идеальных зазоров */
-    display: block !important;
+/* Инлайн-код (текст на сером фоне) */
+.article-code {
+    display: inline-block;
+    background: var(--c-border); 
+    color: var(--c-text); 
+    padding: 3px 9px; 
+    border: 2px solid transparent; /* Добавили невидимую рамку, чтобы размер совпал со ссылкой */
+    border-radius: 9px; 
+    font-family: Consolas, monospace; 
+    font-size: 21px;
+    margin: 0 4px; 
+    white-space: nowrap;
+    line-height: 1.2; /* Жестко фиксируем высоту */
+    vertical-align: baseline;
 }
 /* ============================================================
    МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ
@@ -454,18 +460,24 @@ a { text-decoration: none; color: inherit; }
     .loader-wrap {
         margin-top: 48px;
     }
-    /* Адаптив ссылок-кнопок (Без обводки, размер как у кода) */
+    /* Адаптив ссылок-кнопок */
     .pn-card-desc a, .article-link {
-        padding: 1.5px 4.5px; /* Идеально совпадает с .article-code */
+        padding: 2px 5px; 
         border: none;
         border-radius: 4.5px;
         margin: 0 2px;
+        line-height: 1.2;
     }
-    /* Мобильный адаптив для новых элементов (делим всё на 2) */
+    
+    /* Адаптив инлайн-кода (теперь 1в1 как ссылка) */
     .article-code {
-        padding: 1.5px 4.5px;
+        display: inline-block;
+        padding: 2px 5px;
+        border: none;
         border-radius: 4.5px;
         font-size: 10px;
+        margin: 0 2px;
+        line-height: 1.2;
     }
     .article-code-wrap {
         border-width: 1.5px;
