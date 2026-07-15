@@ -1,0 +1,644 @@
+/* ============================================================
+   ПЕРЕМЕННЫЕ ЦВЕТОВЫХ ТЕМ (ИНВЕРСИЯ)
+============================================================ */
+/* Храню все цвета в переменных. Светлая тема - это идеальная математическая инверсия темной. 
+   Никаких цветов на глаз, только строгие вычисления! (⌐■_■) */
+:root {
+    --c-bg: #000000; --c-bg-rgb: 0, 0, 0;
+    --c-panel: #111111; --c-border: #1F1F1F;
+    --c-text: #E7E7E7; --c-sub: #8C8C8C; --c-canvas: 231, 231, 231;
+}
+
+html[data-theme="light"] {
+    --c-bg: #FFFFFF; 
+    --c-bg-rgb: 255, 255, 255;
+    
+    --c-panel: #EEEEEE; /* Идеальная инверсия #111111 */
+    --c-border: #E0E0E0; /* Идеальная инверсия #1F1F1F */
+    
+    --c-text: #181818;   /* Идеальная инверсия #E7E7E7 */
+    --c-sub: #737373;    /* Идеальная инверсия #8C8C8C */
+    
+    --c-canvas: 24, 24, 24; /* RGB версия идеальной инверсии 231,231,231 */
+}
+
+/* СИСТЕМА ЛОКАЛИЗАЦИИ */
+/* Прячу ненужный язык чисто через CSS. Дешево и сердито =) */
+html[lang="en"] [data-lang="ru"] { display: none !important; }
+html[lang="ru"] [data-lang="en"] { display: none !important; }
+
+/* ПЛАВНОЕ ПОЯВЛЕНИЕ ПРИ ЗАГРУЗКЕ HUB.HTML */
+@keyframes pageFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* АНИМАЦИИ */
+/* Разделил анимации на две группы. Медленные - для больших фонов, 
+   быстрые - для кнопок и ползунков. Интерфейс должен быть отзывчивым, а не как кисель 0_0 */
+body, .top-bar, .sidebar, .main-area, .hero-card, .content-card, 
+.hero-footer, .info-console, .tag, .breadcrumbs, .v-track,
+.tv-combined-card, .tv-screen, .pn-card, .search-block {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-btn, .back-btn, .toggle-btn, .vol-box, .vol-box input, .vol-box span,
+.pn-input, .pn-select, .pn-card-title, .pn-card-desc, .pn-input-wrap, .pn-select-wrap::after {
+    transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+}
+svg { transition: stroke 0.1s ease, fill 0.1s ease; }
+
+/* БАЗА */
+/* Жестко глушу системные обводки фокуса и тапов. Это SPA-приложение, 
+   так что вести оно себя должно как нативное! */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+*:focus {
+    outline: none !important;
+}
+
+body, html { 
+    width: 100vw; height: 100vh; height: 100dvh; 
+    background: var(--c-bg); font-family: 'Noto Sans', sans-serif; 
+    font-weight: 500; 
+    overflow: hidden; user-select: none; 
+    display: flex; flex-direction: column; touch-action: none; 
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ПАНЕЛИ И КНОПКИ */
+.top-bar { height: 75px; background: var(--c-panel); border-bottom: 3px solid var(--c-border); display: flex; align-items: center; padding: 18px; width: 100%; flex-shrink: 0; z-index: 10; }
+.back-btn { width: 36px; height: 36px; background: var(--c-border); border-radius: 9px; margin-right: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
+.back-btn svg { width: 18px; height: 18px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; stroke-linecap: butt; stroke-linejoin: miter; }
+@media (hover: hover) { .back-btn:hover { border-color: var(--c-text); } }
+.back-btn:active { background: var(--c-text); } .back-btn:active svg { stroke: var(--c-panel); }
+
+.settings-group { display: flex; align-items: center; gap: 18px; margin-right: 39px; flex-shrink: 0; }
+.toggle-block { display: flex; gap: 3px; }
+.toggle-btn { width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--c-text); }
+.toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+.toggle-btn.text-btn { 
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1; 
+}
+.toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+.toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+@media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
+.toggle-btn.active, .toggle-btn:active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+.toggle-btn:active svg, .toggle-btn.active svg { stroke: var(--c-panel); }
+
+.breadcrumbs { flex-grow: 1; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; padding: 0 9px; min-width: 0; }
+.bc-text { color: var(--c-text); font-size: 15px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bc-icon { width: 18px; height: 18px; margin: 0 6px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; flex-shrink: 0; }
+
+.content-wrapper { display: flex; flex-grow: 1; width: 100%; overflow: hidden; }
+.sidebar { width: 300px; height: 100%; background: var(--c-panel); border-right: 3px solid var(--c-border); flex-shrink: 0; z-index: 5; }
+.sidebar-nav { display: flex; flex-direction: column; gap: 18px; padding: 18px; }
+.nav-btn { width: 100%; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; padding: 0 9px; cursor: pointer; border: 2px solid transparent; color: var(--c-text); text-decoration: none; }
+.nav-btn .nav-icon { width: 18px; height: 18px; margin-right: 9px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.nav-btn span { font-size: 15px; font-weight: 500; white-space: nowrap; }
+@media (hover: hover) { .nav-btn:hover { border-color: var(--c-text); } }
+.nav-btn:active, .nav-btn.active { background: var(--c-text); color: var(--c-panel); }
+
+/* ОСНОВНАЯ ЗОНА И СКРОЛЛ */
+/* Мой кастомный скролл. Градиенты сверху и снизу появляются, 
+   когда есть куда скроллить. Выглядит просто пушка ╰(*°▽°*)╯ */
+.main-area { flex-grow: 1; background: var(--c-bg); position: relative; overflow: hidden; touch-action: none; }
+.main-clip { position: absolute; inset: 0; overflow: hidden; z-index: 2; touch-action: none; }
+.main-panel { position: relative; width: 100%; min-height: 100%; display: flex; flex-direction: column; align-items: flex-start; will-change: transform; }
+.main-grad-bottom, .main-grad-top { position: absolute; left: 0; right: 0; height: 60px; pointer-events: none; opacity: 0; transition: opacity 0.25s; z-index: 10; }
+.main-grad-bottom { bottom: 0; background: linear-gradient(to bottom, rgba(var(--c-bg-rgb),0) 0%, rgba(var(--c-bg-rgb),1) 100%); }
+.main-grad-top { top: 0; background: linear-gradient(to bottom, rgba(var(--c-bg-rgb),1) 0%, rgba(var(--c-bg-rgb),0) 100%); }
+
+.v-slider-container { position: absolute; right: 18px; top: 18px; bottom: 18px; width: 3px; z-index: 25; display: flex; justify-content: center; }
+.v-track { width: 3px; height: 100%; background: var(--c-border); position: relative; border-radius: 0; }
+.v-thumb { width: 3px; top: 0; left: 0; background: var(--c-text); position: absolute; cursor: grab; touch-action: none; border-radius: 0; }
+.v-thumb:active { cursor: grabbing; }
+.v-thumb::after { content: ''; position: absolute; top: -10px; bottom: -10px; left: -20px; right: -20px; }
+
+/* КАРТОЧКИ И ГЕРОЙ */
+/* Анимация градиентов на фоне героев. Делаю через смещение background-position 
+   и обязательно вешаю will-change, чтобы браузер выделил отдельный слой на GPU. 
+   Плюс накинул процедурный SVG-шум прямо в код. Ни одной картинки не загружено, чистая магия! */
+.cards-layout { width: 100%; padding: 18px 30px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+.hero-card, .content-card, .pn-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; overflow: hidden; }
+.hero-banner { position: relative; width: 100%; height: 441px; display: flex; justify-content: center; align-items: center; background-size: 150vw 150vw; animation: gradientFlow 18s linear infinite; will-change: background-position; overflow: hidden; }
+
+/* Фоны героев */
+.hero-bg-rl { background-image: linear-gradient(135deg, #ffb300 0%, #ff5e00 12.5%, #cc3a00 25%, #ff5e00 37.5%, #ffb300 50%, #ff5e00 62.5%, #cc3a00 75%, #ff5e00 87.5%, #ffb300 100%); }
+.hero-bg-ff { background-image: linear-gradient(135deg, #00e5ff 0%, #0066ff 12.5%, #0022cc 25%, #0066ff 37.5%, #00e5ff 50%, #0066ff 62.5%, #0022cc 75%, #0066ff 87.5%, #00e5ff 100%); }
+.hero-bg-rltv { background-image: linear-gradient(135deg, #FF007F 0%, #C800C8 12.5%, #8A00FF 25%, #C800C8 37.5%, #FF007F 50%, #C800C8 62.5%, #8A00FF 75%, #C800C8 87.5%, #FF007F 100%); }
+
+@keyframes gradientFlow { 0% { background-position: 0vw 0vw; } 100% { background-position: -75vw -75vw; } }
+.hero-banner::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.15) 4px, rgba(0,0,0,0.15) 8px); z-index: 1; }
+.hero-banner::after { content: ''; position: absolute; inset: 0; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); opacity: 0.25; mix-blend-mode: overlay; z-index: 2; }
+.hero-title { position: relative; z-index: 5; font-size: clamp(36px, 8vw, 96px); font-weight: 900; color: #E7E7E7; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; padding: 0 18px; line-height: 1.1; }
+.hero-footer { height: 75px; background: var(--c-panel); border-top: 3px solid var(--c-border); display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
+
+.tags-group { display: flex; gap: 3px; align-items: center; }
+.tag { height: 36px; padding: 0 9px; background: var(--c-border); color: var(--c-text); font-size: 15px; font-weight: 500; display: flex; align-items: center; justify-content: center; border-radius: 9px; }
+.tags-group .tag:not(:last-child) { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.tags-group .tag:not(:first-child) { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.tag svg { width: 16px; height: 16px; margin-right: 8px; stroke: currentColor; fill: none; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; }
+.tag-status { color: var(--c-sub); }
+
+.content-card { padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.content-card:nth-child(even) { flex-direction: row-reverse; }
+
+.info-text { flex: 1; color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.5; text-align: justify; min-width: 0; }
+.info-text h2 { 
+    color: var(--c-text); 
+    font-size: 42px; 
+    font-weight: 500; 
+    letter-spacing: 0.05em; 
+    margin-bottom: 18px; 
+    text-align: left; 
+}
+.info-text .highlight, .pn-card-desc .highlight { color: var(--c-text); }
+.info-console { width: 240px; height: 240px; background: var(--c-bg); border: 3px solid var(--c-border); border-radius: 9px; flex-shrink: 0; position: relative; overflow: hidden; }
+.info-console canvas { display: block; width: 100%; height: 100%; }
+
+/* БЛОК TV (Из RLTV) */
+/* Тут полный фарш: сканлайны, мерцание экрана и VHS шум. Шум тоже сделал через 
+   SVG-фильтр feTurbulence прямо строкой в CSS. Никаких гифок, вес 0 байт! =) */
+.tv-combined-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 0 18px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+.pn-card { padding: 0 18px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+.tv-screen { width: 100%; aspect-ratio: 21 / 9; min-height: 200px; background: #000; border-radius: 9px; border: 3px solid var(--c-border); position: relative; overflow: hidden; box-shadow: inset 0 0 50px rgba(0,0,0,1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+#tvVideoPlayer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; z-index: 5; transition: opacity 0s; }
+.tv-bars { position: absolute; inset: 0; z-index: 1; background: repeating-linear-gradient(to right, #cccccc 0%, #cccccc 14.28%, #e4d924 14.28%, #e4d924 28.56%, #24e4d9 28.56%, #24e4d9 42.84%, #24e424 42.84%, #24e424 57.12%, #e424e4 57.12%, #e424e4 71.4%, #e42424 71.4%, #e42424 85.68%, #2424e4 85.68%, #2424e4 100%); }
+.tv-text-box { position: relative; z-index: 2; background: #050505; color: #E7E7E7; padding: 18px 36px; font-size: clamp(24px, 4vw, 48px); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.9); }
+.scanlines { position: absolute; inset: 0; z-index: 10; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%); background-size: 100% 4px; }
+.crt-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.4) 100%); mix-blend-mode: overlay; animation: crtFlicker 0.15s infinite; }
+.vhs-noise { position: absolute; inset: 0; z-index: 16; pointer-events: none; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="1"/%3E%3C/svg%3E'); opacity: 0.15; mix-blend-mode: screen; filter: contrast(3); animation: noiseJitter 0.3s steps(3) infinite; }
+.osd-text { position: absolute; z-index: 20; color: #00ff00; font-family: 'Noto Sans', sans-serif; font-size: 21px; font-weight: 500; text-shadow: 2px 2px 0px #000, 0 0 10px #00ff00; pointer-events: none; text-transform: uppercase; }
+.osd-text.top-right { top: 18px; right: 24px; }
+.osd-text.center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.osd-blink { animation: recBlink 1s infinite; }
+.tv-screen.switching { background: #000; }
+.tv-screen.switching #tvVideoPlayer { opacity: 0; }
+.tv-screen.switching .tv-bars, .tv-screen.switching .tv-text-box, .tv-screen.switching .crt-overlay, .tv-screen.switching .scanlines { display: none !important; }
+.tv-screen.switching .vhs-noise { opacity: 1 !important; mix-blend-mode: normal !important; filter: grayscale(1) contrast(4) brightness(1.5) !important; animation: noiseJitter 0.05s steps(2) infinite !important; background-color: #111; }
+.tv-screen.paused * { animation-play-state: paused !important; }
+
+@keyframes crtFlicker { 0% { opacity: 0.95; } 50% { opacity: 1; } 100% { opacity: 0.98; } }
+@keyframes noiseJitter { 0% { background-position: 0 0; } 100% { background-position: 100% 100%; } }
+@keyframes recBlink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+.tv-controls-bar { width: 100%; height: 36px; display: flex; align-items: center; justify-content: space-between; }
+.tv-actions-group { display: flex; align-items: center; gap: 18px; }
+.vol-box { width: 63px; height: 36px; background: var(--c-border); display: flex; justify-content: center; align-items: center; border: 2px solid transparent; cursor: text; }
+@media (hover: hover) { .vol-box:hover { border-color: var(--c-text); } }
+.vol-box:focus-within { background: var(--c-text); border-color: var(--c-text); }
+.vol-box input { width: 26px; background: transparent; border: none; color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif; text-align: right; outline: none; padding: 0; margin: 0; }
+.vol-box span { color: var(--c-sub); font-size: 15px; font-weight: 500; margin-left: 4px; user-select: none; display: inline-block; }
+.vol-box:focus-within input, .vol-box:focus-within span { color: var(--c-panel); }
+.vol-slider { -webkit-appearance: none; appearance: none; width: 114px; height: 18px; border-radius: 4.5px; background: var(--c-border); outline: none; cursor: pointer; display: block; }
+.vol-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 18px; border-radius: 4.5px; background: var(--c-text); }
+.vol-slider::-moz-range-thumb { width: 12px; height: 18px; border: none; border-radius: 4.5px; background: var(--c-text); }
+
+/* ПАТЧНОУТЫ */
+.pn-wrapper { display: flex; flex-direction: column; gap: 18px; width: 100%; }
+.search-block { width: 100%; height: 78px; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; padding: 0 18px; display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+.pn-input-wrap { flex-grow: 1; height: 36px; position: relative; display: flex; align-items: center; color: var(--c-text); }
+.pn-input-wrap:focus-within, .pn-input-wrap.active-state { color: var(--c-panel); }
+.search-icon { position: absolute; left: 9px; width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2px; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; transition: stroke 0.1s ease; }
+.pn-input { width: 100%; height: 100%; display: block; margin: 0; background: var(--c-border); border: 2px solid transparent; border-radius: 9px; padding: 0 18px 0 36px; color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif; white-space: nowrap; outline: none; }
+.pn-input::placeholder { color: var(--c-text); opacity: 1; transition: opacity 0.1s ease; }
+@media (hover: hover) { .pn-input:hover { border-color: var(--c-text); } }
+.pn-input-wrap:focus-within .pn-input, .pn-input-wrap.active-state .pn-input { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+.pn-input-wrap:focus-within .pn-input::placeholder, .pn-input-wrap.active-state .pn-input::placeholder { opacity: 0; }
+
+.pn-select-wrap { width: 261px; height: 36px; position: relative; flex-shrink: 0; }
+.pn-select-wrap.cat-box { width: 220px; }
+.pn-select-wrap.sort-box { width: 190px; }
+.pn-select { width: 100%; height: 100%; display: block; background: var(--c-border); border: 2px solid transparent; border-radius: 9px; padding: 0 36px 0 18px; color: var(--c-text); font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif; appearance: none; outline: none; cursor: pointer; }
+.pn-select-wrap::after { content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; pointer-events: none; background-color: var(--c-text); -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat; mask: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>') center/contain no-repeat; }
+@media (hover: hover) { .pn-select:hover { border-color: var(--c-text); } }
+.pn-select-wrap:active .pn-select, .pn-select-wrap.active-state .pn-select { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+.pn-select-wrap:active::after, .pn-select-wrap.active-state::after { background-color: var(--c-panel); }
+
+.tv-combined-card > *:first-child, 
+.pn-card > *:first-child { 
+    margin-top: 18px !important; 
+}
+.pn-card-title { 
+    color: var(--c-text); 
+    font-size: 21px; 
+    font-weight: 500; 
+    letter-spacing: 0.05em; 
+    line-height: 1.1; 
+}
+.pn-card-desc { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.6; text-align: justify; }
+
+/* Ссылки внутри статей (стилизованы под текст инлайн-кода) */
+.pn-card-desc a, .article-link { 
+    background: var(--c-border); 
+    color: var(--c-text); 
+    text-decoration: none; 
+    font-weight: 500; 
+    font-family: Consolas, monospace; 
+    padding: 3px 9px; 
+    border-radius: 9px; 
+    transition: background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease; 
+    position: relative; 
+    z-index: 5; 
+    pointer-events: auto;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone; /* Красивый перенос, если ссылка очень длинная */
+}
+
+@media (hover: hover) { 
+    .pn-card-desc a:hover, .article-link:hover { 
+        box-shadow: inset 0 0 0 2px var(--c-text); /* Обводка внутрь, чтобы не ломать верстку */
+    } 
+}
+
+.pn-card-desc a:active, .article-link:active { 
+    background: var(--c-text); 
+    color: var(--c-panel); 
+}
+
+/* Убираем двойной отступ снизу у любого последнего элемента в карточке */
+.pn-card-desc > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* --- СТИЛИ ДЛЯ КАРТИНОК И ВИДЕО В СТАТЬЯХ (ПК) --- */
+.pn-card-desc img, 
+.pn-card-desc video {
+    max-width: 100% !important;   
+    max-height: 80vh !important;  
+    width: auto !important;       
+    border-radius: 9px !important;
+    border: 3px solid var(--c-border) !important;
+    margin: 18px auto !important; /* Строгие 18px сверху и снизу для идеальных зазоров */
+    display: block !important;
+}
+
+/* ============================================================
+   МУЗЫКАЛЬНЫЙ ПЛЕЕР ДЛЯ СТАТЕЙ
+============================================================ */
+.article-player {
+    display: flex; align-items: center; 
+    gap: 18px; /* Отступы 18px между таймлайном и боковыми группами */
+    margin: 18px 0; width: 100%;
+}
+
+/* Левый блок (Кнопка + Время) */
+.player-left-group { 
+    display: flex; 
+    gap: 3px; 
+    flex-shrink: 0; 
+}
+
+.article-player .player-btn {
+    width: 36px; height: 36px; background: var(--c-border); 
+    border-radius: 9px 0 0 9px; 
+    display: flex; justify-content: center; align-items: center; cursor: pointer;
+    color: var(--c-text); border: 2px solid transparent; flex-shrink: 0; 
+    transition: background-color 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.article-player .player-btn svg { 
+    width: 18px; height: 18px; stroke: currentColor; fill: none; 
+    stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; 
+}
+
+.article-player .player-btn.playing { background: var(--c-text); color: var(--c-panel); }
+@media (hover: hover) { .article-player .player-btn:hover { border-color: var(--c-text); } }
+
+.player-time-box {
+    width: 102px; height: 36px; background: var(--c-border); 
+    border-radius: 0 9px 9px 0; 
+    display: flex; justify-content: center; align-items: center;
+    color: var(--c-sub); 
+    font-size: 15px; font-weight: 500; font-family: 'Noto Sans', sans-serif;
+    border: 2px solid transparent; white-space: nowrap; 
+}
+
+/* Белый цвет для самих цифр внутри серого блока таймкодов */
+.time-current, .time-total {
+    color: var(--c-text);
+}
+
+/* Ползунки с точной математикой центра */
+.player-timeline { flex-grow: 1; width: 100% !important; margin: 0; }
+
+.vol-slider { 
+    -webkit-appearance: none; appearance: none; width: 114px; height: 18px; border-radius: 4.5px; 
+    background: var(--c-border); outline: none; cursor: pointer; display: block; 
+    --val: 0; --thumb-r: 6px; 
+    background: linear-gradient(to right, var(--c-sub) calc(var(--val) * 1% + var(--thumb-r) - (var(--val) * var(--thumb-r) * 2 / 100)), var(--c-border) 0);
+}
+.vol-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 18px; border-radius: 4.5px; background: var(--c-text); }
+.vol-slider::-moz-range-thumb { width: 12px; height: 18px; border: none; border-radius: 4.5px; background: var(--c-text); }
+
+/* Правый блок (Громкость) */
+.player-right-group { 
+    display: flex; align-items: center; 
+    gap: 18px; 
+    flex-shrink: 0; 
+}
+.article-player .vol-box { border-radius: 9px; } 
+.player-volume { width: 114px !important; margin: 0; }
+
+/* ============================================================
+   СТИЛИ ДЛЯ СГЕНЕРИРОВАННЫХ СТАТЕЙ
+============================================================ */
+.article-p { margin: 0 0 18px 0; color: var(--c-sub); }
+
+.article-header {
+    background: var(--c-border); border-left: 3px solid var(--c-text); border-radius: 9px; 
+    padding: 9px 18px; color: var(--c-text); 
+    font-size: 21px;   
+    font-weight: 900;   
+    margin: 0 0 18px 0; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.05em; 
+}
+
+/* Инлайн-код (текст на сером фоне) */
+.article-code {
+    background: var(--c-border); 
+    color: var(--c-text); 
+    padding: 3px 9px; 
+    border-radius: 9px; 
+    font-family: Consolas, monospace; 
+    font-size: 21px;
+}
+
+/* Блоки с горизонтальным скроллом (для длинного кода или путей) */
+.article-code-wrap {
+    background: var(--c-bg); 
+    border: 3px solid var(--c-border); 
+    border-radius: 9px; 
+    margin: 0 0 18px 0;
+    position: relative; 
+    overflow: hidden; 
+    width: 100%; 
+    transition: padding-bottom 0.2s ease;
+}
+.article-scroll-container {
+    overflow-x: auto;
+}
+.article-code-inner {
+    padding: 18px; 
+    min-width: max-content; 
+    width: 100%;
+}
+
+/* Кастомный ползунок для горизонтального скролла */
+.h-slider-container {
+    width: 100%; height: 21px; padding: 0 18px 18px; position: absolute; 
+    bottom: 0; left: 0; background: transparent; opacity: 0; 
+    display: flex; align-items: flex-end; box-sizing: border-box; 
+    z-index: 25; pointer-events: none; transition: opacity 0.2s ease-in-out;
+}
+.h-track {
+    width: 100%; height: 3px; background: var(--c-border); 
+    border-radius: 1.5px; position: relative; pointer-events: auto;
+}
+.h-thumb {
+    height: 3px; background: var(--c-text); border-radius: 1.5px; 
+    position: absolute; top: 0; left: 0; cursor: grab;
+}
+.h-thumb-extended {
+    position: absolute; top: -15px; bottom: -15px; left: -15px; right: -15px; user-select: none;
+}
+
+.article-list-item { display: flex; gap: 9px; margin-bottom: 18px; margin-left: 18px; }
+.article-list-item.sub { margin-left: 54px; }
+.list-bullet { color: var(--c-text); flex-shrink: 0; font-weight: 500; }
+.list-text { color: var(--c-text); }
+
+.article-pre {
+    font-family: Consolas, monospace; color: var(--c-text); font-size: 21px;
+    white-space: pre; margin: 0; line-height: 1.5; display: flex; align-items: center;
+}
+
+/* ============================================================
+   РАЗРЕШЕНИЕ НА КОПИРОВАНИЕ ТЕКСТА
+============================================================ */
+/* Разрешаем выделять текст в контенте */
+.info-text, 
+.pn-card-title, 
+.pn-card-desc,
+.hero-title,
+.scroll-container,
+.article-header {
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+/* Принудительно защищаем кнопки от синего выделения при кликах */
+.article-player .player-btn,
+.player-time-box,
+.vol-box,
+.tag {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ============================================================
+   ЛОАДЕРЫ И ПУСТЫЕ СОСТОЯНИЯ (ЦЕНТРИРОВАНИЕ)
+============================================================ */
+.loader-wrap,
+.empty-state-wrap {
+    display: flex; flex: 1; align-items: center; justify-content: center; 
+    width: 100%; 
+    /* Используем фиксированную мин. высоту вместо 100vh, чтобы блок не сплющивало клавиатурой */
+    min-height: 350px; 
+    padding: 36px 0;
+    pointer-events: none; /* Пропускаем клики насквозь, чтобы поиск работал! */
+}
+.loader-wrap > *,
+.empty-state-wrap > * {
+    pointer-events: auto; /* Включаем клики обратно для самой карточки */
+}
+
+/* Компенсируем скрытый поиск, чтобы Лоадер был на одной высоте с Нердом */
+.loader-wrap {
+    margin-top: 96px; 
+}
+
+/* --- МОБИЛЬНЫЙ АДАПТИВ ПЛЕЕРА --- */
+/* Тут я просто взял десктопные размеры и математически поделил их на 2.
+   Идеальная сетка сохраняется, пиксель-перфект математика 0_0 */
+@media (max-width: 900px) {
+    .loader-wrap {
+        margin-top: 48px;
+    }
+    
+    .article-code {
+        padding: 1.5px 4.5px;
+        border-radius: 4.5px;
+        font-size: 10px;
+    }
+    .article-code-wrap {
+        border-width: 1.5px;
+        border-radius: 4.5px;
+        margin: 0 0 9px 0;
+    }
+    .article-code-inner {
+        padding: 9px;
+    }
+
+    .pn-card-desc a, .article-link {
+        padding: 1.5px 4.5px;
+        border-radius: 4.5px;
+    }
+    
+    .h-slider-container { height: 10.5px; padding: 0 9px 9px; }
+    .h-track { height: 1.5px; border-radius: 1.5px; }
+    .h-thumb { height: 1.5px; border-radius: 1.5px; }
+    .h-thumb-extended { top: -7.5px; bottom: -7.5px; left: -7.5px; right: -7.5px; }
+
+    .article-player { gap: 9px; margin: 9px 0; }
+    .player-left-group { gap: 1.5px; } 
+    .article-player .player-btn { width: 18px; height: 18px; border-radius: 4.5px 0 0 4.5px; border-width: 1px; }
+    .article-player .player-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+    .player-time-box { width: 51px; height: 18px; border-radius: 0 4.5px 4.5px 0; font-size: 7px; border-width: 1px; }
+    .hero-title { 
+        font-size: clamp(24px, 11vw, 42px); 
+    }
+    .player-right-group { gap: 9px; } 
+    .article-player .vol-box { border-radius: 4.5px; }
+    .player-volume { width: 57px !important; }
+    .vol-slider { width: 57px; height: 9px; border-radius: 2.25px; --thumb-r: 3px; }
+    
+    /* ФИКС ДЛЯ МОБИЛЬНОГО ПОЛЗУНКА (Chrome, Safari, Edge) */
+    .vol-slider::-webkit-slider-thumb {
+        width: 6px;   
+        height: 9px;  
+        border-radius: 2.25px;
+    }
+
+    /* ФИКС ДЛЯ МОБИЛЬНОГО ПОЛЗУНКА (Firefox) */
+    .vol-slider::-moz-range-thumb {
+        width: 6px;
+        height: 9px;
+        border-radius: 2.25px;
+        border: none;
+    }
+
+    /* --- АДАПТИВ ОСТАЛЬНОГО ДЛЯ ТЕЛЕФОНОВ --- */
+    .pn-card-desc img, 
+    .pn-card-desc video { 
+        border-radius: 4.5px !important; 
+        border-width: 1.5px !important; 
+        margin: 9px auto !important; 
+    }
+    .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; } .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
+    .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .settings-group { gap: 9px; margin-right: 19.5px; } .toggle-block { gap: 1.5px; }
+    .toggle-btn { width: 18px; height: 18px; border-width: 1px; } .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; } .toggle-btn.text-btn { font-size: 7px; }
+    .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; } .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+    .breadcrumbs { height: 18px; border-radius: 4.5px; padding: 0 4.5px; } .bc-text { font-size: 7px; padding: 1px 0; } .bc-icon { width: 9px; height: 9px; margin: 0 3px; stroke-width: 1px; }
+    .sidebar { width: 150px; border-right-width: 1.5px; } .sidebar-nav { gap: 9px; padding: 9px; } .nav-btn { height: 18px; border-radius: 4.5px; padding: 0 4.5px; border-width: 1px; }
+    .nav-btn .nav-icon { width: 9px; height: 9px; margin-right: 4.5px; stroke-width: 1px; } .nav-btn span { font-size: 7px; padding: 1px 0; }
+    
+    .main-grad-bottom, .main-grad-top { height: 30px; }
+    .v-slider-container { right: 4px; top: 9px; bottom: 9px; width: 3px; } .v-track { width: 1.5px; } .v-thumb { width: 1.5px; }
+    
+    .cards-layout { padding: 9px 15px 9px 9px; gap: 9px; }
+    .hero-card, .content-card, .pn-card, .tv-combined-card { border-width: 1.5px; border-radius: 9px; }
+    .hero-banner { height: 160px; } .hero-title { font-size: 24px; } .hero-footer { height: 37.5px; border-top-width: 1.5px; padding: 0 9px; }
+    .tags-group { gap: 1.5px; } .tag { height: 18px; padding: 0 4.5px; font-size: 7px; border-radius: 4.5px; } .tag svg { width: 8px; height: 8px; margin-right: 4px; stroke-width: 1px; }
+    
+    .content-card { padding: 9px; gap: 9px; }
+    .tv-combined-card, .pn-card { padding: 0 9px 9px 9px; gap: 9px; }
+    .tv-combined-card > *:first-child, .pn-card > *:first-child { margin-top: 9px !important; }
+    .info-text { font-size: 10px; } .info-text h2 { font-size: 21px; margin-bottom: 6px; line-height: 1.2; }
+    .info-console { width: 90px; height: 90px; border-width: 1px; border-radius: 4.5px; }
+
+    .tv-screen { border-radius: 4.5px; border-width: 1.5px; }
+    .tv-text-box { 
+        font-size: clamp(14px, 6vw, 24px);
+        padding: 6px 16px; 
+        border-width: 1px; 
+        box-shadow: 0 0 10px rgba(0,0,0,0.9); 
+    }
+    .osd-text { font-size: 10px; }
+    .tv-controls-bar { height: 18px; } .tv-actions-group { gap: 9px; }
+    .vol-box { width: 31.5px; height: 18px; border-width: 1px; } .vol-box input { width: 14px; font-size: 7px; } .vol-box span { font-size: 7px; margin-left: 2px; }
+    
+    .pn-wrapper { gap: 9px; }
+    .search-block { border-width: 1.5px; border-radius: 9px; padding: 0 9px; height: 39px; gap: 9px; }
+    .pn-input-wrap { height: 18px; } .pn-select-wrap { height: 18px; width: 130px !important; }
+    .search-icon { left: 4.5px; width: 9px; height: 9px; stroke-width: 1px; }
+    .pn-input { border-width: 1px; border-radius: 4.5px; padding: 0 9px 0 18px; font-size: 7px; } 
+    .pn-select { border-width: 1px; border-radius: 4.5px; padding: 0 18px 0 9px; font-size: 7px; } 
+    .pn-select-wrap::after { right: 6px; width: 6px; height: 6px; }
+    .pn-card-title { font-size: 10px; margin-bottom: 0; line-height: 1.2; } .pn-card-desc { font-size: 10px; } 
+
+    /* --- АДАПТИВ СГЕНЕРИРОВАННЫХ СТАТЕЙ --- */
+    .article-p { margin-bottom: 9px; }
+    .article-header { 
+        font-size: 10px; 
+        padding: 4.5px 9px; 
+        border-radius: 4.5px; 
+        border-left-width: 1.5px; 
+        margin-bottom: 9px; 
+    }
+    .article-list-item { gap: 4.5px; margin-bottom: 9px; margin-left: 9px; }
+    .article-list-item.sub { margin-left: 27px; }
+    .article-pre { font-size: 10px; }
+}
+
+/* Использую max-width: 650px вместо orientation: portrait.
+   Раньше при открытии клавиатуры на телефоне менялась ориентация экрана 
+   и сайдбар уродливо прыгал. Теперь все прибито гвоздями, баг пофикшен (⌐■_■) */
+@media (max-width: 650px) {
+    .back-btn { margin-right: 19.5px; } .settings-group { gap: 9px; margin-right: 9px; } .sidebar { width: auto; }
+    .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; } .sidebar .nav-btn .nav-icon { margin-right: 0; } .sidebar .nav-btn span { display: none; }
+    .search-block { height: auto; flex-direction: column; padding: 9px; } .pn-input-wrap, .pn-select-wrap { width: 100% !important; }
+    
+    .loader-wrap { margin-top: 99px; } 
+}
+
+/* ============================================================
+   ФИКСЫ ДЛЯ СВЕТЛОЙ ТЕМЫ
+============================================================ */
+/* Делаю выделенный текст чуть плотнее (semi-bold) без изменения его размера */
+html[data-theme="light"] .info-text .highlight, 
+html[data-theme="light"] .pn-card-desc .highlight {
+    font-weight: 600; 
+}
+
+/* ============================================================
+   АВТОСКРОЛЛ КОЛЕСИКОМ (СИСТЕМНЫЙ КУРСОР)
+============================================================ */
+/* Меняю курсор на системный скролл, чтобы было понятно, 
+   что сейчас работает режим езды по странице. */
+body.autoscroll-active, 
+body.autoscroll-active * { 
+    cursor: ns-resize !important; 
+}
+
+/* Специальный адаптивный блок для загрузки */
+.loader-card {
+    background: var(--c-panel); 
+    border: 3px solid var(--c-border); 
+    border-radius: 18px; 
+    padding: 18px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 18px; 
+    width: fit-content;
+}
+
+/* Настройки для телефонов */
+@media (max-width: 900px) {
+    .loader-card {
+        padding: 9px;
+        gap: 9px;
+        border-radius: 9px;
+        border-width: 1.5px;
+    }
+    .loader-card .info-console {
+        border-width: 1.5px;
+        border-radius: 4.5px;
+        width: 90px; 
+        height: 90px;
+    }
+}

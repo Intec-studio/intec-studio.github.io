@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intec | Chronograph</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;900&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           ПЕРЕМЕННЫЕ ЦВЕТОВЫХ ТЕМ (ИНВЕРСИЯ)
+        ============================================================ */
+        /* Тут лежат цвета для тем. Я сделал все через CSS-переменные, чтобы 
+           инвертировать цвета всей страницы за миллисекунду, просто поменяв 
+           атрибут на html. Дешево и сердито ╰(*°▽°*)╯ */
+        :root {
+            --c-bg: #000000;
+            --c-bg-rgb: 0, 0, 0;
+            --c-panel: #111111;
+            --c-border: #1F1F1F;
+            --c-text: #E7E7E7;
+            --c-sub: #8C8C8C;
+        }
+
+        html[data-theme="light"] {
+            --c-bg: #FFFFFF;
+            --c-bg-rgb: 255, 255, 255;
+            --c-panel: #EEEEEE;
+            --c-border: #E0E0E0;
+            --c-text: #181818;
+            --c-sub: #737373;
+        }
+
+        /* МЕДЛЕННАЯ АНИМАЦИЯ */
+        /* Разделил анимации смены темы на две группы. Медленные - для фонов и панелей. */
+        body, .top-bar, .sidebar, .main-area, .inspector-panel, .inspector-body, .v-track, .h-track {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* БЫСТРАЯ АНИМАЦИЯ */
+        /* А это быстрые - для кнопок и интерактива. Если все будет анимироваться 
+           одинаково медленно, UI будет ощущаться как желе, а мне нужна отзывчивость (⌐■_■) */
+        .nav-btn, .back-btn, .toggle-btn, .h-thumb, .v-thumb {
+            transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+        }
+        svg { transition: stroke 0.1s ease, fill 0.1s ease; }
+
+        /* ============================================================
+           СИСТЕМА ЛОКАЛИЗАЦИИ
+        ============================================================ */
+        /* Моя гордость - локализация чисто на CSS. Никаких тяжелых JS-перерисовок. 
+           Просто прячу ненужные элементы через display: none в зависимости от атрибута lang. 
+           Ноль нагрузки на процессор! B-) */
+        html[lang="en"] [data-lang="ru"] { display: none !important; }
+        html[lang="ru"] [data-lang="en"] { display: none !important; }
+
+        /* ============================================================
+           СБРОС СТИЛЕЙ И БАЗА
+        ============================================================ */
+        /* Делаю overflow: hidden и блокирую выделение текста, потому что это типа 
+           desktop-приложение в браузере, а не просто страничка для чтения. */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        *:focus {
+            outline: none !important;
+        }
+        
+        body, html {
+            width: 100vw; height: 100vh; height: 100dvh; 
+            background: var(--c-bg); font-family: 'Noto Sans', sans-serif;
+            overflow: hidden; user-select: none;
+            display: flex; flex-direction: column; touch-action: none; 
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* ============================================================
+           ВЕРХНЯЯ ПАНЕЛЬ И КНОПКИ
+        ============================================================ */
+        .top-bar { height: 75px; background: var(--c-panel); border-bottom: 3px solid var(--c-border); display: flex; align-items: center; padding: 18px; width: 100%; flex-shrink: 0; z-index: 10; }
+        
+        .back-btn { width: 36px; height: 36px; background: var(--c-border); border-radius: 9px; margin-right: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; }
+        .back-btn svg { width: 18px; height: 18px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; stroke-linecap: butt; stroke-linejoin: miter; }
+        @media (hover: hover) { .back-btn:hover { border-color: var(--c-text); } }
+        .back-btn:active { background: var(--c-text); } .back-btn:active svg { stroke: var(--c-panel); }
+        
+        .settings-group { display: flex; align-items: center; gap: 18px; margin-right: 39px; flex-shrink: 0; }
+        .toggle-block { display: flex; gap: 3px; }
+        .toggle-btn { width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent; display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--c-text); }
+        .toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+        .toggle-btn.text-btn { font-size: 15px; font-weight: 500; line-height: 1; }
+        .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+        .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+        @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
+        .toggle-btn.active, .toggle-btn:active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+        .toggle-btn:active svg, .toggle-btn.active svg { stroke: var(--c-panel); }
+
+        .breadcrumbs { flex-grow: 1; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; padding: 0 9px; min-width: 0; }
+        .bc-text { color: var(--c-text); font-size: 15px; font-weight: 500; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: normal; padding: 3px 0; }
+        .bc-icon { width: 18px; height: 18px; margin: 0 6px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; flex-shrink: 0; }
+
+        /* ============================================================
+           БОКОВАЯ ПАНЕЛЬ И ОСНОВНАЯ ЗОНА
+        ============================================================ */
+        .content-wrapper { display: flex; flex-grow: 1; width: 100%; overflow: hidden; }
+        .sidebar { width: 300px; height: 100%; background: var(--c-panel); border-right: 3px solid var(--c-border); flex-shrink: 0; z-index: 5; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 18px; padding: 18px; }
+        .nav-btn { width: 100%; height: 36px; background: var(--c-border); border-radius: 9px; display: flex; align-items: center; padding: 0 9px; cursor: pointer; border: 2px solid transparent; color: var(--c-text); text-decoration: none; }
+        .nav-btn .nav-icon { width: 18px; height: 18px; margin-right: 9px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .nav-btn span { font-size: 15px; font-weight: 500; white-space: nowrap; line-height: normal; padding: 3px 0; }
+        @media (hover: hover) { .nav-btn:hover { border-color: var(--c-text); } }
+        .nav-btn:active, .nav-btn.active { background: var(--c-text); color: var(--c-panel); }
+
+        .main-area { flex-grow: 1; background: var(--c-bg); position: relative; overflow: hidden; touch-action: none; }
+
+        /* ============================================================
+           CHRONOGRAPH: PAGE 1 (MULTIVERSE LANDING)
+        ============================================================ */
+        /* Тут лежат канвасы для первой страницы с линиями вселенных и варп-прыжком.
+           Обязательно юзаю will-change: transform, это реально спасает FPS при 
+           скейле сцены во время анимации прыжка 0_0 */
+        .chrono-page { position: absolute; inset: 0; width: 100%; height: 100%; }
+        
+        #page1 {
+            z-index: 200; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transform-origin: 50% 50%;
+        }
+
+        #mv-canvas, #warp-canvas {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            pointer-events: none; transform-origin: 50% 50%; will-change: transform;
+        }
+        #warp-canvas { opacity: 0; z-index: 100; }
+
+        #p1-circle {
+            position: relative; z-index: 2;
+            width: clamp(160px, 25vh, 240px); height: clamp(160px, 25vh, 240px);
+            cursor: pointer; transition: transform 0.2s ease; will-change: transform;
+        }
+        #p1-circle:hover { transform: scale(1.04); }
+        #p1-circle:active { transform: scale(0.97); }
+        #page1.animating #p1-circle { pointer-events: none; }
+        
+        /* ПЕРЕОПРЕДЕЛЕНИЕ ЦВЕТОВ ПРИ СИСТЕМНОЙ ОШИБКЕ */
+        /* Если юзер скормил кривой JSON - перекрашиваю глобальные переменные 
+           конкретно для этого блока. Все краснеет! */
+        #page1.error {
+            --c-text: #E53935 !important;
+            --c-sub: #B71C1C !important;
+        }
+        
+        #p1-circle svg { width: 100%; height: 100%; overflow: visible; }
+
+        #p1-status {
+            position: absolute; bottom: 42px; left: 0; right: 0; text-align: center;
+            color: var(--c-sub); font-size: 15px; font-weight: 500; letter-spacing: 0.18em;
+            transition: color 0.4s ease, opacity 0.4s ease; z-index: 3;
+            pointer-events: none;
+        }
+
+        #flash {
+            position: absolute; inset: 0; z-index: 1000;
+            background: var(--c-text); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+
+        /* Тряска экрана для эффектов. Дешевая CSS анимация */
+        @keyframes shake {
+            0%,100% { transform: translate(0,0); }
+            10% { transform: translate(-5px,-2px); } 20% { transform: translate(6px, 3px); }
+            30% { transform: translate(-4px, 2px); } 40% { transform: translate(6px,-3px); }
+            50% { transform: translate(-5px, 3px); } 60% { transform: translate(4px,-2px); }
+            70% { transform: translate(-6px, 2px); } 80% { transform: translate(5px, 3px); }
+            90% { transform: translate(-4px,-2px); }
+        }
+
+        /* ============================================================
+           CHRONOGRAPH: PAGE 2 (TIMELINE APP)
+        ============================================================ */
+        #page2 {
+            display: none; flex-direction: column; z-index: 150;
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        #page2.visible { display: flex; }
+        #page2.fade-in { opacity: 1; }
+
+        /* Вторая страница. Тут таймлайн рисуется векторно прямо в SVG. 
+           Никакого тяжелого канваса для графов, браузер сам отлично рендерит векторы. */
+        .canvas-container {
+            flex-grow: 1; position: relative; overflow: hidden;
+            background: transparent; cursor: grab;
+        }
+        .canvas-container:active { cursor: grabbing; }
+        .canvas-svg { height: 100%; display: block; }
+
+        .timeline-line { stroke: var(--c-text); stroke-width: 3; fill: none; }
+        .timeline-line, .canvas-svg line, .canvas-svg polyline {
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        /* Круги, ромбы, квадраты. Они пульсируют через обычные CSS keyframes. 
+           Дешевле для видеокарты просто не придумать! =D */
+        .node { cursor: pointer; }
+        .node-shape { fill: var(--c-bg); stroke: var(--c-text); stroke-width: 3; transition: all 0.2s; }
+        .node-hover-ring { fill: none; stroke: transparent; stroke-width: 1.5; transition: stroke 0.2s; }
+        .node:hover .node-hover-ring { stroke: var(--c-text); }
+        .node.active .node-hover-ring { display: none !important; }
+        .node.active .node-shape { fill: var(--c-text); }
+        
+        .node-wave, .node-wave-diamond, .node-wave-square { fill: var(--c-text); opacity: 0; }
+        .node.active .node-wave { animation: nodeRipple 2s infinite ease-out; }
+        .node.active .node-wave-diamond { animation: diamondRipple 2s infinite ease-out; }
+        .node.active .node-wave-square { animation: squareRipple 2s infinite ease-out; }
+        
+        @keyframes nodeRipple { 0% { r: 18px; opacity: .4; } 100% { r: 60px; opacity: 0; } }
+        @keyframes diamondRipple { 0% { transform: scale(1); opacity: .4; } 100% { transform: scale(3.333); opacity: 0; } }
+        @keyframes squareRipple { 0% { transform: scale(1); opacity: .4; } 100% { transform: scale(3.333); opacity: 0; } }
+        
+        .svg-text, .svg-date, .svg-branch-label { pointer-events: none; }
+        
+        .svg-text { fill: var(--c-text); text-anchor: middle; font-family: 'Noto Sans'; font-size: 21px; font-weight: 500; }
+        .svg-date { fill: var(--c-sub); text-anchor: middle; font-family: 'Noto Sans'; font-size: 21px; font-weight: 500; }
+        .svg-branch-label { fill: var(--c-sub); font-family: 'Noto Sans'; font-size: 15px; font-weight: 500; }
+
+        /* INSPECTOR */
+        .inspector-clip { 
+            position: absolute; right: 30px; top: 18px; bottom: 39px; 
+            width: 615px; overflow: hidden; z-index: 20; touch-action: none;
+        }
+        
+        .inspector-panel { position: relative; width: 100%; min-height: 100%; display: flex; flex-direction: column; will-change: transform; }
+        .inspector-header { height: 144px; background: var(--c-text); border: 3px solid var(--c-border); border-bottom: none; border-radius: 18px 18px 0 0; padding: 18px; display: flex; flex-direction: column; justify-content: center; flex-shrink: 0; }
+        .inspector-header .title { color: var(--c-bg); font-size: 42px; font-weight: 900; line-height: 1.1; margin-bottom: 6px; }
+        .inspector-header .date { color: var(--c-bg); font-size: 21px; font-weight: 500; }
+        .inspector-body { background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 0 0 18px 18px; flex-grow: 1; padding: 18px; }
+        .inspector-text-content { color: var(--c-sub); font-size: 21px; font-weight: 500; line-height: 1.4; text-align: justify; }
+        .inspector-text-content .highlight { color: var(--c-text); }
+        
+        .inspector-grad-bottom, .inspector-grad-top { position: absolute; left: 0; right: 0; height: 30px; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 5; }
+        .inspector-grad-bottom { bottom: 0; background: linear-gradient(to bottom, rgba(var(--c-bg-rgb),0) 0%, rgba(var(--c-bg-rgb),1) 100%); }
+        .inspector-grad-top { top: 0; background: linear-gradient(to bottom, rgba(var(--c-bg-rgb),1) 0%, rgba(var(--c-bg-rgb),0) 100%); }
+
+        /* SLIDERS */
+        .h-slider-container { height: 21px; padding: 0 18px 18px; background: transparent; width: 100%; flex-shrink: 0; z-index: 25; }
+        .h-track, .v-track { background: var(--c-border); position: relative; border-radius: 0; }
+        .h-thumb, .v-thumb { background: var(--c-text); position: absolute; border-radius: 0; cursor: grab; }
+        .h-thumb:active, .v-thumb:active { cursor: grabbing; }
+        .h-track { width: 100%; height: 3px; } .h-thumb { height: 3px; top: 0; left: 0; }
+        
+        .v-slider-container { position: absolute; right: 18px; top: 18px; bottom: 39px; width: 3px; z-index: 25; }
+        .v-track { width: 3px; height: 100%; } .v-thumb { width: 3px; top: 0; left: 0; }
+        .v-thumb::after, .h-thumb::after { content: ''; position: absolute; top: -15px; bottom: -15px; left: -15px; right: -15px; }
+
+        /* ============================================================
+           БЛОКИРОВКА ХРОНОГРАФА (ДЛЯ ТЕЛЕФОНОВ И ПОРТРЕТА)
+        ============================================================ */
+        .mobile-blocker {
+            display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+            position: absolute; inset: 0; z-index: 10000; 
+            background: var(--c-bg); color: var(--c-sub); 
+            text-align: center; padding: 18px; gap: 18px;
+        }
+        .mobile-blocker svg {
+            width: 48px; height: 48px; stroke: var(--c-text); fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round;
+        }
+        .mobile-blocker .mb-text {
+            font-size: 15px; font-weight: 500; line-height: 1.4; max-width: 300px;
+        }
+
+        /* ЕСЛИ ЭТО ТЕЛЕФОН ИЛИ ЛЮБОЙ ЭКРАН В ВЕРТИКАЛЬНОМ ПОЛОЖЕНИИ - ПРЯЧЕМ ХРОНОГРАФ */
+        /* Таймлайн слишком огромный, чтобы пытаться впихнуть его в мобилу, 
+           так что тупо прячу интерфейс и показываю заглушку X_X */
+        @media (max-width: 900px), (orientation: portrait) {
+            #page1, #page2, #flash { display: none !important; }
+            .mobile-blocker { display: flex !important; }
+        }
+
+        /* ============================================================
+           МОБИЛЬНЫЙ АДАПТИВ ОБОЛОЧКИ (ИЗ ФАЙЛА FF/RL)
+        ============================================================ */
+        @media (max-width: 900px) {
+            .top-bar { height: 37.5px; padding: 9px; border-bottom-width: 1.5px; }
+            .back-btn { width: 18px; height: 18px; border-radius: 4.5px; margin-right: 9px; border-width: 1px; }
+            .back-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+            
+            .settings-group { gap: 9px; margin-right: 19.5px; }
+            .toggle-block { gap: 1.5px; }
+            .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
+            .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+            .toggle-btn.text-btn { font-size: 7px; }
+            .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
+            .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+
+            .breadcrumbs { height: 18px; border-radius: 4.5px; padding: 0 4.5px; }
+            .bc-text { font-size: 7px; padding: 1px 0; }
+            .bc-icon { width: 9px; height: 9px; margin: 0 3px; stroke-width: 1px; }
+
+            .sidebar { width: 150px; border-right-width: 1.5px; }
+            .sidebar-nav { gap: 9px; padding: 9px; }
+            .nav-btn { height: 18px; border-radius: 4.5px; padding: 0 4.5px; border-width: 1px; }
+            .nav-btn .nav-icon { width: 9px; height: 9px; margin-right: 4.5px; stroke-width: 1px; }
+            .nav-btn span { font-size: 7px; padding: 1px 0; }
+        }
+
+        /* В ПОРТРЕТНОМ РЕЖИМЕ СВОРАЧИВАЕМ САЙДБАР ДО ИКОНОК */
+        @media (max-width: 900px) and (orientation: portrait) {
+            .back-btn { margin-right: 19.5px; } 
+            .settings-group { gap: 9px; margin-right: 9px; } 
+
+            .sidebar { width: auto; }
+            .sidebar .nav-btn { width: 18px; padding: 0; justify-content: center; }
+            .sidebar .nav-btn .nav-icon { margin-right: 0; }
+            .sidebar .nav-btn span { display: none; }
+        }
+        /* ============================================================
+           ФИКСЫ ДЛЯ СВЕТЛОЙ ТЕМЫ
+        ============================================================ */
+        html[data-theme="light"] .inspector-text-content .highlight {
+            font-weight: 600; 
+        }
+    </style>
+    <!-- Этот скрипт в head - спасительный костыль. Он блокирует рендер на миллисекунду, 
+         чтобы применить правильную тему ДО первой отрисовки. Иначе при загрузке 
+         была бы уродливая белая вспышка на темной теме >_< -->
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('rl-theme') || 'system';
+            const isLight = savedTheme === 'system' ? window.matchMedia('(prefers-color-scheme: light)').matches : savedTheme === 'light';
+            if (isLight) document.documentElement.setAttribute('data-theme', 'light');
+            else document.documentElement.removeAttribute('data-theme');
+        } catch(e) {}
+    </script>
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="back-btn" id="globalBackBtn"><svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15"/></svg></div>
+        
+        <div class="settings-group">
+            <div class="toggle-block theme-group">
+                <div class="toggle-btn" data-theme-val="system"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="toggle-btn" data-theme-val="dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+                <div class="toggle-btn" data-theme-val="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+            </div>
+            <div class="toggle-block lang-group">
+                <div class="toggle-btn text-btn" data-lang-val="en">EN</div>
+                <div class="toggle-btn text-btn" data-lang-val="ru">RU</div>
+            </div>
+        </div>
+
+        <div class="breadcrumbs">
+            <span class="bc-text" id="bcFirst">Intec</span>
+            <svg class="bc-icon" id="bcSeparator" viewBox="0 0 18 18" style="display: none;"><path d="M 6 3 L 12 9 L 6 15"/></svg>
+            <span class="bc-text" data-lang="en">Chronograph</span>
+            <span class="bc-text" data-lang="ru">Хронограф</span>
+            <svg class="bc-icon" id="bcSeparator2" viewBox="0 0 18 18" style="display: none;"><path d="M 6 3 L 12 9 L 6 15"/></svg>
+            <span class="bc-text" id="bcStoryName" style="display: none;"></span>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-nav">
+                <!-- ТЕПЕРЬ ЭТО РАБОЧИЕ ССЫЛКИ -->
+                <a href="hub.html#rl" class="nav-btn"><svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg><span>Race Legends</span></a>
+                <a href="hub.html#ff" class="nav-btn"><svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg><span>Fractal Forge</span></a>
+                <a href="hub.html#rltv" class="nav-btn"><svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg><span>#RaceLegendsTV</span></a>
+                <a href="hub.html#patchnotes" class="nav-btn"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><span data-lang="en">Articles</span><span data-lang="ru">Статьи</span></a>
+                <div class="nav-btn active"><svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span data-lang="en">Chronograph</span><span data-lang="ru">Хронограф</span></div>
+            </div>
+        </aside>
+
+        <main class="main-area" id="mainArea">
+            
+            <div class="mobile-blocker">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                <div class="mb-text">
+                    <span data-lang="en">Chronograph requires more space and is only available on desktop screens.</span>
+                    <span data-lang="ru">Хронограф требует больше пространства и доступен только на экранах ПК.</span>
+                </div>
+            </div>
+
+            <div id="flash"></div>
+            
+            <div id="page1" class="chrono-page">
+                <input type="file" id="fileInput" accept=".json" style="display:none">
+                
+                <canvas id="mv-canvas"></canvas>
+                <canvas id="warp-canvas"></canvas>
+                
+                <div id="p1-circle">
+                    <svg viewBox="-130 -130 260 260">
+                        <defs>
+                            <radialGradient id="p1-glow" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="var(--c-text)" stop-opacity="0.6"/>
+                                <stop offset="100%" stop-color="var(--c-text)" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <circle r="120" fill="url(#p1-glow)"/>
+                        <circle r="75" fill="none" stroke="var(--c-text)" stroke-width="2.4" opacity="0">
+                            <animate attributeName="r" values="75;260" dur="2.8s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0.4;0" dur="2.8s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle r="75" fill="none" stroke="var(--c-sub)" stroke-width="1.5" opacity="0">
+                            <animate attributeName="r" values="75;260" dur="2.8s" begin="1.4s" repeatCount="indefinite"/>
+                            <animate attributeName="opacity" values="0.25;0" dur="2.8s" begin="1.4s" repeatCount="indefinite"/>
+                        </circle>
+                        <circle r="75" fill="var(--c-text)"/>
+                    </svg>
+                </div>
+                <div id="p1-status">
+                    <span data-lang="en">WAITING FOR COORDINATES (.JSON)</span>
+                    <span data-lang="ru">ОЖИДАНИЕ КООРДИНАТ (.JSON)</span>
+                </div>
+            </div>
+
+            <div id="page2" class="chrono-page">
+                <div class="canvas-container" id="canvasContainer">
+                    <svg class="canvas-svg" id="canvasSvg" viewBox="0 0 3600 984" preserveAspectRatio="xMinYMid slice"></svg>
+                </div>
+                
+                <div class="inspector-clip" id="inspectorClip">
+                    <aside class="inspector-panel" id="inspectorPanel">
+                        <div class="inspector-header">
+                            <div class="title" id="inspTitle">-</div>
+                            <div class="date"  id="inspDate">-</div>
+                        </div>
+                        <div class="inspector-body">
+                            <div class="inspector-text-content" id="inspDesc"></div>
+                        </div>
+                    </aside>
+                    <div class="inspector-grad-bottom" id="inspGradBottom"></div>
+                    <div class="inspector-grad-top"    id="inspGradTop"></div>
+                </div>
+                
+                <div class="v-slider-container">
+                    <div class="v-track" id="vTrack"><div class="v-thumb" id="vThumb"></div></div>
+                </div>
+                <div class="h-slider-container">
+                    <div class="h-track" id="hTrack"><div class="h-thumb" id="hThumb"></div></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const rootTheme = document.documentElement;
+        const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
+        const themeBtns = document.querySelectorAll('.theme-group .toggle-btn');
+        const langBtns = document.querySelectorAll('.lang-group .toggle-btn');
+        
+        const bcFirst = document.getElementById('bcFirst');
+        const bcSeparator = document.getElementById('bcSeparator');
+        const bcStoryName = document.getElementById('bcStoryName');
+        const bcSeparator2 = document.getElementById('bcSeparator2');
+        
+        const mainArea = document.getElementById('mainArea');
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const p1Circ = document.getElementById('p1-circle');
+        const p1Stat = document.getElementById('p1-status');
+        const flash = document.getElementById('flash');
+        const fileInput = document.getElementById('fileInput');
+        const globalBackBtn = document.getElementById('globalBackBtn');
+        
+        const mvCanvas = document.getElementById('mv-canvas');
+        const mvCtx = mvCanvas.getContext('2d');
+        const warpCanvas = document.getElementById('warp-canvas');
+        const warpCtx = warpCanvas.getContext('2d');
+        
+        const canvasContainer = document.getElementById('canvasContainer');
+        const canvasSvg = document.getElementById('canvasSvg');
+        const inspectorClip = document.getElementById('inspectorClip');
+        const inspectorPanel = document.getElementById('inspectorPanel');
+        const inspGradBottom = document.getElementById('inspGradBottom');
+        const inspGradTop = document.getElementById('inspGradTop');
+        const hTrack = document.getElementById('hTrack');
+        const hThumb = document.getElementById('hThumb');
+        const vTrack = document.getElementById('vTrack');
+        const vThumb = document.getElementById('vThumb');
+
+        let currentLang = 'en';
+        let currentBorderColor = '#1F1F1F';
+        let currentTextColor = '#E7E7E7';
+        
+        let isAnimating = false;
+        let animTimers = [];
+        let panelOffset = 0;
+        let nodeData = {};
+
+        // Константа BIG_BANG_DATA - хардкод для Точки Ноль. 
+        // Все остальные ноды будут парситься из JSON файла.
+        const BIG_BANG_DATA = {
+            title: 'Большой взрыв', date: '≈ 13,8 млрд л. н.',
+            desc: '<span class="highlight">Большой взрыв</span> - это момент, когда все вселенные начали быстро расширяться из одной крошечной и очень горячей точки. Данная точка является <span class="highlight">"Точкой Ноль"</span>, порождение всего сущего.<br><br>Она является общим центром, из которого во все стороны расходятся прямые линии. Каждая такая линия - это <span class="highlight">отдельная вселенная</span> со своими собственными правилами и законами природы. В данном UI вселенные представлены именно как линии, а не как пузыри, потому что так удобнее следить за ходом времени и понимать, что и когда в них происходило.<br><br>Если рассмотреть одну такую линию вблизи, можно увидеть, что она постоянно делится на новые ветки. Это происходит в <span class="highlight">"Точках расхождения"</span> - особых моментах, когда случается какое-то событие и история разделяется на несколько разных путей.<br><br>В этой системе не существует одной <span class="highlight">"самой правильной"</span> или главной линии времени. Все варианты развития событий одинаково важны и реальны.<br><br>Таким образом, всё мироздание похоже на гигантское дерево из бесконечного количества веток, которые растут из одного общего корня - <span class="highlight">Точки Ноль</span>. Любое изменение в прошлом просто создает новую ветку, которая идет дальше своим путем, не мешая остальным.'
+        };
+
+        const NUM_LINES = 16, CHOSEN_IDX = 0;
+        const ANGLES = Array.from({length: NUM_LINES}, (_, i) => (i / NUM_LINES) * Math.PI * 2);
+        const SCAN_ORDER = []; for (let i = 1; i < NUM_LINES; i++) SCAN_ORDER.push(i); SCAN_ORDER.push(CHOSEN_IDX);
+
+        let lineOpacities = new Array(NUM_LINES).fill(1);
+        let lineSelectionProgress = new Array(NUM_LINES).fill(0); 
+        let warpParticles = [], warpRAF = null, isWarpReverse = false, isStoppingWarp = false;
+        let sharedAudioCtx = null, audioUnlocked = false;
+
+        // Генератор звука системной ошибки. Чистый AudioContext, пищу осциллятором 
+        // (sawtooth) по заданным частотам. Весит 0 байт, не надо грузить никаких аудиофайлов 
+        // с сервера. Чистый кайф (⌐■_■)
+        function playTone(type, startFreq, endFreq, maxVol, duration, attackTime = 0.003) {
+            try {
+                if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (sharedAudioCtx.state === 'suspended') { sharedAudioCtx.resume().catch(()=>{}); if (sharedAudioCtx.state === 'suspended') return; }
+                const osc = sharedAudioCtx.createOscillator(), gainNode = sharedAudioCtx.createGain();
+                osc.type = type; const now = sharedAudioCtx.currentTime;
+                osc.frequency.setValueAtTime(startFreq, now); osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
+                gainNode.gain.setValueAtTime(0, now); gainNode.gain.linearRampToValueAtTime(maxVol, now + attackTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration); gainNode.gain.linearRampToValueAtTime(0, now + duration + 0.01);
+                osc.connect(gainNode); gainNode.connect(sharedAudioCtx.destination);
+                osc.start(now); osc.stop(now + duration + 0.02);
+            } catch (e) {}
+        }
+
+
+        function updateCanvasColors() {
+            currentBorderColor = getComputedStyle(rootTheme).getPropertyValue('--c-border').trim() || '#1F1F1F';
+            currentTextColor = getComputedStyle(rootTheme).getPropertyValue('--c-text').trim() || '#E7E7E7';
+        }
+
+        function applyTheme(themeVal) {
+            let isLight = themeVal === 'system' ? sysMedia.matches : themeVal === 'light';
+            if (isLight) rootTheme.setAttribute('data-theme', 'light'); else rootTheme.removeAttribute('data-theme');
+            try { localStorage.setItem('rl-theme', themeVal); } catch(e) {}
+            themeBtns.forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-theme-val') === themeVal));
+            updateCanvasColors(); setTimeout(drawMv, 50);
+        }
+
+        function updateP1Status() {
+            if (isAnimating || page2.classList.contains('visible')) return;
+            p1Stat.innerHTML = currentLang === 'en' ? 'WAITING FOR COORDINATES (.JSON)' : 'ОЖИДАНИЕ КООРДИНАТ (.JSON)';
+        }
+
+        function applyLang(langVal) {
+            currentLang = langVal;
+            rootTheme.setAttribute('lang', langVal);
+            try { localStorage.setItem('rl-lang', langVal); } catch(e) {}
+            langBtns.forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-lang-val') === langVal));
+            updateP1Status();
+        }
+
+        function updateBreadcrumbs(storyName) {
+            if (!storyName) {
+                bcFirst.textContent = 'Intec';
+                bcSeparator2.style.display = 'none';
+                bcStoryName.style.display = 'none';
+            } else {
+                bcFirst.textContent = storyName.length > 25 ? '...' : 'Intec';
+                bcSeparator2.style.display = 'block';
+                bcStoryName.style.display = 'block';
+                bcStoryName.textContent = storyName;
+            }
+        }
+
+        // Рисую лучи мультивселенной на первом экране. Обычный цикл с тригонометрией. 
+        // Высчитываю X и Y через синус и косинус. Ничего сложного, математика 5 класса =)
+        function drawMv() {
+            mvCtx.clearRect(0, 0, mvCanvas.width, mvCanvas.height);
+            const cx = mvCanvas.width / 2, cy = mvCanvas.height / 2;
+            const maxR = Math.hypot(cx, cy) * 1.1;
+            const zScale = mainArea.clientHeight / 984;
+
+            for (let i = 0; i < NUM_LINES; i++) {
+                if (lineOpacities[i] <= 0) continue;
+                const x2 = cx + Math.cos(ANGLES[i]) * maxR;
+                const y2 = cy + Math.sin(ANGLES[i]) * maxR;
+
+                mvCtx.lineWidth = Math.max(1, 1.5 * zScale);
+                
+                mvCtx.globalAlpha = lineOpacities[i];
+                mvCtx.strokeStyle = currentBorderColor;
+                mvCtx.beginPath(); mvCtx.moveTo(cx, cy); mvCtx.lineTo(x2, y2); mvCtx.stroke();
+
+                if (lineSelectionProgress[i] > 0) {
+                    mvCtx.globalAlpha = lineOpacities[i] * lineSelectionProgress[i];
+                    mvCtx.strokeStyle = currentTextColor;
+                    mvCtx.beginPath(); mvCtx.moveTo(cx, cy); mvCtx.lineTo(x2, y2); mvCtx.stroke();
+                }
+            }
+            mvCtx.globalAlpha = 1;
+        }
+
+        // Варп-эффект! Создаю массив частиц.
+        function spawnWarpParticles() {
+            warpParticles = [];
+            const cx = warpCanvas.width / 2, cy = warpCanvas.height / 2;
+            const radius = Math.max(cx, cy);
+            const zScale = mainArea.clientHeight / 984;
+            
+            for (let i = 0; i < 200; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                let dist, speed;
+                if (!isWarpReverse) {
+                    dist = (20 * zScale) + Math.random() * (warpCanvas.width / 2);
+                    speed = (1 + Math.random() * 4) * zScale;
+                } else {
+                    dist = radius + Math.random() * (300 * zScale);
+                    speed = (4 + Math.random() * 6) * zScale;
+                }
+                warpParticles.push({ x: cx + Math.cos(angle) * dist, y: cy + Math.sin(angle) * dist, angle: angle, speed: speed, life: 0, maxLife: isWarpReverse ? (40 + Math.random() * 30) : (20 + Math.random() * 20) });
+            }
+        }
+
+        // В requestAnimationFrame двигаю частицы от центра (или к центру, если это отмена). 
+        // Чтобы они не жрали память, удаляю мертвые частицы из массива и спавню новые. 
+        // Обычный канвас работает в разы быстрее, чем гонять тысячи скрытых DOM-элементов.
+        function animateWarp() {
+            warpCtx.clearRect(0, 0, warpCanvas.width, warpCanvas.height);
+            const cx = warpCanvas.width / 2, cy = warpCanvas.height / 2;
+            const zScale = mainArea.clientHeight / 984;
+            
+            warpParticles.forEach(p => {
+                p.life++;
+                if (!isWarpReverse) { p.speed *= 1.15; p.x += Math.cos(p.angle) * p.speed; p.y += Math.sin(p.angle) * p.speed; } 
+                else { p.speed *= 0.97; p.x -= Math.cos(p.angle) * p.speed; p.y -= Math.sin(p.angle) * p.speed; }
+
+                const len = p.speed * (isWarpReverse ? 1.2 : 2.5);
+                const tailX = p.x + (isWarpReverse ? 1 : -1) * Math.cos(p.angle) * len;
+                const tailY = p.y + (isWarpReverse ? 1 : -1) * Math.sin(p.angle) * len;
+                const alpha = Math.max(0, 1 - (p.life / p.maxLife));
+
+                warpCtx.globalAlpha = alpha; warpCtx.strokeStyle = currentTextColor; warpCtx.lineWidth = Math.max(1, 1.5 * zScale);
+                warpCtx.beginPath(); warpCtx.moveTo(tailX, tailY); warpCtx.lineTo(p.x, p.y); warpCtx.stroke();
+            });
+
+            warpParticles = warpParticles.filter(p => {
+                if (p.life >= p.maxLife) return false;
+                if (!isWarpReverse) return p.x > -500 && p.x < warpCanvas.width + 500 && p.y > -500 && p.y < warpCanvas.height + 500;
+                else return Math.hypot(p.x - cx, p.y - cy) > (30 * zScale); 
+            });
+
+            if (!isStoppingWarp) {
+                const dead = 200 - warpParticles.length;
+                const radius = Math.max(cx, cy);
+                for (let i = 0; i < dead; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    let dist, speed;
+                    if (!isWarpReverse) { dist = (50 * zScale) + Math.random() * (150 * zScale); speed = (1 + Math.random() * 3) * zScale; } 
+                    else { dist = radius + Math.random() * (300 * zScale); speed = (4 + Math.random() * 6) * zScale; }
+                    warpParticles.push({ x: cx + Math.cos(angle) * dist, y: cy + Math.sin(angle) * dist, angle: angle, speed: speed, life: 0, maxLife: isWarpReverse ? (40 + Math.random() * 30) : (20 + Math.random() * 20) });
+                }
+            }
+            warpRAF = requestAnimationFrame(animateWarp);
+        }
+
+        // Тут живет монстр - логика переходов. Вместо тяжелых библиотек для анимаций (типа GSAP), 
+        // я написал свою функцию later(fn, ms). Это просто обертка над setTimeout, 
+        // которая складывает таймеры в массив, чтобы их можно было убить при реверсе.
+        function later(fn, ms) { const t = setTimeout(fn, ms); animTimers.push(t); return t; }
+        
+        function setStatus(textEn, textRu) {
+            p1Stat.style.opacity = '0';
+            setTimeout(() => { p1Stat.innerHTML = currentLang === 'en' ? textEn : textRu; p1Stat.style.opacity = '1'; }, 250);
+        }
+
+        function validateChronographData(data) {
+            if (!data || typeof data !== 'object') return false;
+            if (!data.timeline || typeof data.timeline !== 'object') return false;
+            return true;
+        }
+
+        // Парсер JSON файла через Drag & Drop. Проверяю структуру. 
+        // Если кто-то подсунет кривой файл - триггерю showErrorState() с красным экраном, 
+        // тряской и звуком писка.
+        function loadFile(file) {
+            const r = new FileReader();
+            r.onload = ev => { 
+                try { 
+                    const json = JSON.parse(ev.target.result); 
+                    if (!validateChronographData(json)) throw new Error('Invalid JSON structure');
+                    startTransition(json); 
+                } catch (err) { 
+                    showErrorState(); 
+                } 
+            };
+            r.readAsText(file);
+        }
+
+        function showErrorState() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            page1.classList.add('animating');
+            page1.classList.add('error');
+
+            currentTextColor = '#E53935';
+            currentBorderColor = '#B71C1C';
+            drawMv();
+
+            playTone('sawtooth', 120, 80, 0.3, 0.2, 0.02);
+            setTimeout(() => playTone('sawtooth', 80, 50, 0.3, 0.3, 0.02), 250);
+
+            setStatus('SYSTEM ERROR: INVALID COORDINATES', 'ОШИБКА СИСТЕМЫ: НЕВЕРНЫЕ КООРДИНАТЫ');
+
+            page1.style.animation = 'shake 0.4s ease-in-out';
+            setTimeout(() => { page1.style.animation = 'none'; }, 400);
+
+            setTimeout(() => {
+                page1.classList.remove('error');
+                updateCanvasColors();
+                drawMv();
+
+                p1Stat.style.opacity = '0';
+                setTimeout(() => {
+                    isAnimating = false;
+                    page1.classList.remove('animating');
+                    updateP1Status(); 
+                    p1Stat.style.opacity = '1';
+                    fileInput.value = '';
+                }, 250);
+            }, 3000);
+        }
+
+        // Переход делается поэтапно: скан линий, вспышка, зум канваса 
+        // (тут как раз помогает will-change) и рендер самого SVG.
+        function startTransition(json) {
+            isAnimating = true; page1.classList.add('animating');
+            setStatus('ANALYZING TIMELINES...', 'АНАЛИЗ ЛИНИЙ ВРЕМЕНИ...');
+
+            const STEP_MS = 125;
+            SCAN_ORDER.forEach((lineIdx, i) => {
+                const isChosen = (lineIdx === CHOSEN_IDX);
+                later(() => { lineSelectionProgress[lineIdx] = 0.5; drawMv(); }, i * STEP_MS);
+                later(() => { lineSelectionProgress[lineIdx] = isChosen ? 1 : 0; drawMv(); }, i * STEP_MS + 80);
+            });
+
+            const SCAN_END = SCAN_ORDER.length * STEP_MS + 100;
+            later(() => {
+                setStatus('TIMELINE SYNCHRONIZED', 'ЛИНИЯ ВРЕМЕНИ СИНХРОНИЗИРОВАНА');
+                for (let s = 1; s <= 12; s++) {
+                    later(() => {
+                        for (let i = 0; i < NUM_LINES; i++) { if (i !== CHOSEN_IDX) lineOpacities[i] = Math.max(0, lineOpacities[i] - 1 / 12); }
+                        drawMv();
+                    }, s * 80);
+                }
+            }, SCAN_END);
+
+            const PHASE2_END = SCAN_END + 1100;
+            later(() => { setStatus('INITIATING JUMP...', 'ИНИЦИАЦИЯ ПЕРЕХОДА...'); }, PHASE2_END);
+
+            later(() => {
+                isWarpReverse = false; isStoppingWarp = false;
+                warpCanvas.style.transition = 'opacity 0.2s ease'; warpCanvas.style.opacity = '1';
+                spawnWarpParticles(); animateWarp();
+                const jumpTiming = 'transform 1.2s cubic-bezier(0.7, 0, 0.9, 1)';
+                const jumpTransform = 'scale(35) translateX(-8px)';
+                mvCanvas.style.transition = jumpTiming; mvCanvas.style.transform = jumpTransform;
+                p1Circ.style.transition = jumpTiming; p1Circ.style.transform = jumpTransform;
+                p1Stat.style.opacity = '0'; page1.style.animation = 'shake 0.07s linear infinite';
+            }, PHASE2_END + 400);
+
+            later(() => { isStoppingWarp = true; flash.style.opacity = '1'; }, PHASE2_END + 1100);
+
+            later(() => {
+                renderTimeline(json);
+                page2.classList.add('visible');
+                cancelAnimationFrame(warpRAF); warpCtx.clearRect(0, 0, warpCanvas.width, warpCanvas.height); warpCanvas.style.opacity = '0';
+                mvCanvas.style.transition = 'none'; mvCanvas.style.transform = 'scale(1)';
+                p1Circ.style.transition = 'none'; p1Circ.style.transform = 'scale(1)';
+            }, PHASE2_END + 1200);
+
+            later(() => {
+                flash.style.opacity = '0'; page2.classList.add('fade-in');
+                page1.style.animation = 'none'; page1.style.display = 'none';
+            }, PHASE2_END + 1500);
+
+            later(() => { updateHSlider(); refreshPanel(); isAnimating = false; selectNode('big_bang'); }, PHASE2_END + 2100);
+        }
+
+        function reverseTransition() {
+            isAnimating = true; flash.style.opacity = '1';
+
+            later(() => {
+                updateBreadcrumbs(null);
+                page2.classList.remove('fade-in'); page1.style.cssText = ''; page1.style.display = '';
+                
+                lineSelectionProgress = new Array(NUM_LINES).fill(0); lineSelectionProgress[CHOSEN_IDX] = 1;
+                lineOpacities = new Array(NUM_LINES).fill(0); lineOpacities[CHOSEN_IDX] = 1; 
+
+                const jumpTransform = 'scale(35) translateX(-8px)';
+                mvCanvas.style.transition = 'none'; mvCanvas.style.transform = jumpTransform;
+                p1Circ.style.transition = 'none'; p1Circ.style.transform = jumpTransform; drawMv();
+                updateP1Status(); p1Stat.style.opacity = '0'; 
+            }, 300);
+
+            later(() => {
+                flash.style.opacity = '0'; page2.classList.remove('visible'); fileInput.value = '';
+                isWarpReverse = true; isStoppingWarp = false;
+                warpCanvas.style.transition = 'opacity 0.2s ease'; warpCanvas.style.opacity = '1';
+                spawnWarpParticles(); animateWarp();
+
+                const backTiming = 'transform 1.1s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                const backTransform = 'scale(1) translateX(0)';
+                mvCanvas.style.transition = backTiming; mvCanvas.style.transform = backTransform;
+                p1Circ.style.transition = backTiming; p1Circ.style.transform = backTransform;
+                p1Stat.style.opacity = '1'; page1.style.animation = 'shake 0.07s linear infinite';
+            }, 450);
+
+            later(() => { isStoppingWarp = true; warpCanvas.style.transition = 'opacity 0.4s ease-out'; warpCanvas.style.opacity = '0'; }, 1150);
+            later(() => { page1.style.animation = 'none'; cancelAnimationFrame(warpRAF); warpCtx.clearRect(0, 0, warpCanvas.width, warpCanvas.height); }, 1600);
+
+            const CHOSEN_FADE_START = 1700;
+            for (let s = 0; s <= 24; s++) { later(() => { lineSelectionProgress[CHOSEN_IDX] = 1 - (s / 24); drawMv(); }, CHOSEN_FADE_START + s * 40); }
+
+            const LINE_RESTORE_START = 1800;
+            for (let i = 0; i < NUM_LINES; i++) {
+                if (i === CHOSEN_IDX) continue; 
+                later((() => { const idx = i; return () => { for (let s = 1; s <= 8; s++) { later(() => { lineOpacities[idx] = Math.min(1, lineOpacities[idx] + 1 / 8); drawMv(); }, s * 30); } }; })(), LINE_RESTORE_START + i * 55);
+            }
+
+            later(() => {
+                p1Circ.style.transition = ''; p1Circ.style.transform = '';
+                mvCanvas.style.transition = ''; mvCanvas.style.transform = '';
+                page1.style.transition = ''; page1.style.transform = ''; page1.style.animation = '';
+                page1.classList.remove('animating'); panelOffset = 0; isAnimating = false;
+            }, LINE_RESTORE_START + NUM_LINES * 55 + 350);
+        }
+
+        const MAIN_Y = 492, NODE_R = 18, RING_R = 24;
+        
+        function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+        // Генерация SVG таймлайна. Я не создаю элементы через document.createElement 
+        // (это жрет ресурсы при таком количестве нод), я собираю огромную HTML-строку 
+        // и вкидываю ее в innerHTML один раз! Максимальная производительность ╰(*°▽°*)╯
+        // Рассчитываю ширину viewBox динамически на основе самой далекой ноды.
+        function renderTimeline(json) {
+            const tl = json.timeline;
+            updateBreadcrumbs(tl.name || 'Без названия');
+
+            const mainEvents = (tl.tracks || []).flatMap(t => t.events || []);
+            const branchEvents = (tl.branches || []).flatMap(b => b.events || []);
+            const allEvents = [...mainEvents, ...branchEvents];
+
+            let maxX = 1440; allEvents.forEach(e => { if (e.x) maxX = Math.max(maxX, e.x); });
+            
+            const SVG_WIDTH = maxX + 1800; 
+            
+            const splitX = {}; mainEvents.forEach(e => { if (e.type === 'split') splitX[e.id] = e.x; });
+
+            nodeData = { 'big_bang': BIG_BANG_DATA };
+            allEvents.forEach(e => { nodeData[e.id] = { title: e.title || '-', date: e.date || '-', desc: e.description || '' }; });
+
+            let h = `<defs>
+                <radialGradient id="sun-glow">
+                    <stop offset="0%" stop-color="var(--c-text)" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="var(--c-text)" stop-opacity="0"/>
+                </radialGradient>
+            </defs>`;
+
+            h += `<g id="bb-group" class="node" style="cursor:pointer" onclick="selectNode('big_bang')">
+                <circle cx="0" cy="${MAIN_Y}" r="150" fill="url(#sun-glow)"/>
+                <circle cx="0" cy="${MAIN_Y}" r="90" fill="none" stroke="var(--c-text)" stroke-width="2.4" opacity="0">
+                    <animate attributeName="r" values="90;330" dur="2.8s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.4;0" dur="2.8s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="0" cy="${MAIN_Y}" r="90" fill="none" stroke="var(--c-sub)" stroke-width="1.5" opacity="0">
+                    <animate attributeName="r" values="90;330" dur="2.8s" begin="1.4s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.25;0" dur="2.8s" begin="1.4s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="0" cy="${MAIN_Y}" r="90" fill="var(--c-text)"/>
+            </g>`;
+
+            h += `<line x1="0" y1="${MAIN_Y}" x2="${SVG_WIDTH}" y2="${MAIN_Y}" class="timeline-line"/>`;
+
+            const branches = (tl.branches || []).map(b => ({ id: b.id, nx: splitX[b.spawned_by], by: MAIN_Y + b.depth, depth: b.depth })).filter(b => b.nx !== undefined);
+            branches.forEach(b => {
+                h += `<line x1="${b.nx}" y1="${b.by}" x2="${SVG_WIDTH}" y2="${b.by}" stroke="var(--c-bg)" stroke-width="9" fill="none"/>`;
+                h += `<polyline points="${b.nx},${MAIN_Y+NODE_R} ${b.nx},${b.by} ${SVG_WIDTH},${b.by}" stroke="var(--c-text)" stroke-width="3" fill="none" />`;
+                h += `<text x="${b.nx+15}" y="${b.by-15}" class="svg-branch-label">${escHtml((tl.branches||[]).find(br=>br.id===b.id)?.label||'')}</text>`;});
+
+            function nodeHtml(e, y) {
+                const isSplit = e.type === 'split', isCulmination = e.type === 'culmination';
+                const SQ = NODE_R, SQ_R = NODE_R * 0.45, SQ2 = RING_R, SQ2_R = RING_R * 0.45;
+                let wave, ring, shape;
+                if (isSplit) {
+                    wave = `<polygon points="0,-${NODE_R} ${NODE_R},0 0,${NODE_R} -${NODE_R},0" class="node-wave-diamond"/>`;
+                    ring = `<polygon points="0,-${RING_R} ${RING_R},0 0,${RING_R} -${RING_R},0" class="node-hover-ring"/>`;
+                    shape = `<polygon points="0,-${NODE_R} ${NODE_R},0 0,${NODE_R} -${NODE_R},0" class="node-shape" id="node-${e.id}"/>`;
+                } else if (isCulmination) {
+                    wave = `<rect x="-${SQ}" y="-${SQ}" width="${SQ*2}" height="${SQ*2}" rx="${SQ_R}" ry="${SQ_R}" class="node-wave-square"/>`;
+                    ring = `<rect x="-${SQ2}" y="-${SQ2}" width="${SQ2*2}" height="${SQ2*2}" rx="${SQ2_R}" ry="${SQ2_R}" class="node-hover-ring"/>`;
+                    shape = `<rect x="-${SQ}" y="-${SQ}" width="${SQ*2}" height="${SQ*2}" rx="${SQ_R}" ry="${SQ_R}" class="node-shape" id="node-${e.id}"/>`;
+                } else {
+                    wave = `<circle cx="0" cy="0" r="${NODE_R}" class="node-wave"/>`;
+                    ring = `<circle cx="0" cy="0" r="${RING_R}" class="node-hover-ring"/>`;
+                    shape = `<circle cx="0" cy="0" r="${NODE_R}" class="node-shape" id="node-${e.id}"/>`;
+                }
+                
+                return `<g class="node" transform="translate(${e.x},${y})" onclick="selectNode('${e.id}')">
+                    ${wave}${ring}${shape}
+                    <text y="-62" class="svg-text">${escHtml(e.title)}</text>
+                    <text y="-36" class="svg-date">${escHtml(e.date)}</text>
+                </g>`;
+            }
+
+            mainEvents.forEach(e => { h += nodeHtml(e, MAIN_Y); });
+            (tl.branches||[]).forEach(b => {
+                const by = MAIN_Y + b.depth;
+                (b.events||[]).forEach(e => { h += nodeHtml(e, by); });
+            });
+
+            canvasSvg.setAttribute('viewBox', `0 0 ${SVG_WIDTH} 984`);
+            canvasSvg.style.minWidth = SVG_WIDTH + 'px';
+            canvasSvg.innerHTML = h;
+            
+        }
+
+        window.selectNode = function(id) {
+            document.querySelectorAll('.node').forEach(el => el.classList.remove('active'));
+            const el = document.getElementById(id === 'big_bang' ? 'bb-group' : 'node-' + id);
+            if (el) el.closest('.node').classList.add('active');
+            const d = nodeData[id] || {};
+            document.getElementById('inspTitle').textContent = d.title || '-';
+            document.getElementById('inspDate').textContent = d.date || '-';
+            document.getElementById('inspDesc').innerHTML = d.desc || '';
+            panelOffset = 0; setTimeout(refreshPanel, 0);
+        };
+
+        // Моя любимая кастомная система скролла с инерцией для тачскринов (прямо как на сайте). 
+        // Тут я сделал два ползунка - горизонтальный для канваса и вертикальный для инспектора.
+        function getPanelMaxOffset() { return Math.max(0, inspectorPanel.scrollHeight - inspectorClip.clientHeight); }
+        function setPanelOffset(o) {
+            const max = getPanelMaxOffset(); panelOffset = Math.max(0, Math.min(o, max));
+            inspectorPanel.style.transform = `translateY(-${panelOffset}px)`;
+            inspGradBottom.style.opacity = (panelOffset < max) && (max > 0) ? '1' : '0';
+            inspGradTop.style.opacity = panelOffset > 0 ? '1' : '0'; updateVSlider();
+        }
+        function refreshPanel() { setPanelOffset(panelOffset); }
+
+        function updateHSlider() {
+            const sW = canvasContainer.scrollWidth, cW = canvasContainer.clientWidth, tW = hTrack.clientWidth;
+            if (sW <= cW) { hThumb.style.width='100%'; hThumb.style.left='0px'; return; }
+            const tw = Math.max((cW/sW)*tW, 40); hThumb.style.width = `${tw}px`;
+            hThumb.style.left = `${(canvasContainer.scrollLeft/(sW-cW))*(tW-tw)}px`;
+        }
+        function updateVSlider() {
+            const pH = inspectorPanel.scrollHeight, cH = inspectorClip.clientHeight, tH = vTrack.clientHeight, max = getPanelMaxOffset();
+            if (max <= 0) { vThumb.style.height='100%'; vThumb.style.top='0px'; return; }
+            const th = Math.max((cH/pH)*tH, 40); vThumb.style.height = `${th}px`;
+            vThumb.style.top = `${(panelOffset/max)*(tH-th)}px`;
+        }
+
+        canvasContainer.addEventListener('scroll', updateHSlider);
+        canvasContainer.addEventListener('wheel', e => { e.preventDefault(); canvasContainer.scrollLeft += e.deltaY; }, {passive:false});
+        inspectorClip.addEventListener('wheel', e => { e.preventDefault(); e.stopPropagation(); setPanelOffset(panelOffset + e.deltaY); }, {passive:false});
+
+        let activeDrag = null, startX, startY, startScrollLeft, startPanelOffset;
+        let inspTouchVelocity = 0, inspLastTouchY = 0, inspLastTouchTime = 0, inspInertiaFrame;
+
+        canvasContainer.addEventListener('pointerdown', e => { 
+            if (isAnimating || e.target.closest('.node')) return; 
+            activeDrag = 'canvas'; startX = e.pageX; startScrollLeft = canvasContainer.scrollLeft; 
+            canvasContainer.setPointerCapture(e.pointerId);
+        });
+        hThumb.addEventListener('pointerdown', e => { 
+            if (isAnimating) return; activeDrag = 'hThumb'; startX = e.pageX; startScrollLeft = canvasContainer.scrollLeft; 
+            e.stopPropagation(); hThumb.setPointerCapture(e.pointerId);
+        });
+        vThumb.addEventListener('pointerdown', e => { 
+            if (isAnimating) return; activeDrag = 'vThumb'; startY = e.pageY; startPanelOffset = panelOffset; 
+            e.stopPropagation(); vThumb.setPointerCapture(e.pointerId);
+        });
+
+        inspectorClip.addEventListener('pointerdown', e => { 
+            if (isAnimating) return; 
+            if (e.pointerType !== 'mouse') { 
+                activeDrag = 'inspector'; startY = e.pageY; startPanelOffset = panelOffset; 
+                cancelAnimationFrame(inspInertiaFrame); inspLastTouchY = e.pageY; inspLastTouchTime = Date.now();
+                inspectorClip.setPointerCapture(e.pointerId); e.stopPropagation();
+            }
+        });
+
+        window.addEventListener('pointermove', e => {
+            if (!activeDrag) return;
+            if (activeDrag === 'canvas') { e.preventDefault(); canvasContainer.scrollLeft = startScrollLeft - (e.pageX - startX); }
+            else if (activeDrag === 'hThumb') { e.preventDefault(); const mT = hTrack.clientWidth - hThumb.offsetWidth, mS = canvasContainer.scrollWidth - canvasContainer.clientWidth; canvasContainer.scrollLeft = startScrollLeft + ((e.pageX - startX) / mT) * mS; }
+            else if (activeDrag === 'vThumb') { e.preventDefault(); setPanelOffset(startPanelOffset + ((e.pageY - startY) / (vTrack.clientHeight - vThumb.offsetHeight)) * getPanelMaxOffset()); }
+            else if (activeDrag === 'inspector') { 
+                e.preventDefault(); const now = Date.now();
+                inspTouchVelocity = (e.pageY - inspLastTouchY) / (now - inspLastTouchTime || 1);
+                inspLastTouchY = e.pageY; inspLastTouchTime = now;
+                setPanelOffset(startPanelOffset + (startY - e.pageY)); 
+            }
+        });
+
+        window.addEventListener('pointerup', () => { 
+            if (activeDrag === 'inspector') {
+                let v = inspTouchVelocity * 15; 
+                const step = () => {
+                    if (Math.abs(v) < 0.5) return; 
+                    let prevOffset = panelOffset; setPanelOffset(panelOffset - v);
+                    if (panelOffset === prevOffset) { v = 0; return; }
+                    v *= 0.92; inspInertiaFrame = requestAnimationFrame(step);
+                };
+                step();
+            }
+            activeDrag = null; 
+        });
+        window.addEventListener('pointercancel', () => activeDrag = null);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
+            sysMedia.addEventListener('change', () => { if ((localStorage.getItem('rl-theme') || 'system') === 'system') applyTheme('system'); });
+            langBtns.forEach(btn => btn.addEventListener('click', () => applyLang(btn.getAttribute('data-lang-val'))));
+            
+            p1Circ.addEventListener('click', () => { if (!isAnimating) fileInput.click(); });
+            fileInput.addEventListener('change', e => { const f = e.target.files[0]; if (f) loadFile(f); });
+            
+            page1.addEventListener('dragover', e => { 
+                e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; 
+                if (!isAnimating) p1Circ.style.transform = 'scale(1.08)';
+            });
+            page1.addEventListener('dragleave', e => { 
+                e.preventDefault(); 
+                if (!isAnimating) p1Circ.style.transform = ''; 
+            });
+            page1.addEventListener('drop', e => { 
+                e.preventDefault(); 
+                if (!isAnimating) p1Circ.style.transform = '';
+                if (isAnimating) return;
+                const f = e.dataTransfer.files[0]; 
+                if (f) {
+                    if (f.name.endsWith('.json')) {
+                        loadFile(f); 
+                    } else {
+                        showErrorState(); 
+                    }
+                } 
+            });
+
+            // ИСПРАВЛЕНО: Теперь кнопка "Назад" в Хронографе возвращает в хаб, если мы на первом экране
+            globalBackBtn.addEventListener('click', () => { 
+                if (isAnimating) return;
+                if (page2.classList.contains('visible')) {
+                    reverseTransition(); 
+                } else {
+                    window.location.href = '/';
+                }
+            });
+
+            const unlockAudio = () => {
+                if (audioUnlocked) return;
+                if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume().then(()=>audioUnlocked=true).catch(()=>{}); else audioUnlocked=true;
+                if (audioUnlocked) ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.removeEventListener(evt, unlockAudio));
+            };
+            ['click', 'pointerdown', 'touchstart', 'keydown'].forEach(evt => document.addEventListener(evt, unlockAudio, { passive: true }));
+            
+            applyTheme(localStorage.getItem('rl-theme') || 'system');
+            applyLang(localStorage.getItem('rl-lang') || 'en');
+            updateBreadcrumbs(null);
+            
+            mvCanvas.width = mainArea.clientWidth; mvCanvas.height = mainArea.clientHeight;
+            warpCanvas.width = mainArea.clientWidth; warpCanvas.height = mainArea.clientHeight;
+            drawMv();
+        });
+
+        // ResizeObserver. Обновляю канвасы и пересчитываю ползунки, если размер окна 
+        // изменился. Главное не забыть перерисовать сцену через drawMv().
+        const resizeObserver = new ResizeObserver(() => {
+            const rect = mainArea.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) return;
+            mvCanvas.width = rect.width; mvCanvas.height = rect.height;
+            warpCanvas.width = rect.width; warpCanvas.height = rect.height;
+            drawMv();
+            if (page2.classList.contains('visible')) { 
+                updateHSlider(); refreshPanel(); 
+            }
+        });
+        resizeObserver.observe(mainArea);
+    </script>
+</body>
+</html>

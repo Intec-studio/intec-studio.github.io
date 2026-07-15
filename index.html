@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta name="google-site-verification" content="zHxlD_Y6Cj2VHCGGGrb6NyQDJspCPnvDUe4E4MUsRwk" />
+    <meta charset="UTF-8">
+    <!-- Жестко запрещаю масштабирование экрана пользователем. Это типа приложение, 
+         так что никаких случайных зумов при двойном тапе >_< -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Intec</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ============================================================
+           ПЕРЕМЕННЫЕ ЦВЕТОВЫХ ТЕМ (ИНВЕРСИЯ)
+        ============================================================ */
+        /* Храню цвета в CSS-переменных. Просто меняю атрибут data-theme на html, 
+           и браузер сам все перекрашивает. Обрати внимание на --c-canvas - тут я 
+           храню RGB значения без скобок, чтобы потом в JS удобно вставлять их 
+           прямо в rgba() ╰(*°▽°*)╯ */
+        :root {
+            --c-bg: #000000;
+            --c-bg-rgb: 0, 0, 0;
+            --c-panel: #111111;
+            --c-border: #1F1F1F;
+            --c-text: #E7E7E7;
+            --c-canvas: 180, 190, 205; /* Цвет точек в темной теме */
+        }
+
+        html[data-theme="light"] {
+            --c-bg: #FFFFFF;
+            --c-bg-rgb: 255, 255, 255;
+            --c-panel: #EEEEEE;
+            --c-border: #E0E0E0;
+            --c-text: #181818;
+            --c-canvas: 75, 65, 50; /* Строгая инверсия 180, 190, 205 */
+        }
+
+        /* МЕДЛЕННАЯ АНИМАЦИЯ (для смены тем) */
+        body, .vignette, .gate-btn {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* БЫСТРАЯ АНИМАЦИЯ (для ховеров) */
+        .toggle-btn, .gate-btn {
+            transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+        }
+        svg { transition: stroke 0.1s ease, fill 0.1s ease; }
+
+        /* ============================================================
+           СБРОС СТИЛЕЙ И БАЗА
+        ============================================================ */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        *:focus {
+            outline: none !important;
+        }
+        
+        body, html {
+            width: 100vw; height: 100vh; height: 100dvh;
+            background: var(--c-bg); font-family: 'Noto Sans', sans-serif;
+            font-weight: 500;
+            overflow: hidden; user-select: none;
+            display: flex; justify-content: center; align-items: center;
+            /* ЖЕСТКО блокирую системные жесты браузера (типа свайпа для истории). 
+               Иначе мультитач на канвасе будет дергать саму страницу X_X */
+            touch-action: none; 
+        }
+
+        /* Канвас на заднем фоне */
+        #intro-canvas {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Виньетка для глубины. Делает края темнее, чтобы интерфейс в центре 
+           читался лучше. Опять же, чисто CSS, никаких картинок! */
+        .vignette {
+            position: absolute; inset: 0; z-index: 2; pointer-events: none;
+            background: radial-gradient(circle at center, transparent 30%, rgba(var(--c-bg-rgb), 0.9) 100%);
+        }
+
+        /* ============================================================
+           УГЛОВОЙ БЛОК НАСТРОЕК
+        ============================================================ */
+        .corner-settings { 
+            position: absolute; top: 18px; left: 18px; z-index: 10; 
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+        
+        .toggle-block { display: flex; gap: 3px; }
+
+        .toggle-btn {
+            width: 36px; height: 36px; background: var(--c-border); border: 2px solid transparent;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; color: var(--c-text);
+        }
+        .toggle-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.5px; stroke-linecap: round; stroke-linejoin: round; }
+        
+        .toggle-block > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+        .toggle-block > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+        
+        @media (hover: hover) { .toggle-btn:hover { border-color: var(--c-text); } }
+        .toggle-btn.active, .toggle-btn:active { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+
+        /* ============================================================
+           ЦЕНТРАЛЬНЫЙ БЛОК UI
+        ============================================================ */
+        .intro-container {
+            position: relative; z-index: 5;
+            display: flex; flex-direction: column; align-items: center; gap: 36px;
+            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.8s ease;
+        }
+
+        /* Глитч-логотип. Это просто магия CSS. Беру текст, дублирую его в ::before 
+           и ::after через атрибут data-text. А потом анимирую свойство clip-path, 
+           чтобы показывать только узкие полоски этих дубликатов, смещая их в стороны. 
+           Никаких тяжелых гифок или JS! (⌐■_■) */
+        .glitch-logo {
+            font-size: clamp(4rem, 10vw, 12rem); font-weight: 900;
+            text-transform: uppercase; letter-spacing: 0.25em;
+            position: relative; color: var(--c-text); white-space: nowrap; 
+            text-shadow: 0 0 20px rgba(var(--c-bg-rgb), 0.5);
+            margin-left: 0.25em; line-height: 1;
+        }
+        
+        .glitch-logo::before, .glitch-logo::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; background: transparent; color: var(--c-text); 
+            overflow: hidden; white-space: nowrap; 
+        }
+        
+        .glitch-logo::before { text-shadow: -3px 0 rgba(128, 128, 128, 0.5); animation: glitch-anim-1 4s infinite linear alternate-reverse; }
+        .glitch-logo::after { text-shadow: 3px 0 rgba(128, 128, 128, 0.3); animation: glitch-anim-2 5s infinite linear alternate-reverse; }
+
+        @keyframes glitch-anim-1 {
+            0%, 90% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+            92% { clip-path: inset(10% 0 60% 0); transform: translate(-4px, 2px); }
+            94% { clip-path: inset(40% 0 20% 0); transform: translate(4px, -2px); }
+            96% { clip-path: inset(80% 0 5% 0); transform: translate(-4px, 2px); }
+            98%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+        }
+        @keyframes glitch-anim-2 {
+            0%, 85% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+            88% { clip-path: inset(20% 0 50% 0); transform: translate(4px, 2px); }
+            92% { clip-path: inset(60% 0 10% 0); transform: translate(-4px, -2px); }
+            95% { clip-path: inset(15% 0 70% 0); transform: translate(4px, 2px); }
+            98%, 100% { clip-path: inset(100% 0 0 0); transform: translate(0); }
+        }
+
+        /* ============================================================
+           ВХОДНЫЕ КНОПКИ (EN / RU)
+        ============================================================ */
+        .lang-gate { display: flex; width: 261px; height: 36px; gap: 3px; }
+
+        .gate-btn {
+            flex: 1; height: 100%; background: var(--c-border); border: 2px solid transparent;
+            color: var(--c-text); font-size: 15px; font-family: 'Noto Sans', sans-serif;
+            font-weight: 500; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; outline: none; letter-spacing: 0.05em;
+        }
+
+        .lang-gate > *:first-child { border-top-left-radius: 9px; border-bottom-left-radius: 9px; }
+        .lang-gate > *:last-child { border-top-right-radius: 9px; border-bottom-right-radius: 9px; }
+
+        @media (hover: hover) { .gate-btn:hover { border-color: var(--c-text); } }
+        .gate-btn:active, .gate-btn.entering { background: var(--c-text); color: var(--c-panel); border-color: var(--c-text); }
+
+        /* Состояние перехода (при клике). Тут все начинает уезжать и растворяться. */
+        body.transitioning .intro-container { transform: scale(1.1); opacity: 0; }
+        body.transitioning #intro-canvas { opacity: 0; transform: scale(1.05); transition: all 1.2s cubic-bezier(0.8, 0, 0.2, 1); }
+        body.transitioning .corner-settings { transform: scale(0.9) translateY(-5px); opacity: 0; } 
+
+        /* Мобильный адаптив */
+        @media (max-width: 900px) {
+            .corner-settings { top: 9px; left: 9px; }
+            .toggle-block { gap: 1.5px; } .toggle-btn { width: 18px; height: 18px; border-width: 1px; }
+            .toggle-btn svg { width: 9px; height: 9px; stroke-width: 1px; }
+            .toggle-block > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
+            .toggle-block > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+            
+            .lang-gate { width: 130px; height: 18px; gap: 1.5px; }
+            .gate-btn { font-size: 7px; border-width: 1px; }
+            .lang-gate > *:first-child { border-top-left-radius: 4.5px; border-bottom-left-radius: 4.5px; }
+            .lang-gate > *:last-child { border-top-right-radius: 4.5px; border-bottom-right-radius: 4.5px; }
+        }
+    </style>
+    
+    <!-- Тот самый костыль против моргания белого экрана при загрузке. -->
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('rl-theme') || 'system';
+            const isLight = savedTheme === 'system' ? window.matchMedia('(prefers-color-scheme: light)').matches : savedTheme === 'light';
+            if (isLight) document.documentElement.setAttribute('data-theme', 'light');
+            else document.documentElement.removeAttribute('data-theme');
+        } catch(e) {}
+        
+        // ============================================================
+        // ВОССТАНОВЛЕНИЕ ПРИ СВАЙПЕ НАЗАД (BFCache)
+        // ============================================================
+        // Мой спасительный костыль для iOS и мобильных браузеров. Они агрессивно кешируют 
+        // страницу (BFCache) прямо в тот момент, когда она уже стала прозрачной и отскейлилась 
+        // из-за класса "transitioning". Если юзер нажмет "назад", он увидит пустой экран 0_0
+        // Здесь я ловлю событие pageshow, мгновенно сношу класс перехода, вырубаю плавность 
+        // анимации, форсирую перерисовку кадра браузером и возвращаю всё на место. Изи =)
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                const intro = document.querySelector('.intro-container');
+                const cvs = document.getElementById('intro-canvas');
+                const corner = document.querySelector('.corner-settings');
+                const gateBtns = document.querySelectorAll('.gate-btn');
+                
+                // 1. Временно отключаю плавность анимации ВСЕМ элементам
+                intro.style.transition = 'none';
+                cvs.style.transition = 'none';
+                if (corner) corner.style.transition = 'none';
+                gateBtns.forEach(btn => btn.style.transition = 'none');
+                
+                // 2. Снимаю все классы (всё мгновенно станет видимым)
+                document.body.classList.remove('transitioning');
+                gateBtns.forEach(btn => btn.classList.remove('entering'));
+                
+                // 3. Форсирую перерисовку кадра браузером
+                void document.body.offsetWidth;
+                
+                // 4. Возвращаю плавность обратно
+                intro.style.transition = '';
+                cvs.style.transition = '';
+                if (corner) corner.style.transition = '';
+                gateBtns.forEach(btn => btn.style.transition = '');
+                
+                // Перезапускаю фон
+                if (isEntering) {
+                    isEntering = false;
+                    drawGrid();
+                }
+                
+                // Сбрасываю координаты касаний
+                mouseX = -1000; mouseY = -1000; activePointers = [];
+            }
+        });
+    </script>
+</head>
+<body>
+
+    <canvas id="intro-canvas"></canvas>
+    <div class="vignette"></div>
+
+    <div class="corner-settings">
+        <div class="toggle-block theme-group">
+            <div class="toggle-btn" data-theme-val="system"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div class="toggle-btn" data-theme-val="dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+            <div class="toggle-btn" data-theme-val="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+        </div>
+    </div>
+
+    <div class="intro-container">
+        <h1 class="glitch-logo" data-text="INTEC">INTEC</h1>
+        <div class="lang-gate">
+            <button class="gate-btn" data-lang-entry="en">EN</button>
+            <button class="gate-btn" data-lang-entry="ru">RU</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ТЕМЫ
+        // ============================================================
+        const rootTheme = document.documentElement;
+        let currentCanvasColor = '180, 190, 205'; 
+        const themeBtns = document.querySelectorAll('.theme-group .toggle-btn');
+        const sysMedia = window.matchMedia('(prefers-color-scheme: light)');
+
+        function applyTheme(themeVal) {
+            let isLight = themeVal === 'system' ? sysMedia.matches : themeVal === 'light';
+            if (isLight) rootTheme.setAttribute('data-theme', 'light'); else rootTheme.removeAttribute('data-theme');
+            try { localStorage.setItem('rl-theme', themeVal); } catch(e) {}
+            
+            themeBtns.forEach(btn => {
+                if (btn.getAttribute('data-theme-val') === themeVal) btn.classList.add('active'); 
+                else btn.classList.remove('active');
+            });
+            setTimeout(() => { currentCanvasColor = getComputedStyle(rootTheme).getPropertyValue('--c-canvas').trim(); }, 50);
+        }
+
+        themeBtns.forEach(btn => btn.addEventListener('click', () => applyTheme(btn.getAttribute('data-theme-val'))));
+        sysMedia.addEventListener('change', () => {
+            let current = 'system';
+            try { current = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
+            if (current === 'system') applyTheme('system');
+        });
+
+        let savedTheme = 'system';
+        try { savedTheme = localStorage.getItem('rl-theme') || 'system'; } catch(e) {}
+        applyTheme(savedTheme);
+
+        // ============================================================
+        // ИНТЕРАКТИВНЫЙ КАНВАС (МУЛЬТИТАЧ)
+        // ============================================================
+        // Интерактивный фон с поддержкой мультитача! Храню координаты всех 
+        // пальцев в массиве activePointers. Сколько бы юзер ни тыкал в экран, 
+        // скрипт все переварит :)
+        const canvas = document.getElementById('intro-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const spacing = 24; 
+        
+        let cols = 0, rows = 0;
+        let isEntering = false;
+
+        // Массив, в котором будут храниться координаты всех активных пальцев/мыши
+        let activePointers = [];
+        let lastTouchTime = 0;
+
+        let influenceRadius = 200; 
+        let baseDotRadius = 0.8;   
+        let maxDotRadius = 3.2;    
+
+        function initCanvas() {
+            // Обязательно учитываю devicePixelRatio, иначе на Retina дисплеях 
+            // канвас будет выглядеть как мыло X_X
+            const dpr = window.devicePixelRatio || 1;
+            width = window.innerWidth; height = window.innerHeight;
+            canvas.width = width * dpr; canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+            
+            cols = Math.ceil(width / spacing) + 1;
+            rows = Math.ceil(height / spacing) + 1;
+
+            if (width <= 900) {
+                influenceRadius = 100;
+                baseDotRadius = 0.5;
+                maxDotRadius = 1.5;
+            } else {
+                influenceRadius = 200;
+                baseDotRadius = 0.8;
+                maxDotRadius = 3.2;
+            }
+        }
+
+        window.addEventListener('resize', initCanvas);
+
+        // Функция обновления списка координат (для мультитача)
+        function updateTouches(e) {
+            lastTouchTime = Date.now();
+            activePointers = Array.from(e.touches).map(t => ({ x: t.clientX, y: t.clientY }));
+        }
+
+        // --- СОБЫТИЯ КАСАНИЯ (СЕНСОРНЫЕ ЭКРАНЫ) ---
+        window.addEventListener('touchstart', updateTouches, { passive: true });
+        window.addEventListener('touchmove', updateTouches, { passive: true });
+        window.addEventListener('touchend', updateTouches); 
+        window.addEventListener('touchcancel', updateTouches); 
+
+        // --- СОБЫТИЯ МЫШИ (ПК) ---
+        window.addEventListener('mousemove', (e) => { 
+            // Отключаю мышь на полсекунды после тача, чтобы события не перебивали друг друга
+            if (Date.now() - lastTouchTime < 500) return;
+            activePointers = [{ x: e.clientX, y: e.clientY }];
+        });
+        window.addEventListener('mouseout', () => { activePointers = []; });
+
+        initCanvas();
+
+        function drawGrid() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    let x = c * spacing + (width % spacing) / 2;
+                    let y = r * spacing + (height % spacing) / 2;
+                    
+                    let maxInfluence = 0;
+
+                    // В цикле проверяю расстояние от каждой точки сетки до ВСЕХ пальцев. 
+                    // Нахожу самое сильное влияние (ближайший палец). Математика простая, 
+                    // работает как часы =)
+                    for (let i = 0; i < activePointers.length; i++) {
+                        let dx = activePointers[i].x - x;
+                        let dy = activePointers[i].y - y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        let influence = Math.max(0, 1 - dist / influenceRadius);
+                        if (influence > maxInfluence) {
+                            maxInfluence = influence;
+                        }
+                    }
+                    
+                    let intensity = maxInfluence * maxInfluence * (3 - 2 * maxInfluence);
+                    
+                    let radius = baseDotRadius + intensity * maxDotRadius; 
+                    let alpha = 0.05 + intensity * 0.95; 
+
+                    ctx.fillStyle = `rgba(${currentCanvasColor}, ${alpha})`;
+                    ctx.beginPath(); 
+                    ctx.arc(x, y, radius, 0, Math.PI * 2); 
+                    ctx.fill();
+                }
+            }
+            
+            // Если мы уже нажали кнопку и улетаем - торможу анимацию канваса, 
+            // чтобы не жрать ресурсы во время перехода.
+            if (!isEntering) {
+                requestAnimationFrame(drawGrid);
+            }
+        }
+        drawGrid();
+
+        // ============================================================
+        // ЛОГИКА ВХОДА
+        // ============================================================
+        const gateBtns = document.querySelectorAll('.gate-btn');
+
+        gateBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isEntering) return;
+                isEntering = true;
+                
+                btn.classList.add('entering');
+                
+                // Записываю язык в локалсторадж, чтобы на странице hub.html 
+                // сразу подхватился правильный.
+                const lang = btn.getAttribute('data-lang-entry');
+                try { localStorage.setItem('rl-lang', lang); } catch(e) {}
+                
+                // А вот и мой флажок для красивого фейда на следующей странице!
+                try { sessionStorage.setItem('fromIntro', 'true'); } catch(e) {}
+
+                // Запускаю класс анимации ухода в CSS
+                document.body.classList.add('transitioning');
+
+                setTimeout(() => {
+                    window.location.href = 'hub.html#rl'; 
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>

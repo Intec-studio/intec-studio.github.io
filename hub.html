@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intec | Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css"> <!-- Подключаю свои общие стили -->
+
+    <!-- Этот скрипт в head - мой спасительный костыль. Он блокирует рендер на миллисекунду, 
+         чтобы вытянуть тему из localStorage и применить ее ДО того, как браузер нарисует страницу. 
+         Иначе при загрузке была бы вырвиглазная белая вспышка на темной теме >_< -->
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('rl-theme') || 'system';
+            const isLight = savedTheme === 'system' ? window.matchMedia('(prefers-color-scheme: light)').matches : savedTheme === 'light';
+            if (isLight) document.documentElement.setAttribute('data-theme', 'light');
+            else document.documentElement.removeAttribute('data-theme');
+        } catch(e) {}
+    </script>
+</head>
+<body>
+    
+    <!-- СКРЫТАЯ АНИМАЦИЯ ЗАГРУЗКИ. Тут я делаю хитрую проверку: если я пришел сюда со 
+         стартового интро-экрана (проверяю флаг в sessionStorage), то страница плавно проявляется. 
+         Отработало - сразу сжигаю билет (удаляю флаг), чтобы при обычном обновлении страницы 
+         этой анимации больше не было. Элементарно и красиво (⌐■_■) -->
+    <script>
+        try {
+            if (sessionStorage.getItem('fromIntro') === 'true') {
+                document.body.style.opacity = '0';
+                document.body.style.animation = 'pageFadeIn 0.8s ease-out forwards';
+                sessionStorage.removeItem('fromIntro');
+            }
+        } catch(e) {}
+    </script>
+
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ. Тут у меня глобальная кнопка "назад", переключалки тем и языков, 
+         а еще хлебные крошки (breadcrumbs). Все SVG-иконки встроены прямо в HTML, 
+         чтобы не делать лишних HTTP-запросов к картинкам. Оптимизация в каждой строчке ╰(*°▽°*)╯ -->
+    <header class="top-bar">
+        <div class="back-btn" id="globalBackBtn"><svg viewBox="0 0 18 18"><path d="M 9 3 L 3 9 L 9 15 M 15 3 L 9 9 L 15 15"/></svg></div>
+        
+        <div class="settings-group">
+            <div class="toggle-block theme-group">
+                <div class="toggle-btn" data-theme-val="system"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+                <div class="toggle-btn" data-theme-val="dark"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+                <div class="toggle-btn" data-theme-val="light"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+            </div>
+            <div class="toggle-block lang-group">
+                <div class="toggle-btn text-btn" data-lang-val="en">EN</div>
+                <div class="toggle-btn text-btn" data-lang-val="ru">RU</div>
+            </div>
+        </div>
+
+        <div class="breadcrumbs">
+            <span class="bc-text">Intec</span>
+            <svg class="bc-icon" viewBox="0 0 18 18"><path d="M 6 3 L 12 9 L 6 15"/></svg>
+            <span class="bc-text" id="bcPageNameEn" data-lang="en">Race Legends</span>
+            <span class="bc-text" id="bcPageNameRu" data-lang="ru">Race Legends</span>
+        </div>
+    </header>
+
+    <div class="content-wrapper">
+        <!-- БОКОВОЕ МЕНЮ. Ссылки на все разделы моего SPA. В href прописаны хеши (#rl, #ff), 
+             чтобы роутер из app.js мог их перехватить и подменить контент без перезагрузки страницы. 
+             Хронограф - единственная ссылка, которая ведет на отдельный HTML файл, 
+             потому что он слишком тяжелый и имеет свою собственную логику 0_0 -->
+        <aside class="sidebar">
+            <div class="sidebar-nav" id="mainNav">
+                <a href="#rl" class="nav-btn" data-target="rl">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M15 11h.01M18 13h.01"/></svg><span>Race Legends</span>
+                </a>
+                <a href="#ff" class="nav-btn" data-target="ff">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg><span>Fractal Forge</span>
+                </a>
+                <a href="#rltv" class="nav-btn" data-target="rltv">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg><span>#RaceLegendsTV</span>
+                </a>
+                <a href="#patchnotes" class="nav-btn" data-target="patchnotes"><svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                    <span data-lang="en">Articles</span><span data-lang="ru">Статьи</span>
+                </a>
+                <a href="chronograph.html" class="nav-btn">
+                    <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span data-lang="en">Chronograph</span><span data-lang="ru">Хронограф</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ОСНОВНАЯ ЗОНА. Тут находится динамический контейнер #dynamicContent, 
+             куда мой JS вбрасывает куски HTML из content.js. А еще тут лежит моя кастомная 
+             система скролла с градиентами по краям (чтобы было видно, что контент уходит за края) 
+             и ползунком. Работает гладко, как по маслу :) -->
+        <main class="main-area">
+            <div class="main-clip" id="mainClip">
+                <div class="main-panel" id="mainPanel">
+                    
+                    <div class="cards-layout" id="dynamicContent"></div>
+
+                </div>
+                <div class="main-grad-bottom" id="mainGradBottom"></div>
+                <div class="main-grad-top" id="mainGradTop"></div>
+            </div>
+
+            <div class="v-slider-container">
+                <div class="v-track" id="vTrack"><div class="v-thumb" id="vThumb"></div></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Подключаю свою самодельную базу данных с текстами и главный JS файл со всей логикой. 
+         Никаких тяжелых фреймворков, только чистый ванильный JS! (⌐■_■) -->
+    <script src="content.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
