@@ -27,14 +27,14 @@ const POSTS_DATABASE = [
         date: "17.07.2026",
         tags: ["#RaceLegends"],
         title: {
-            en: "RL — P-A.0.0.2 ",
-            ru: "RL — P-A.0.0.2 "
+            en: "RL — P-A.0.0.2",
+            ru: "RL — P-A.0.0.2"
         },
         description: {
             en: "Race Legends P-A.0.0.2 (Pre-Alpha) update. Global graphics overhaul: transition to anime styling (Cel-Shading), smart landscape with procedural AutoMaterial, interactive vegetation, and FPS boost. Launch of the official game website with an interactive concept of the new UI 3.0. Release of the custom Blender addon Fractal Forge (environment generation, automatic LODs, Oklab integration) and announcement of the user-generated content (UGC) system \"Content Monarchy\".",
             ru: "Обновление Race Legends P-A.0.0.2 (Pre-Alpha). Глобальная переработка графики: переход на аниме-стилизацию (Cel-Shading), умный ландшафт с процедурным AutoMaterial, интерактивная растительность и повышение FPS. Запуск официального сайта игры с интерактивным концептом нового интерфейса UI 3.0. Релиз авторского аддона для Blender Fractal Forge (генерация окружения, автоматические LOD'ы, интеграция Oklab) и анонс системы пользовательского контента (UGC) «Монархия контента»."
         },
-        contentFile: "articles/patch_rl_p_a.0.0.2.json"
+        contentFile: "articles/patch_rl_p_a.0.0.2"
     }
 ];   
 
