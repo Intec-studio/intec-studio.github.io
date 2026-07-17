@@ -7,19 +7,37 @@
 // Если надо добавить новую статью, я просто копипащу объект и прописываю путь к JSON файлу.
 const POSTS_DATABASE = [
     {
-        id: "patch_rl_p_a001",
+        id: "patch_rl_p_a.0.0.1",
         timestamp: 1757073600000,
         date: "05.09.2025",
         tags: ["#RaceLegends"],
         title: {
-            en: "RL-P-A001",
-            ru: "RL-P-A001"
+            en: "RL — P-A.0.0.1",
+            ru: "RL — P-A.0.0.1"
         },
         description: {
             en: "First development diary for Race Legends (pre-alpha). Removed realism, new cartoon graphics, stylized city. Completely redesigned minimalist UI (like realme), settings search, carousel picker, menu, laboratory. Colorblind settings, FOV, field of view. Added English and Russian languages, audio preview. Disappearing chat messages, chat timer, empty messages ban. New tracks and music. New car physics, how to drift, custom yellow car, flying car, mid-air tricks, loop-the-loop, 4 cameras (first and third-person view). 100 player servers, new tab screen, scoreboard, online list. Plans for 2026: concept arts, keybinds, shaders, visual profiles.",
             ru: "Первый дневник разработки Race Legends (пре-альфа). Убрали реализм, новая мультяшная графика, стилизованный город. Полностью новый минималистичный интерфейс (как realme), поиск по настройкам, барабан, меню, лаборатория. Настройки дальтонизма, FOV, угол обзора. Добавлен русский и английский язык, предпрослушка звука. В чате пропадают сообщения, таймер чата, запрет пустых сообщений. Новые треки и музыка. Новая физика машин, как дрифтить, своя желтая машина, полет на машине, трюки в воздухе, мертвая петля, 4 камеры (вид от первого и третьего лица). Сервера на 100 игроков, новый таб (tab), список онлайна. Планы на 2026 год: концепт-арты, бинды на кнопки, шейдеры, визуальные профили.\n"
         },
-        contentFile: "articles/patch_rl_p_a001.json"
+        contentFile: "articles/patch_rl_p_a.0.0.1.json"
+    }
+];
+
+const POSTS_DATABASE = [
+    {
+        id: "patch_rl__p_a.0.0.2",
+        timestamp: 1784289600000,
+        date: "17.07.2026",
+        tags: ["#RaceLegends"],
+        title: {
+            en: "RL — P-A.0.0.2",
+            ru: "RL — P-A.0.0.2"
+        },
+        description: {
+            en: "",
+            ru: "Обновление Race Legends P-A.0.0.2 (Pre-Alpha). Глобальная переработка графики: переход на аниме-стилизацию (Cel-Shading), умный ландшафт с процедурным AutoMaterial, интерактивная растительность и повышение FPS. Запуск официального сайта игры с интерактивным концептом нового интерфейса UI 3.0. Релиз авторского аддона для Blender Fractal Forge (генерация окружения, автоматические LOD'ы, интеграция Oklab) и анонс системы пользовательского контента (UGC) «Монархия контента»."
+        },
+        contentFile: "articles/patch_rl__p_a.0.0.2.json"
     }
 ];
 
