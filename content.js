@@ -349,12 +349,12 @@ const PAGE_CONTENT = {
             </div>
         </div>
 
-        <div id="postsList" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
+        <div id="postsList" class="posts-list"></div>
 
-        <div id="singlePostView" style="display: none; flex-direction: column; gap: 18px; width: 100%;">
+        <div id="singlePostView" class="single-post-view" style="display: none;">
             <!-- ПРАВИЛЬНАЯ ФИРМЕННАЯ КНОПКА НАЗАД -->
             
-            <div id="singlePostContent" style="display: flex; flex-direction: column; gap: 18px; width: 100%;"></div>
+            <div id="singlePostContent" class="single-post-content"></div>
         </div>
     `
 };

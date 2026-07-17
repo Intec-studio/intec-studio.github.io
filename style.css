@@ -122,6 +122,8 @@ a { text-decoration: none; color: inherit; }
    и обязательно вешаю will-change, чтобы браузер выделил отдельный слой на GPU. 
    Плюс накинул процедурный SVG-шум прямо в код. Ни одной картинки не загружено, чистая магия! */
 .cards-layout { width: 100%; padding: 18px 30px 18px 18px; display: flex; flex-direction: column; gap: 18px; }
+.posts-list, .single-post-content { display: flex; flex-direction: column; gap: 18px; width: 100%; }
+.single-post-view { display: flex; flex-direction: column; gap: 18px; width: 100%; }
 .hero-card, .content-card, .pn-card { width: 100%; background: var(--c-panel); border: 3px solid var(--c-border); border-radius: 18px; overflow: hidden; }
 .hero-banner { position: relative; width: 100%; height: 441px; display: flex; justify-content: center; align-items: center; background-size: 150vw 150vw; animation: gradientFlow 18s linear infinite; will-change: background-position; overflow: hidden; }
 
@@ -540,6 +542,7 @@ a { text-decoration: none; color: inherit; }
     .v-slider-container { right: 4px; top: 9px; bottom: 9px; width: 3px; } .v-track { width: 1.5px; } .v-thumb { width: 1.5px; }
     
     .cards-layout { padding: 9px 15px 9px 9px; gap: 9px; }
+    .posts-list, .single-post-content, .single-post-view { gap: 9px; }
     .hero-card, .content-card, .pn-card, .tv-combined-card { border-width: 1.5px; border-radius: 9px; }
     .hero-banner { height: 160px; } .hero-title { font-size: 24px; } .hero-footer { height: 37.5px; border-top-width: 1.5px; padding: 0 9px; }
     .tags-group { gap: 1.5px; } .tag { height: 18px; padding: 0 4.5px; font-size: 7px; border-radius: 4.5px; } .tag svg { width: 8px; height: 8px; margin-right: 4px; stroke-width: 1px; }
